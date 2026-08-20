@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -121,8 +121,87 @@ STATIC_URL = 'static/'
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
+# ============================================================
+# EMAIL CONFIGURATION
+# ============================================================
+
 MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "HOST": os.getenv(
+            "EMAIL_HOST",
+            "smtp.gmail.com",
+        ),
+        "PORT": int(
+            os.getenv(
+                "EMAIL_PORT",
+                "587",
+            )
+        ),
+        "USERNAME": os.getenv(
+            "EMAIL_HOST_USER",
+            "",
+        ),
+        "PASSWORD": os.getenv(
+            "EMAIL_HOST_PASSWORD",
+            "",
+        ),
+        "USE_TLS": True,
     },
 }
+
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "",
+)
+
+POOL_TRACKER_REMINDER_EMAIL = os.getenv(
+    "POOL_TRACKER_REMINDER_EMAIL",
+    "",
+)
+# ============================================================
+# EMAIL CONFIGURATION - DJANGO 6.1
+# ============================================================
+
+# ============================================================
+# EMAIL CONFIGURATION - DJANGO 6.1
+# ============================================================
+
+MAILERS = {
+    "default": {
+        "BACKEND": (
+            "django.core.mail.backends.smtp.EmailBackend"
+        ),
+        "OPTIONS": {
+            "host": os.getenv(
+                "EMAIL_HOST",
+                "smtp.gmail.com",
+            ),
+            "port": int(
+                os.getenv(
+                    "EMAIL_PORT",
+                    "587",
+                )
+            ),
+            "username": os.getenv(
+                "EMAIL_HOST_USER",
+                "",
+            ),
+            "password": os.getenv(
+                "EMAIL_HOST_PASSWORD",
+                "",
+            ),
+            "use_tls": True,
+        },
+    },
+}
+
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "",
+)
+
+POOL_TRACKER_REMINDER_EMAIL = os.getenv(
+    "POOL_TRACKER_REMINDER_EMAIL",
+    "",
+)

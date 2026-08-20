@@ -45,6 +45,10 @@ class Expense(models.Model):
             "Police Payment",
         ),
         (
+            "FUEL",
+            "Fuel",
+        ),
+        (
             "OTHER",
             "Other Expense",
         ),
