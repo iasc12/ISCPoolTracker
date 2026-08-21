@@ -1,5 +1,5 @@
 from datetime import timedelta
-from decimal import Decimal
+from decimal import Decimal, ROUND_CEILING
 
 from django.db.models import Sum
 from django.shortcuts import redirect, render
@@ -66,13 +66,13 @@ def dashboard(request):
     # =================================================
 
     week_start = (
-        today - timedelta(
-            days=today.weekday()
-        )
+        today -
+        timedelta(days=today.weekday())
     )
 
     week_end = (
-        week_start + timedelta(days=6)
+        week_start +
+        timedelta(days=6)
     )
 
     weekly_earnings = (
@@ -125,7 +125,8 @@ def dashboard(request):
         )
 
     month_end = (
-        next_month - timedelta(days=1)
+        next_month -
+        timedelta(days=1)
     )
 
     monthly_earnings = (
@@ -157,7 +158,7 @@ def dashboard(request):
     )
 
     # =================================================
-    # AVERAGE DAILY EARNINGS
+    # LIFETIME DAILY AVERAGE
     # =================================================
 
     earning_count = (
@@ -176,6 +177,176 @@ def dashboard(request):
         average_daily_earnings = (
             Decimal("0.00")
         )
+
+    # =================================================
+    # RECENT 7-DAY AVERAGE
+    # =================================================
+
+    seven_days_ago = (
+        today - timedelta(days=6)
+    )
+
+    recent_7_day_records = (
+        DailyEarning.objects
+        .filter(
+            date__gte=seven_days_ago,
+            date__lte=today,
+        )
+    )
+
+    recent_7_day_total = (
+        recent_7_day_records.aggregate(
+            total=Sum("amount_collected")
+        )["total"]
+        or Decimal("0.00")
+    )
+
+    recent_7_day_count = (
+        recent_7_day_records.count()
+    )
+
+    if recent_7_day_count:
+
+        recent_7_day_average = (
+            recent_7_day_total /
+            Decimal(recent_7_day_count)
+        )
+
+    else:
+
+        recent_7_day_average = (
+            Decimal("0.00")
+        )
+
+    # =================================================
+    # RECENT 30-DAY AVERAGE
+    # =================================================
+
+    thirty_days_ago = (
+        today - timedelta(days=29)
+    )
+
+    recent_30_day_records = (
+        DailyEarning.objects
+        .filter(
+            date__gte=thirty_days_ago,
+            date__lte=today,
+        )
+    )
+
+    recent_30_day_total = (
+        recent_30_day_records.aggregate(
+            total=Sum("amount_collected")
+        )["total"]
+        or Decimal("0.00")
+    )
+
+    recent_30_day_count = (
+        recent_30_day_records.count()
+    )
+
+    if recent_30_day_count:
+
+        recent_30_day_average = (
+            recent_30_day_total /
+            Decimal(recent_30_day_count)
+        )
+
+    else:
+
+        recent_30_day_average = (
+            Decimal("0.00")
+        )
+
+    # =================================================
+    # SMART FORECAST RATE
+    #
+    # Prefer recent performance.
+    #
+    # If we have 7-day data:
+    #     70% recent 7-day average
+    #     30% lifetime average
+    #
+    # If not enough recent data:
+    #     use lifetime average.
+    # =================================================
+
+    if recent_7_day_count >= 3:
+
+        forecast_daily_average = (
+            (
+                recent_7_day_average *
+                Decimal("0.70")
+            )
+            +
+            (
+                average_daily_earnings *
+                Decimal("0.30")
+            )
+        )
+
+    elif recent_30_day_count >= 3:
+
+        forecast_daily_average = (
+            (
+                recent_30_day_average *
+                Decimal("0.70")
+            )
+            +
+            (
+                average_daily_earnings *
+                Decimal("0.30")
+            )
+        )
+
+    else:
+
+        forecast_daily_average = (
+            average_daily_earnings
+        )
+
+    # =================================================
+    # TREND ANALYSIS
+    # =================================================
+
+    if (
+        recent_7_day_average > 0
+        and recent_30_day_average > 0
+    ):
+
+        difference = (
+            recent_7_day_average -
+            recent_30_day_average
+        )
+
+        trend_percentage = (
+            (
+                difference /
+                recent_30_day_average
+            )
+            * Decimal("100")
+        )
+
+        if trend_percentage >= Decimal("10"):
+
+            trend = "Increasing"
+            trend_symbol = "↑"
+
+        elif trend_percentage <= Decimal("-10"):
+
+            trend = "Decreasing"
+            trend_symbol = "↓"
+
+        else:
+
+            trend = "Stable"
+            trend_symbol = "→"
+
+    else:
+
+        trend = "Not enough data"
+        trend_symbol = "—"
+        trend_percentage = Decimal("0.00")
 
     # =================================================
     # BEST EARNING DAY
@@ -212,27 +383,26 @@ def dashboard(request):
         )
 
     # =================================================
-    # GENERAL FORECAST
+    # FUTURE EARNINGS FORECAST
     # =================================================
 
     forecast_tomorrow = (
-        average_daily_earnings
+        forecast_daily_average
     )
 
     forecast_7_days = (
-        average_daily_earnings *
+        forecast_daily_average *
         Decimal("7")
     )
 
     forecast_30_days = (
-        average_daily_earnings *
+        forecast_daily_average *
         Decimal("30")
     )
 
-    # Estimated profit after expenses.
-    #
-    # We use the average daily expense to estimate
-    # future profit.
+    # =================================================
+    # EXPENSE FORECAST
+    # =================================================
 
     expense_count = (
         Expense.objects.count()
@@ -251,26 +421,29 @@ def dashboard(request):
             Decimal("0.00")
         )
 
+    forecast_7_days_expenses = (
+        average_daily_expenses *
+        Decimal("7")
+    )
+
+    forecast_30_days_expenses = (
+        average_daily_expenses *
+        Decimal("30")
+    )
+
     forecast_7_days_profit = (
         forecast_7_days -
-        (
-            average_daily_expenses *
-            Decimal("7")
-        )
+        forecast_7_days_expenses
     )
 
     forecast_30_days_profit = (
         forecast_30_days -
-        (
-            average_daily_expenses *
-            Decimal("30")
-        )
+        forecast_30_days_expenses
     )
 
     # =================================================
     # TARGET FORECAST
     #
-    # Targets:
     # KSh 50,000
     # KSh 100,000
     # KSh 150,000
@@ -286,7 +459,6 @@ def dashboard(request):
 
     for target in target_amounts:
 
-        # Already reached
         if total_earnings >= target:
 
             target_forecasts.append(
@@ -300,8 +472,7 @@ def dashboard(request):
 
             continue
 
-        # Cannot forecast without earnings data
-        if average_daily_earnings <= 0:
+        if forecast_daily_average <= 0:
 
             target_forecasts.append(
                 {
@@ -315,29 +486,27 @@ def dashboard(request):
             continue
 
         remaining = (
-            target - total_earnings
+            target -
+            total_earnings
         )
 
         estimated_days_decimal = (
             remaining /
-            average_daily_earnings
+            forecast_daily_average
         )
 
         estimated_days = max(
             1,
             int(
-                estimated_days_decimal
-                .to_integral_value(
-                    rounding="ROUND_CEILING"
+                estimated_days_decimal.to_integral_value(
+                    rounding=ROUND_CEILING
                 )
             ),
         )
 
         estimated_date = (
             today +
-            timedelta(
-                days=estimated_days
-            )
+            timedelta(days=estimated_days)
         )
 
         target_forecasts.append(
@@ -403,7 +572,10 @@ def dashboard(request):
 
     context = {
 
-        # All time
+        # ---------------------------------------------
+        # ALL TIME
+        # ---------------------------------------------
+
         "total_earnings":
             total_earnings,
 
@@ -413,7 +585,10 @@ def dashboard(request):
         "total_profit":
             total_profit,
 
-        # Today
+        # ---------------------------------------------
+        # TODAY
+        # ---------------------------------------------
+
         "today_earnings":
             today_earnings,
 
@@ -423,7 +598,10 @@ def dashboard(request):
         "today_profit":
             today_profit,
 
-        # Week
+        # ---------------------------------------------
+        # WEEK
+        # ---------------------------------------------
+
         "week_start":
             week_start,
 
@@ -439,7 +617,10 @@ def dashboard(request):
         "weekly_profit":
             weekly_profit,
 
-        # Month
+        # ---------------------------------------------
+        # MONTH
+        # ---------------------------------------------
+
         "month_start":
             month_start,
 
@@ -455,9 +636,18 @@ def dashboard(request):
         "monthly_profit":
             monthly_profit,
 
-        # Analysis
+        # ---------------------------------------------
+        # ANALYSIS
+        # ---------------------------------------------
+
         "average_daily_earnings":
             average_daily_earnings,
+
+        "recent_7_day_average":
+            recent_7_day_average,
+
+        "recent_30_day_average":
+            recent_30_day_average,
 
         "highest_earning":
             highest_earning,
@@ -465,7 +655,13 @@ def dashboard(request):
         "projected_monthly_earnings":
             projected_monthly_earnings,
 
-        # Forecast
+        # ---------------------------------------------
+        # SMART FORECAST
+        # ---------------------------------------------
+
+        "forecast_daily_average":
+            forecast_daily_average,
+
         "forecast_tomorrow":
             forecast_tomorrow,
 
@@ -481,18 +677,43 @@ def dashboard(request):
         "forecast_30_days_profit":
             forecast_30_days_profit,
 
-        # Target forecast
+        "average_daily_expenses":
+            average_daily_expenses,
+
+        # ---------------------------------------------
+        # TREND
+        # ---------------------------------------------
+
+        "trend":
+            trend,
+
+        "trend_symbol":
+            trend_symbol,
+
+        "trend_percentage":
+            trend_percentage,
+
+        # ---------------------------------------------
+        # TARGET FORECAST
+        # ---------------------------------------------
+
         "target_forecasts":
             target_forecasts,
 
-        # Chart
+        # ---------------------------------------------
+        # CHART
+        # ---------------------------------------------
+
         "chart_labels":
             chart_labels,
 
         "chart_values":
             chart_values,
 
-        # Records
+        # ---------------------------------------------
+        # RECORDS
+        # ---------------------------------------------
+
         "recent_records":
             recent_records,
 

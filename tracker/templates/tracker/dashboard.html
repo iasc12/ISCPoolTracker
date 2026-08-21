@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,235 +11,596 @@
 
     <title>ISC Pool Tracker</title>
 
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- ========================================================= -->
+    <!-- THEME INITIALIZATION -->
+    <!-- ========================================================= -->
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem("isc-pool-theme");
+
+            if (savedTheme === "dark") {
+                document.documentElement.classList.add("dark");
+            }
+        })();
+    </script>
+
     <style>
+
+        /* ===================================================== */
+        /* ROOT VARIABLES */
+        /* ===================================================== */
+
+        :root {
+            --bg: #f4f7fb;
+            --surface: #ffffff;
+            --surface-2: #f8fafc;
+
+            --text: #111827;
+            --text-secondary: #6b7280;
+
+            --border: #e5e7eb;
+
+            --header: #111827;
+            --header-text: #ffffff;
+
+            --green: #16a34a;
+            --red: #dc2626;
+            --blue: #2563eb;
+            --orange: #ea580c;
+            --purple: #7c3aed;
+            --cyan: #0891b2;
+
+            --shadow:
+                0 8px 25px rgba(15, 23, 42, 0.08);
+
+            --shadow-hover:
+                0 15px 35px rgba(15, 23, 42, 0.14);
+
+            --radius: 16px;
+        }
+
+
+        /* ===================================================== */
+        /* DARK THEME */
+        /* ===================================================== */
+
+        html.dark {
+            --bg: #070b14;
+            --surface: #111827;
+            --surface-2: #172033;
+
+            --text: #f9fafb;
+            --text-secondary: #9ca3af;
+
+            --border: #263244;
+
+            --header: #020617;
+            --header-text: #ffffff;
+
+            --shadow:
+                0 8px 25px rgba(0, 0, 0, 0.35);
+
+            --shadow-hover:
+                0 15px 35px rgba(0, 0, 0, 0.55);
+        }
+
+
+        /* ===================================================== */
+        /* GLOBAL */
+        /* ===================================================== */
 
         * {
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f4f6f8;
-            color: #222;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: var(--bg);
+            color: var(--text);
+
+            transition:
+                background 0.3s ease,
+                color 0.3s ease;
         }
 
+
+        /* ===================================================== */
+        /* HEADER */
+        /* ===================================================== */
+
         .header {
-            background: #111827;
+            position: relative;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #020617,
+                    #111827,
+                    #1e3a8a
+                );
+
             color: white;
-            padding: 25px;
+
+            padding: 32px 25px;
+
+            box-shadow:
+                0 5px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: auto;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
         }
 
         .header h1 {
             margin: 0;
-            font-size: 30px;
+
+            font-size: 32px;
+            font-weight: 800;
         }
 
         .header p {
             margin: 8px 0 0;
-            color: #d1d5db;
+
+            color: #cbd5e1;
         }
+
+
+        /* ===================================================== */
+        /* THEME BUTTON */
+        /* ===================================================== */
+
+        .theme-toggle {
+            border: 1px solid rgba(255,255,255,0.2);
+
+            background:
+                rgba(255,255,255,0.12);
+
+            color: white;
+
+            padding: 11px 16px;
+
+            border-radius: 999px;
+
+            cursor: pointer;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            backdrop-filter: blur(10px);
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+
+            background:
+                rgba(255,255,255,0.2);
+        }
+
+
+        /* ===================================================== */
+        /* CONTAINER */
+        /* ===================================================== */
 
         .container {
             max-width: 1400px;
+
             margin: 0 auto;
-            padding: 25px;
+
+            padding: 30px 25px;
         }
+
+
+        /* ===================================================== */
+        /* ACTIONS */
+        /* ===================================================== */
 
         .actions {
             display: flex;
+
             gap: 12px;
+
             flex-wrap: wrap;
-            margin-bottom: 25px;
+
+            margin-bottom: 30px;
         }
 
         .button {
             display: inline-block;
-            padding: 12px 18px;
-            border-radius: 8px;
+
+            padding: 13px 20px;
+
+            border-radius: 10px;
+
             text-decoration: none;
+
             font-weight: bold;
+
             color: white;
-        }
 
-        .button.earning {
-            background: #16a34a;
-        }
-
-        .button.expense {
-            background: #dc2626;
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                opacity 0.2s ease;
         }
 
         .button:hover {
-            opacity: 0.9;
+            transform: translateY(-2px);
+
+            opacity: 0.95;
+
+            box-shadow:
+                0 8px 20px rgba(0,0,0,0.15);
         }
 
+        .button.earning {
+            background:
+                linear-gradient(
+                    135deg,
+                    #16a34a,
+                    #22c55e
+                );
+        }
+
+        .button.expense {
+            background:
+                linear-gradient(
+                    135deg,
+                    #dc2626,
+                    #ef4444
+                );
+        }
+
+
+        /* ===================================================== */
+        /* SECTIONS */
+        /* ===================================================== */
+
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         .section h2 {
-            margin-bottom: 15px;
-            color: #111827;
-        }
+            margin: 0 0 8px;
 
-        .card-grid {
-            display: grid;
-            grid-template-columns:
-                repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px;
-        }
+            color: var(--text);
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow:
-                0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .card h3 {
-            margin-top: 0;
-            color: #374151;
-        }
-
-        .amount {
-            font-size: 26px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .green {
-            color: #16a34a;
-        }
-
-        .red {
-            color: #dc2626;
-        }
-
-        .blue {
-            color: #2563eb;
-        }
-
-        .orange {
-            color: #ea580c;
-        }
-
-        .gray {
-            color: #6b7280;
-        }
-
-        .forecast-card {
-            border-left: 5px solid #2563eb;
-        }
-
-        .target-card {
-            border-top: 5px solid #2563eb;
-        }
-
-        .target-card.reached {
-            border-top-color: #16a34a;
-        }
-
-        .target-card.waiting {
-            border-top-color: #ea580c;
-        }
-
-        .chart-container {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow:
-                0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .chart-wrapper {
-            position: relative;
-            width: 100%;
-            height: 400px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        th,
-        td {
-            padding: 13px;
-            border-bottom: 1px solid #e5e7eb;
-            text-align: left;
-        }
-
-        th {
-            background: #111827;
-            color: white;
-        }
-
-        tr:hover {
-            background: #f9fafb;
-        }
-
-        .empty {
-            padding: 25px;
-            background: white;
-            border-radius: 10px;
-            color: #6b7280;
+            font-size: 23px;
         }
 
         .small {
             font-size: 14px;
-            color: #6b7280;
+
+            color: var(--text-secondary);
         }
+
+
+        /* ===================================================== */
+        /* CARDS */
+        /* ===================================================== */
+
+        .card-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(220px, 1fr)
+                );
+
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius);
+
+            padding: 22px;
+
+            box-shadow: var(--shadow);
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease,
+                background 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card h3 {
+            margin-top: 0;
+
+            color: var(--text-secondary);
+
+            font-size: 16px;
+        }
+
+        .amount {
+            font-size: 28px;
+
+            font-weight: 800;
+
+            margin-top: 12px;
+        }
+
+        .green {
+            color: var(--green);
+        }
+
+        .red {
+            color: var(--red);
+        }
+
+        .blue {
+            color: var(--blue);
+        }
+
+        .orange {
+            color: var(--orange);
+        }
+
+        .purple {
+            color: var(--purple);
+        }
+
+        .cyan {
+            color: var(--cyan);
+        }
+
+        .gray {
+            color: var(--text-secondary);
+        }
+
+
+        /* ===================================================== */
+        /* SPECIAL CARDS */
+        /* ===================================================== */
+
+        .forecast-card {
+            border-left: 5px solid var(--blue);
+        }
+
+        .target-card {
+            border-top: 5px solid var(--blue);
+        }
+
+        .target-card.reached {
+            border-top-color: var(--green);
+        }
+
+        .target-card.waiting {
+            border-top-color: var(--orange);
+        }
+
+
+        /* ===================================================== */
+        /* TARGET */
+        /* ===================================================== */
 
         .target-date {
             font-size: 24px;
-            font-weight: bold;
-            color: #2563eb;
+
+            font-weight: 800;
+
+            color: var(--blue);
+
             margin: 10px 0;
         }
 
         .target-reached {
             font-size: 22px;
-            font-weight: bold;
-            color: #16a34a;
+
+            font-weight: 800;
+
+            color: var(--green);
+
             margin: 10px 0;
         }
 
         .target-waiting {
             font-size: 22px;
-            font-weight: bold;
-            color: #ea580c;
+
+            font-weight: 800;
+
+            color: var(--orange);
+
             margin: 10px 0;
         }
 
-        .profit-positive {
-            color: #16a34a;
+
+        /* ===================================================== */
+        /* CHART */
+        /* ===================================================== */
+
+        .chart-container {
+            background: var(--surface);
+
+            padding: 25px;
+
+            border-radius: var(--radius);
+
+            border: 1px solid var(--border);
+
+            box-shadow: var(--shadow);
         }
 
-        .profit-negative {
-            color: #dc2626;
+        .chart-wrapper {
+            position: relative;
+
+            width: 100%;
+
+            height: 400px;
         }
+
+
+        /* ===================================================== */
+        /* TABLES */
+        /* ===================================================== */
+
+        .table-container {
+            width: 100%;
+
+            overflow-x: auto;
+
+            border-radius: var(--radius);
+
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            background: var(--surface);
+        }
+
+        th,
+        td {
+            padding: 14px;
+
+            border-bottom:
+                1px solid var(--border);
+
+            text-align: left;
+        }
+
+        th {
+            background:
+                linear-gradient(
+                    135deg,
+                    #111827,
+                    #1e3a8a
+                );
+
+            color: white;
+        }
+
+        td {
+            color: var(--text);
+        }
+
+        tr:hover {
+            background: var(--surface-2);
+        }
+
+
+        /* ===================================================== */
+        /* EMPTY */
+        /* ===================================================== */
+
+        .empty {
+            padding: 25px;
+
+            background: var(--surface);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 12px;
+
+            color: var(--text-secondary);
+        }
+
+
+        /* ===================================================== */
+        /* FOOTER */
+        /* ===================================================== */
+
+        .footer {
+            text-align: center;
+
+            padding: 35px 15px;
+
+            color: var(--text-secondary);
+        }
+
+        .footer-title {
+            font-size: 18px;
+
+            font-weight: bold;
+
+            color: var(--text);
+        }
+
+
+        /* ===================================================== */
+        /* MOBILE */
+        /* ===================================================== */
 
         @media (max-width: 700px) {
 
-            .container {
-                padding: 15px;
+            .header {
+                padding: 24px 15px;
             }
 
-            .header {
-                padding: 20px 15px;
+            .header-content {
+                align-items: flex-start;
             }
 
             .header h1 {
+                font-size: 25px;
+            }
+
+            .header p {
+                font-size: 14px;
+            }
+
+            .theme-toggle {
+                padding: 10px 12px;
+
+                font-size: 13px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .section h2 {
+                font-size: 20px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .amount {
                 font-size: 24px;
+            }
+
+            .chart-container {
+                padding: 15px;
             }
 
             .chart-wrapper {
@@ -246,830 +608,1020 @@
             }
 
             table {
-                font-size: 14px;
+                min-width: 650px;
             }
 
-            th,
-            td {
-                padding: 9px;
+            .table-container {
+                overflow-x: auto;
             }
         }
 
     </style>
 </head>
 
+
 <body>
 
-    <!-- ================================================= -->
-    <!-- HEADER -->
-    <!-- ================================================= -->
 
-    <div class="header">
+<!-- ========================================================= -->
+<!-- HEADER -->
+<!-- ========================================================= -->
 
-        <h1>
-            🎱 ISC Pool Tracker
-        </h1>
+<div class="header">
 
-        <p>
-            Track earnings, expenses, profit and business growth.
-        </p>
+    <div class="header-content">
+
+        <div>
+
+            <h1>
+                🎱 ISC Pool Tracker
+            </h1>
+
+            <p>
+                Track earnings, expenses, profit and business growth.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="theme-toggle"
+            id="themeToggle"
+            onclick="toggleTheme()"
+        >
+            🌙 Dark Mode
+        </button>
 
     </div>
 
+</div>
 
-    <div class="container">
 
-        <!-- ================================================= -->
-        <!-- ACTION BUTTONS -->
-        <!-- ================================================= -->
+<div class="container">
 
-        <div class="actions">
 
-            <a
-                href="{% url 'add_earning' %}"
-                class="button earning"
+<!-- ========================================================= -->
+<!-- ACTION BUTTONS -->
+<!-- ========================================================= -->
+
+<div class="actions">
+
+    <a
+        href="{% url 'add_earning' %}"
+        class="button earning"
+    >
+        💰 + Add Daily Earning
+    </a>
+
+
+    <a
+        href="{% url 'add_expense' %}"
+        class="button expense"
+    >
+        💸 + Add Expense
+    </a>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- BUSINESS SUMMARY -->
+<!-- ========================================================= -->
+
+<div class="section">
+
+    <h2>
+        📊 Business Summary
+    </h2>
+
+    <div class="card-grid">
+
+
+        <div class="card">
+
+            <h3>
+                Total Earnings
+            </h3>
+
+            <div class="amount green">
+
+                KSh
+                {{ total_earnings|floatformat:2 }}
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Total Expenses
+            </h3>
+
+            <div class="amount red">
+
+                KSh
+                {{ total_expenses|floatformat:2 }}
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Total Profit
+            </h3>
+
+            <div
+                class="amount
+                {% if total_profit >= 0 %}
+                    green
+                {% else %}
+                    red
+                {% endif %}"
             >
-                + Add Daily Earning
-            </a>
 
-            <a
-                href="{% url 'add_expense' %}"
-                class="button expense"
+                KSh
+                {{ total_profit|floatformat:2 }}
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Average Daily Earnings
+            </h3>
+
+            <div class="amount blue">
+
+                KSh
+                {{ average_daily_earnings|floatformat:2 }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- TODAY -->
+<!-- ========================================================= -->
+
+<div class="section">
+
+    <h2>
+        📅 Today
+    </h2>
+
+    <div class="card-grid">
+
+
+        <div class="card">
+
+            <h3>
+                Today's Earnings
+            </h3>
+
+            <div class="amount green">
+
+                KSh
+                {{ today_earnings|floatformat:2 }}
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Today's Expenses
+            </h3>
+
+            <div class="amount red">
+
+                KSh
+                {{ today_expenses|floatformat:2 }}
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Today's Profit
+            </h3>
+
+            <div
+                class="amount
+                {% if today_profit >= 0 %}
+                    green
+                {% else %}
+                    red
+                {% endif %}"
             >
-                + Add Expense
-            </a>
+
+                KSh
+                {{ today_profit|floatformat:2 }}
+
+            </div>
 
         </div>
 
+    </div>
 
-        <!-- ================================================= -->
-        <!-- ALL-TIME SUMMARY -->
-        <!-- ================================================= -->
-
-        <div class="section">
-
-            <h2>
-                📊 Business Summary
-            </h2>
-
-            <div class="card-grid">
-
-                <div class="card">
-
-                    <h3>
-                        Total Earnings
-                    </h3>
-
-                    <div class="amount green">
-                        KSh
-                        {{ total_earnings|floatformat:2 }}
-                    </div>
-
-                </div>
+</div>
 
 
-                <div class="card">
+<!-- ========================================================= -->
+<!-- WEEK -->
+<!-- ========================================================= -->
 
-                    <h3>
-                        Total Expenses
-                    </h3>
+<div class="section">
 
-                    <div class="amount red">
-                        KSh
-                        {{ total_expenses|floatformat:2 }}
-                    </div>
+    <h2>
+        📅 This Week
+    </h2>
 
-                </div>
+    <p class="small">
 
+        {{ week_start|date:"d M Y" }}
 
-                <div class="card">
+        -
 
-                    <h3>
-                        Total Profit
-                    </h3>
+        {{ week_end|date:"d M Y" }}
 
-                    <div
-                        class="amount
-                        {% if total_profit >= 0 %}
-                            green
-                        {% else %}
-                            red
-                        {% endif %}"
-                    >
-                        KSh
-                        {{ total_profit|floatformat:2 }}
-                    </div>
-
-                </div>
+    </p>
 
 
-                <div class="card">
+    <div class="card-grid">
 
-                    <h3>
-                        Average Daily Earnings
-                    </h3>
 
-                    <div class="amount blue">
-                        KSh
-                        {{ average_daily_earnings|floatformat:2 }}
-                    </div>
+        <div class="card">
 
-                </div>
+            <h3>
+                Weekly Earnings
+            </h3>
+
+            <div class="amount green">
+
+                KSh
+                {{ weekly_earnings|floatformat:2 }}
 
             </div>
 
         </div>
 
 
-        <!-- ================================================= -->
-        <!-- TODAY -->
-        <!-- ================================================= -->
+        <div class="card">
 
-        <div class="section">
+            <h3>
+                Weekly Expenses
+            </h3>
 
-            <h2>
-                📅 Today
-            </h2>
+            <div class="amount red">
 
-            <div class="card-grid">
-
-                <div class="card">
-
-                    <h3>
-                        Today's Earnings
-                    </h3>
-
-                    <div class="amount green">
-                        KSh
-                        {{ today_earnings|floatformat:2 }}
-                    </div>
-
-                </div>
-
-
-                <div class="card">
-
-                    <h3>
-                        Today's Expenses
-                    </h3>
-
-                    <div class="amount red">
-                        KSh
-                        {{ today_expenses|floatformat:2 }}
-                    </div>
-
-                </div>
-
-
-                <div class="card">
-
-                    <h3>
-                        Today's Profit
-                    </h3>
-
-                    <div
-                        class="amount
-                        {% if today_profit >= 0 %}
-                            green
-                        {% else %}
-                            red
-                        {% endif %}"
-                    >
-                        KSh
-                        {{ today_profit|floatformat:2 }}
-                    </div>
-
-                </div>
+                KSh
+                {{ weekly_expenses|floatformat:2 }}
 
             </div>
 
         </div>
 
 
-        <!-- ================================================= -->
-        <!-- WEEK -->
-        <!-- ================================================= -->
+        <div class="card">
 
-        <div class="section">
+            <h3>
+                Weekly Profit
+            </h3>
 
-            <h2>
-                📅 This Week
-            </h2>
+            <div
+                class="amount
+                {% if weekly_profit >= 0 %}
+                    green
+                {% else %}
+                    red
+                {% endif %}"
+            >
+
+                KSh
+                {{ weekly_profit|floatformat:2 }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- MONTH -->
+<!-- ========================================================= -->
+
+<div class="section">
+
+    <h2>
+        📅 This Month
+    </h2>
+
+    <p class="small">
+
+        {{ month_start|date:"d M Y" }}
+
+        -
+
+        {{ month_end|date:"d M Y" }}
+
+    </p>
+
+
+    <div class="card-grid">
+
+
+        <div class="card">
+
+            <h3>
+                Monthly Earnings
+            </h3>
+
+            <div class="amount green">
+
+                KSh
+                {{ monthly_earnings|floatformat:2 }}
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Monthly Expenses
+            </h3>
+
+            <div class="amount red">
+
+                KSh
+                {{ monthly_expenses|floatformat:2 }}
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Monthly Profit
+            </h3>
+
+            <div
+                class="amount
+                {% if monthly_profit >= 0 %}
+                    green
+                {% else %}
+                    red
+                {% endif %}"
+            >
+
+                KSh
+                {{ monthly_profit|floatformat:2 }}
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Projected Monthly Earnings
+            </h3>
+
+            <div class="amount blue">
+
+                KSh
+                {{ projected_monthly_earnings|floatformat:2 }}
+
+            </div>
 
             <p class="small">
-                {{ week_start|date:"d M Y" }}
-                -
-                {{ week_end|date:"d M Y" }}
+                Based on the current month's average.
             </p>
 
-            <div class="card-grid">
-
-                <div class="card">
-
-                    <h3>
-                        Weekly Earnings
-                    </h3>
-
-                    <div class="amount green">
-                        KSh
-                        {{ weekly_earnings|floatformat:2 }}
-                    </div>
-
-                </div>
-
-
-                <div class="card">
-
-                    <h3>
-                        Weekly Expenses
-                    </h3>
-
-                    <div class="amount red">
-                        KSh
-                        {{ weekly_expenses|floatformat:2 }}
-                    </div>
-
-                </div>
-
-
-                <div class="card">
-
-                    <h3>
-                        Weekly Profit
-                    </h3>
-
-                    <div
-                        class="amount
-                        {% if weekly_profit >= 0 %}
-                            green
-                        {% else %}
-                            red
-                        {% endif %}"
-                    >
-                        KSh
-                        {{ weekly_profit|floatformat:2 }}
-                    </div>
-
-                </div>
-
-            </div>
-
         </div>
 
+    </div>
 
-        <!-- ================================================= -->
-        <!-- MONTH -->
-        <!-- ================================================= -->
+</div>
 
-        <div class="section">
 
-            <h2>
-                📅 This Month
-            </h2>
+<!-- ========================================================= -->
+<!-- TARGET FORECAST -->
+<!-- ========================================================= -->
 
-            <p class="small">
-                {{ month_start|date:"d M Y" }}
-                -
-                {{ month_end|date:"d M Y" }}
-            </p>
+<div class="section">
 
-            <div class="card-grid">
+    <h2>
+        🎯 Earnings Target Forecast
+    </h2>
 
-                <div class="card">
+    <p class="small">
 
-                    <h3>
-                        Monthly Earnings
-                    </h3>
+        These dates are estimates based on
+        your current average daily earnings.
 
-                    <div class="amount green">
-                        KSh
-                        {{ monthly_earnings|floatformat:2 }}
-                    </div>
+    </p>
 
-                </div>
 
+    <div class="card-grid">
 
-                <div class="card">
 
-                    <h3>
-                        Monthly Expenses
-                    </h3>
-
-                    <div class="amount red">
-                        KSh
-                        {{ monthly_expenses|floatformat:2 }}
-                    </div>
-
-                </div>
-
-
-                <div class="card">
-
-                    <h3>
-                        Monthly Profit
-                    </h3>
-
-                    <div
-                        class="amount
-                        {% if monthly_profit >= 0 %}
-                            green
-                        {% else %}
-                            red
-                        {% endif %}"
-                    >
-                        KSh
-                        {{ monthly_profit|floatformat:2 }}
-                    </div>
-
-                </div>
-
-
-                <div class="card">
-
-                    <h3>
-                        Projected Monthly Earnings
-                    </h3>
-
-                    <div class="amount blue">
-                        KSh
-                        {{ projected_monthly_earnings|floatformat:2 }}
-                    </div>
-
-                    <p class="small">
-                        Based on the current month's
-                        average.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- EARNINGS TARGET FORECAST -->
-        <!-- ================================================= -->
-
-        <div class="section">
-
-            <h2>
-                🎯 Earnings Target Forecast
-            </h2>
-
-            <p class="small">
-                These dates are estimates based on
-                your current average daily earnings.
-            </p>
-
-
-            <div class="card-grid">
-
-                {% for forecast in target_forecasts %}
-
-                    <div
-                        class="
-                            card
-                            target-card
-                            {% if forecast.reached %}
-                                reached
-                            {% elif forecast.date %}
-                                waiting
-                            {% endif %}
-                        "
-                    >
-
-                        <h3>
-                            KSh
-                            {{ forecast.target|floatformat:0 }}
-                        </h3>
-
-
-                        {% if forecast.reached %}
-
-                            <div class="target-reached">
-                                🎉 Target Reached
-                            </div>
-
-                            <p>
-                                You have already reached
-                                this earnings target.
-                            </p>
-
-
-                        {% elif forecast.date %}
-
-                            <div class="target-date">
-
-                                {{ forecast.date|date:"d M Y" }}
-
-                            </div>
-
-                            <p>
-                                Estimated target date.
-                            </p>
-
-                            <p>
-
-                                Approximately
-                                <strong>
-                                    {{ forecast.days }}
-                                </strong>
-                                days from now.
-
-                            </p>
-
-                            <p class="small">
-
-                                Current average:
-
-                                <strong>
-                                    KSh
-                                    {{ average_daily_earnings|floatformat:2 }}
-                                </strong>
-
-                                per day.
-
-                            </p>
-
-
-                        {% else %}
-
-                            <div class="target-waiting">
-                                Waiting for data
-                            </div>
-
-                            <p>
-                                Enter daily earnings
-                                to generate a forecast.
-                            </p>
-
-                        {% endif %}
-
-                    </div>
-
-                {% empty %}
-
-                    <div class="empty">
-
-                        No target forecasts available.
-
-                    </div>
-
-                {% endfor %}
-
-            </div>
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- GENERAL FORECAST -->
-        <!-- ================================================= -->
-
-        <div class="section">
-
-            <h2>
-                🔮 Earnings Forecast
-            </h2>
-
-            <div class="card-grid">
-
-                <div class="card forecast-card">
-
-                    <h3>
-                        Tomorrow
-                    </h3>
-
-                    <div class="amount blue">
-                        KSh
-                        {{ forecast_tomorrow|floatformat:2 }}
-                    </div>
-
-                    <p class="small">
-                        Expected earnings based on
-                        your average.
-                    </p>
-
-                </div>
-
-
-                <div class="card forecast-card">
-
-                    <h3>
-                        Next 7 Days
-                    </h3>
-
-                    <div class="amount blue">
-                        KSh
-                        {{ forecast_7_days|floatformat:2 }}
-                    </div>
-
-                    <p class="small">
-                        Expected earnings.
-                    </p>
-
-                    <p>
-                        Expected profit:
-
-                        <strong>
-                            KSh
-                            {{ forecast_7_days_profit|floatformat:2 }}
-                        </strong>
-                    </p>
-
-                </div>
-
-
-                <div class="card forecast-card">
-
-                    <h3>
-                        Next 30 Days
-                    </h3>
-
-                    <div class="amount blue">
-                        KSh
-                        {{ forecast_30_days|floatformat:2 }}
-                    </div>
-
-                    <p class="small">
-                        Expected earnings.
-                    </p>
-
-                    <p>
-                        Expected profit:
-
-                        <strong>
-                            KSh
-                            {{ forecast_30_days_profit|floatformat:2 }}
-                        </strong>
-                    </p>
-
-                </div>
-
-
-                <div class="card forecast-card">
-
-                    <h3>
-                        Best Earning Day
-                    </h3>
-
-                    {% if highest_earning %}
-
-                        <div class="amount green">
-
-                            KSh
-                            {{ highest_earning.amount_collected|floatformat:2 }}
-
-                        </div>
-
-                        <p class="small">
-
-                            {{ highest_earning.date|date:"d M Y" }}
-
-                        </p>
-
-                    {% else %}
-
-                        <p>
-                            No earnings recorded yet.
-                        </p>
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- 7-DAY EARNINGS CHART -->
-        <!-- ================================================= -->
-
-        <div class="section">
-
-            <h2>
-                📈 Earnings — Last 7 Days
-            </h2>
-
-            <div class="chart-container">
-
-                <div class="chart-wrapper">
-
-                    <canvas id="earningsChart"></canvas>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- RECENT EARNINGS -->
-        <!-- ================================================= -->
-
-        <div class="section">
-
-            <h2>
-                💰 Recent Earnings
-            </h2>
-
-            {% if recent_records %}
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Date
-                            </th>
-
-                            <th>
-                                Amount
-                            </th>
-
-                            <th>
-                                Notes
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {% for record in recent_records %}
-
-                            <tr>
-
-                                <td>
-                                    {{ record.date|date:"d M Y" }}
-                                </td>
-
-                                <td class="green">
-
-                                    <strong>
-                                        KSh
-                                        {{ record.amount_collected|floatformat:2 }}
-                                    </strong>
-
-                                </td>
-
-                                <td>
-                                    {{ record.notes|default:"-" }}
-                                </td>
-
-                            </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            {% else %}
-
-                <div class="empty">
-
-                    No earnings recorded yet.
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- RECENT EXPENSES -->
-        <!-- ================================================= -->
-
-        <div class="section">
-
-            <h2>
-                💸 Recent Expenses
-            </h2>
-
-            {% if recent_expenses %}
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Date
-                            </th>
-
-                            <th>
-                                Type
-                            </th>
-
-                            <th>
-                                Amount
-                            </th>
-
-                            <th>
-                                Notes
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {% for expense in recent_expenses %}
-
-                            <tr>
-
-                                <td>
-                                    {{ expense.date|date:"d M Y" }}
-                                </td>
-
-                                <td>
-                                    {{ expense.get_expense_type_display }}
-                                </td>
-
-                                <td class="red">
-
-                                    <strong>
-                                        KSh
-                                        {{ expense.amount|floatformat:2 }}
-                                    </strong>
-
-                                </td>
-
-                                <td>
-                                    {{ expense.notes|default:"-" }}
-                                </td>
-
-                            </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            {% else %}
-
-                <div class="empty">
-
-                    No expenses recorded yet.
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- FOOTER -->
-        <!-- ================================================= -->
+        {% for forecast in target_forecasts %}
 
         <div
-            style="
-                text-align:center;
-                padding:30px;
-                color:#6b7280;
+            class="
+                card
+                target-card
+                {% if forecast.reached %}
+                    reached
+                {% elif forecast.date %}
+                    waiting
+                {% endif %}
             "
         >
 
-            <p>
-                ISC Pool Tracker
-            </p>
+            <h3>
+
+                KSh
+                {{ forecast.target|floatformat:0 }}
+
+            </h3>
+
+
+            {% if forecast.reached %}
+
+                <div class="target-reached">
+                    🎉 Target Reached
+                </div>
+
+                <p>
+                    You have already reached
+                    this earnings target.
+                </p>
+
+
+            {% elif forecast.date %}
+
+                <div class="target-date">
+
+                    {{ forecast.date|date:"d M Y" }}
+
+                </div>
+
+                <p>
+                    Estimated target date.
+                </p>
+
+                <p>
+
+                    Approximately
+
+                    <strong>
+                        {{ forecast.days }}
+                    </strong>
+
+                    days from now.
+
+                </p>
+
+                <p class="small">
+
+                    Current average:
+
+                    <strong>
+
+                        KSh
+                        {{ average_daily_earnings|floatformat:2 }}
+
+                    </strong>
+
+                    per day.
+
+                </p>
+
+
+            {% else %}
+
+                <div class="target-waiting">
+                    Waiting for data
+                </div>
+
+                <p>
+                    Enter daily earnings
+                    to generate a forecast.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+        {% empty %}
+
+        <div class="empty">
+            No target forecasts available.
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- GENERAL FORECAST -->
+<!-- ========================================================= -->
+
+<div class="section">
+
+    <h2>
+        🔮 Earnings Forecast
+    </h2>
+
+
+    <div class="card-grid">
+
+
+        <div class="card forecast-card">
+
+            <h3>
+                Tomorrow
+            </h3>
+
+            <div class="amount blue">
+
+                KSh
+                {{ forecast_tomorrow|floatformat:2 }}
+
+            </div>
 
             <p class="small">
-                Track your money. Understand your business.
-                Plan your growth.
+                Expected earnings based on
+                your average.
             </p>
+
+        </div>
+
+
+        <div class="card forecast-card">
+
+            <h3>
+                Next 7 Days
+            </h3>
+
+            <div class="amount blue">
+
+                KSh
+                {{ forecast_7_days|floatformat:2 }}
+
+            </div>
+
+            <p class="small">
+                Expected earnings.
+            </p>
+
+            <p>
+
+                Expected profit:
+
+                <strong>
+
+                    KSh
+                    {{ forecast_7_days_profit|floatformat:2 }}
+
+                </strong>
+
+            </p>
+
+        </div>
+
+
+        <div class="card forecast-card">
+
+            <h3>
+                Next 30 Days
+            </h3>
+
+            <div class="amount blue">
+
+                KSh
+                {{ forecast_30_days|floatformat:2 }}
+
+            </div>
+
+            <p class="small">
+                Expected earnings.
+            </p>
+
+            <p>
+
+                Expected profit:
+
+                <strong>
+
+                    KSh
+                    {{ forecast_30_days_profit|floatformat:2 }}
+
+                </strong>
+
+            </p>
+
+        </div>
+
+
+        <div class="card forecast-card">
+
+            <h3>
+                Best Earning Day
+            </h3>
+
+
+            {% if highest_earning %}
+
+                <div class="amount green">
+
+                    KSh
+                    {{ highest_earning.amount_collected|floatformat:2 }}
+
+                </div>
+
+                <p class="small">
+
+                    {{ highest_earning.date|date:"d M Y" }}
+
+                </p>
+
+            {% else %}
+
+                <p>
+                    No earnings recorded yet.
+                </p>
+
+            {% endif %}
 
         </div>
 
     </div>
 
+</div>
 
-    <!-- ================================================= -->
-    <!-- CHART SCRIPT -->
-    <!-- ================================================= -->
 
-    <script>
+<!-- ========================================================= -->
+<!-- CHART -->
+<!-- ========================================================= -->
 
-        const chartLabels = {{ chart_labels|safe }};
-        const chartValues = {{ chart_values|safe }};
+<div class="section">
 
-        const ctx = document
+    <h2>
+        📈 Earnings — Last 7 Days
+    </h2>
+
+
+    <div class="chart-container">
+
+        <div class="chart-wrapper">
+
+            <canvas id="earningsChart"></canvas>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- RECENT EARNINGS -->
+<!-- ========================================================= -->
+
+<div class="section">
+
+    <h2>
+        💰 Recent Earnings
+    </h2>
+
+
+    {% if recent_records %}
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Amount
+                    </th>
+
+                    <th>
+                        Notes
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for record in recent_records %}
+
+                <tr>
+
+                    <td>
+                        {{ record.date|date:"d M Y" }}
+                    </td>
+
+                    <td class="green">
+
+                        <strong>
+
+                            KSh
+                            {{ record.amount_collected|floatformat:2 }}
+
+                        </strong>
+
+                    </td>
+
+                    <td>
+                        {{ record.notes|default:"-" }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% else %}
+
+    <div class="empty">
+        No earnings recorded yet.
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- RECENT EXPENSES -->
+<!-- ========================================================= -->
+
+<div class="section">
+
+    <h2>
+        💸 Recent Expenses
+    </h2>
+
+
+    {% if recent_expenses %}
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Type
+                    </th>
+
+                    <th>
+                        Amount
+                    </th>
+
+                    <th>
+                        Notes
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for expense in recent_expenses %}
+
+                <tr>
+
+                    <td>
+                        {{ expense.date|date:"d M Y" }}
+                    </td>
+
+                    <td>
+                        {{ expense.get_expense_type_display }}
+                    </td>
+
+                    <td class="red">
+
+                        <strong>
+
+                            KSh
+                            {{ expense.amount|floatformat:2 }}
+
+                        </strong>
+
+                    </td>
+
+                    <td>
+                        {{ expense.notes|default:"-" }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% else %}
+
+    <div class="empty">
+        No expenses recorded yet.
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- FOOTER -->
+<!-- ========================================================= -->
+
+<div class="footer">
+
+    <div class="footer-title">
+        🎱 ISC Pool Tracker
+    </div>
+
+    <p class="small">
+
+        Track your money.
+        Understand your business.
+        Plan your growth.
+
+    </p>
+
+</div>
+
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- THEME + CHART JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+    /* ========================================================= */
+    /* THEME */
+    /* ========================================================= */
+
+    function updateThemeButton() {
+
+        const button =
+            document.getElementById("themeToggle");
+
+        const isDark =
+            document.documentElement.classList.contains("dark");
+
+        if (isDark) {
+
+            button.innerHTML =
+                "☀️ Light Mode";
+
+        } else {
+
+            button.innerHTML =
+                "🌙 Dark Mode";
+
+        }
+    }
+
+
+    function toggleTheme() {
+
+        const html =
+            document.documentElement;
+
+        html.classList.toggle("dark");
+
+        const isDark =
+            html.classList.contains("dark");
+
+        localStorage.setItem(
+            "isc-pool-theme",
+            isDark ? "dark" : "light"
+        );
+
+        updateThemeButton();
+
+        updateChartTheme();
+    }
+
+
+    updateThemeButton();
+
+
+    /* ========================================================= */
+    /* CHART DATA */
+    /* ========================================================= */
+
+    const chartLabels =
+        {{ chart_labels|safe }};
+
+    const chartValues =
+        {{ chart_values|safe }};
+
+
+    /* ========================================================= */
+    /* CHART COLORS */
+    /* ========================================================= */
+
+    function getChartTextColor() {
+
+        return document
+            .documentElement
+            .classList
+            .contains("dark")
+            ? "#f9fafb"
+            : "#111827";
+    }
+
+
+    function getChartGridColor() {
+
+        return document
+            .documentElement
+            .classList
+            .contains("dark")
+            ? "#263244"
+            : "#e5e7eb";
+    }
+
+
+    /* ========================================================= */
+    /* CHART */
+    /* ========================================================= */
+
+    const ctx =
+        document
             .getElementById("earningsChart")
             .getContext("2d");
 
+
+    const earningsChart =
         new Chart(ctx, {
 
             type: "bar",
@@ -1081,16 +1633,29 @@
                 datasets: [
 
                     {
-                        label: "Daily Earnings (KSh)",
 
-                        data: chartValues,
+                        label:
+                            "Daily Earnings (KSh)",
 
-                        borderWidth: 1
+                        data:
+                            chartValues,
+
+                        borderWidth: 1,
+
+                        borderRadius: 8,
+
+                        backgroundColor:
+                            "rgba(37, 99, 235, 0.75)",
+
+                        borderColor:
+                            "#2563eb"
+
                     }
 
                 ]
 
             },
+
 
             options: {
 
@@ -1098,7 +1663,27 @@
 
                 maintainAspectRatio: false,
 
+
                 scales: {
+
+                    x: {
+
+                        ticks: {
+
+                            color:
+                                getChartTextColor()
+
+                        },
+
+                        grid: {
+
+                            color:
+                                getChartGridColor()
+
+                        }
+
+                    },
+
 
                     y: {
 
@@ -1106,12 +1691,24 @@
 
                         ticks: {
 
-                            callback: function(value) {
+                            color:
+                                getChartTextColor(),
 
-                                return "KSh "
-                                    + value.toLocaleString();
+                            callback:
+                                function(value) {
 
-                            }
+                                    return "KSh "
+                                        +
+                                        value.toLocaleString();
+
+                                }
+
+                        },
+
+                        grid: {
+
+                            color:
+                                getChartGridColor()
 
                         }
 
@@ -1119,31 +1716,40 @@
 
                 },
 
+
                 plugins: {
 
                     legend: {
 
-                        display: true
+                        labels: {
+
+                            color:
+                                getChartTextColor()
+
+                        }
 
                     },
+
 
                     tooltip: {
 
                         callbacks: {
 
-                            label: function(context) {
+                            label:
+                                function(context) {
 
-                                return "KSh "
-                                    + Number(
-                                        context.raw
-                                    ).toLocaleString(
-                                        undefined,
-                                        {
-                                            minimumFractionDigits: 2
-                                        }
-                                    );
+                                    return "KSh "
+                                        +
+                                        Number(
+                                            context.raw
+                                        ).toLocaleString(
+                                            undefined,
+                                            {
+                                                minimumFractionDigits: 2
+                                            }
+                                        );
 
-                            }
+                                }
 
                         }
 
@@ -1155,7 +1761,42 @@
 
         });
 
-    </script>
+
+    /* ========================================================= */
+    /* UPDATE CHART WHEN THEME CHANGES */
+    /* ========================================================= */
+
+    function updateChartTheme() {
+
+        const textColor =
+            getChartTextColor();
+
+        const gridColor =
+            getChartGridColor();
+
+
+        earningsChart.options.scales.x.ticks.color =
+            textColor;
+
+        earningsChart.options.scales.y.ticks.color =
+            textColor;
+
+        earningsChart.options.scales.x.grid.color =
+            gridColor;
+
+        earningsChart.options.scales.y.grid.color =
+            gridColor;
+
+        earningsChart.options.plugins.legend.labels.color =
+            textColor;
+
+
+        earningsChart.update();
+
+    }
+
+</script>
+
 
 </body>
 </html>
