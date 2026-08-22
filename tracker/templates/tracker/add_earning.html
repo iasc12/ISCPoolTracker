@@ -1,32 +1,128 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>ISC Pool Tracker</title>
-</head>
+{% extends "tracker/base.html" %}
 
-<body>
+{% block title %}
+    {% if editing %}
+        Edit Today's Earning
+    {% else %}
+        Add Today's Earning
+    {% endif %}
+{% endblock %}
 
-    <h1>ISC Pool Tracker</h1>
 
-    <h2>Record Daily Earnings</h2>
+{% block content %}
 
-    <form method="post">
+<div class="form-page">
 
-        {% csrf_token %}
+    <div class="form-card">
 
-        {{ form.as_p }}
+        <div class="form-header">
 
-        <button type="submit">
-            Save Earnings
-        </button>
+            <div class="form-icon">
+                {% if editing %}
+                    ✏️
+                {% else %}
+                    💰
+                {% endif %}
+            </div>
 
-    </form>
+            <div>
+                <h1>
+                    {% if editing %}
+                        Edit Today's Earning
+                    {% else %}
+                        Today's Earning
+                    {% endif %}
+                </h1>
 
-    <br>
+                <p>
+                    {{ today|date:"l, d F Y" }}
+                </p>
+            </div>
 
-    <a href="{% url 'dashboard' %}">
-        Back to Dashboard
-    </a>
+        </div>
 
-</body>
-</html>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+
+            {% endif %}
+
+
+            <div class="form-group">
+
+                <label>
+                    Amount Collected
+                </label>
+
+                {{ form.amount_collected }}
+
+                {% if form.amount_collected.errors %}
+
+                    <div class="field-error">
+                        {{ form.amount_collected.errors }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Notes
+                </label>
+
+                {{ form.notes }}
+
+                {% if form.notes.errors %}
+
+                    <div class="field-error">
+                        {{ form.notes.errors }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="button secondary"
+                >
+                    Cancel
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="button earning"
+                >
+
+                    {% if editing %}
+                        Save Changes
+                    {% else %}
+                        Save Today's Earning
+                    {% endif %}
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

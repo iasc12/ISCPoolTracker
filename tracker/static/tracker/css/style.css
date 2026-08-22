@@ -1,0 +1,157 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+        ISC Pool Tracker
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'tracker/css/style.css' %}"
+    >
+
+    {% block extra_head %}
+    {% endblock %}
+
+    <script>
+
+        (function () {
+
+            const savedTheme =
+                localStorage.getItem(
+                    "isc-pool-theme"
+                );
+
+            if (savedTheme === "dark") {
+
+                document.documentElement
+                    .classList
+                    .add("dark");
+
+            }
+
+        })();
+
+    </script>
+
+</head>
+
+
+<body>
+
+
+<header class="app-header">
+
+    <div class="header-content">
+
+        <a
+            href="/"
+            class="brand"
+        >
+
+            <h1 class="brand-title">
+                🎱 ISC Pool Tracker
+            </h1>
+
+            <p class="brand-subtitle">
+                Track earnings, expenses and profit
+            </p>
+
+        </a>
+
+
+        <button
+            type="button"
+            class="theme-toggle"
+            id="themeToggle"
+            onclick="toggleTheme()"
+        >
+            🌙 Dark Mode
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+
+<script>
+
+    function updateThemeButton() {
+
+        const button =
+            document.getElementById(
+                "themeToggle"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        const isDark =
+            document.documentElement
+                .classList
+                .contains("dark");
+
+        button.textContent =
+            isDark
+                ? "☀️ Light Mode"
+                : "🌙 Dark Mode";
+
+    }
+
+
+    function toggleTheme() {
+
+        const html =
+            document.documentElement;
+
+        html.classList.toggle("dark");
+
+        const isDark =
+            html.classList.contains("dark");
+
+        localStorage.setItem(
+            "isc-pool-theme",
+            isDark
+                ? "dark"
+                : "light"
+        );
+
+        updateThemeButton();
+
+    }
+
+
+    updateThemeButton();
+
+</script>
+
+
+{% block extra_scripts %}
+{% endblock %}
+
+
+</body>
+
+</html>

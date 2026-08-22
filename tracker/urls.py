@@ -1,13 +1,14 @@
 from django.urls import path
 
 from .views import (
+    dashboard,
     add_earning,
     add_expense,
-    dashboard,
 )
 
 
 urlpatterns = [
+
     path(
         "",
         dashboard,
@@ -25,4 +26,5 @@ urlpatterns = [
         add_expense,
         name="add_expense",
     ),
+
 ]
