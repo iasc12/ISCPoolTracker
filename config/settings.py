@@ -19,7 +19,7 @@ SECRET_KEY = os.getenv(
     "django-insecure-+&4=l&@u71!6x%r4vfi)(%lsgm*r%)azv5tng8g&rop#28(n6&",
 )
 
-DEBUG = False
+DEBUG = True
 
 
 # ============================================================
