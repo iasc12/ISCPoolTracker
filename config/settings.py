@@ -18,7 +18,7 @@ SECRET_KEY = (
     "django-insecure-+&4=l&@u71!6x%r4vfi)(%lsgm*r%)azv5tng8g&rop#28(n6&"
 )
 
-DEBUG = True
+DEBUG = False
 
 
 # ============================================================
@@ -26,6 +26,7 @@ DEBUG = True
 # ============================================================
 
 ALLOWED_HOSTS = [
+    "iscpooltracker.onrender.com",
     "isac1213.pythonanywhere.com",
     "localhost",
     "127.0.0.1",
@@ -217,3 +218,6 @@ POOL_TRACKER_REMINDER_EMAIL = os.getenv(
 # ============================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
