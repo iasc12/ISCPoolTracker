@@ -14,8 +14,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # ============================================================
 
-SECRET_KEY = (
-    "django-insecure-+&4=l&@u71!6x%r4vfi)(%lsgm*r%)azv5tng8g&rop#28(n6&"
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-+&4=l&@u71!6x%r4vfi)(%lsgm*r%)azv5tng8g&rop#28(n6&",
 )
 
 DEBUG = False
@@ -31,6 +32,8 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
 ]
+
+
 # ============================================================
 # CSRF
 # ============================================================
@@ -38,6 +41,7 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = [
     "https://iscpooltracker.onrender.com",
 ]
+
 
 # ============================================================
 # APPLICATIONS
@@ -160,7 +164,9 @@ USE_TZ = True
 # STATIC FILES
 # ============================================================
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # ============================================================
@@ -217,6 +223,3 @@ POOL_TRACKER_REMINDER_EMAIL = os.getenv(
 # ============================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
