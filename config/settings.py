@@ -36,9 +36,8 @@ ALLOWED_HOSTS = [
 # ============================================================
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://optimization-input-aberdeen-promoting.trycloudflare.com",
+    "https://iscpooltracker.onrender.com",
 ]
-
 
 # ============================================================
 # APPLICATIONS
