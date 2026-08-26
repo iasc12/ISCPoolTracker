@@ -1,3 +1,4 @@
+
 {% load static %}
 
 <!DOCTYPE html>
@@ -14,120 +15,1066 @@
 
     <title>
         {% block title %}
-        ISC Pool Tracker
+            ISC Pool Tracker
         {% endblock %}
     </title>
 
-    <link
-        rel="stylesheet"
-        href="{% static 'tracker/css/style.css' %}"
-    >
 
-    {% block extra_head %}
-    {% endblock %}
+    <style>
 
-    <script>
-        (function () {
-            const savedTheme =
-                localStorage.getItem("isc-pool-theme");
+        /* =====================================================
+           THEME VARIABLES
+        ===================================================== */
 
-            if (savedTheme === "dark") {
-                document.documentElement.classList.add("dark");
+        :root {
+
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+
+            --background: #f1f5f9;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+
+            --text: #0f172a;
+            --muted: #64748b;
+
+            --border: #e2e8f0;
+
+            --shadow:
+                0 10px 30px rgba(15, 23, 42, 0.08);
+
+            --navbar:
+                rgba(255, 255, 255, 0.96);
+
+            --radius: 16px;
+        }
+
+
+        /* =====================================================
+           DARK THEME
+        ===================================================== */
+
+        [data-theme="dark"] {
+
+            --background: #020617;
+
+            --surface: #0f172a;
+            --surface-soft: #1e293b;
+
+            --text: #f8fafc;
+            --muted: #94a3b8;
+
+            --border: #334155;
+
+            --shadow:
+                0 10px 30px rgba(0, 0, 0, 0.35);
+
+            --navbar:
+                rgba(15, 23, 42, 0.96);
+        }
+
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--background),
+                    var(--surface-soft)
+                );
+
+            color: var(--text);
+
+            font-family:
+                Inter,
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            transition:
+                background 0.25s ease,
+                color 0.25s ease;
+        }
+
+
+        a {
+            color: inherit;
+        }
+
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+
+        /* =====================================================
+           SITE WRAPPER
+        ===================================================== */
+
+        .site-wrapper {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            flex-direction: column;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 1000;
+
+            width: 100%;
+
+            background: var(--navbar);
+
+            backdrop-filter: blur(14px);
+
+            border-bottom:
+                1px solid var(--border);
+
+            box-shadow:
+                0 4px 20px rgba(
+                    15,
+                    23,
+                    42,
+                    0.05
+                );
+        }
+
+
+        .navbar-inner {
+
+            width: min(
+                1400px,
+                calc(100% - 32px)
+            );
+
+            min-height: 76px;
+
+            margin: 0 auto;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 24px;
+        }
+
+
+        /* =====================================================
+           BRAND
+        ===================================================== */
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            text-decoration: none;
+
+            min-width: 0;
+        }
+
+
+        .brand-icon {
+
+            width: 46px;
+
+            height: 46px;
+
+            flex-shrink: 0;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    #7c3aed
+                );
+
+            color: white;
+
+            font-weight: 900;
+
+            letter-spacing: -1px;
+
+            box-shadow:
+                0 8px 20px rgba(
+                    37,
+                    99,
+                    235,
+                    0.25
+                );
+        }
+
+
+        .brand-text {
+
+            display: flex;
+
+            flex-direction: column;
+
+            min-width: 0;
+        }
+
+
+        .brand-name {
+
+            font-size: 17px;
+
+            font-weight: 900;
+
+            color: var(--text);
+
+            white-space: nowrap;
+        }
+
+
+        .brand-subtitle {
+
+            margin-top: 2px;
+
+            font-size: 11px;
+
+            color: var(--muted);
+
+            white-space: nowrap;
+        }
+
+
+        /* =====================================================
+           NAV ACTIONS
+        ===================================================== */
+
+        .nav-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: flex-end;
+
+            gap: 8px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .nav-button {
+
+            min-height: 42px;
+
+            padding:
+                9px
+                13px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            border-radius: 11px;
+
+            border:
+                1px solid var(--border);
+
+            background: var(--surface);
+
+            color: var(--text);
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.18s ease,
+                background 0.18s ease,
+                border-color 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+
+        .nav-button:hover {
+
+            transform: translateY(-2px);
+
+            border-color:
+                var(--primary);
+
+            box-shadow:
+                0 6px 16px rgba(
+                    15,
+                    23,
+                    42,
+                    0.10
+                );
+        }
+
+
+        .nav-button.primary {
+
+            border-color:
+                var(--primary);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary-dark)
+                );
+
+            color: white;
+        }
+
+
+        .nav-button.primary:hover {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary-dark),
+                    #1e40af
+                );
+        }
+
+
+        /* =====================================================
+           MAIN CONTENT
+        ===================================================== */
+
+        main {
+
+            flex: 1;
+
+            width: 100%;
+        }
+
+
+        .main-container {
+
+            width: min(
+                1200px,
+                calc(100% - 32px)
+            );
+
+            margin: 0 auto;
+
+            padding:
+                40px
+                0
+                60px;
+        }
+
+
+        /* =====================================================
+           GENERIC CARDS
+        ===================================================== */
+
+        .card {
+
+            background: var(--surface);
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                var(--radius);
+
+            box-shadow:
+                var(--shadow);
+
+            padding: 24px;
+        }
+
+
+        /* =====================================================
+           FORMS
+        ===================================================== */
+
+        .form-container {
+
+            width: min(
+                650px,
+                100%
+            );
+
+            margin: 0 auto;
+        }
+
+
+        .form-group {
+
+            margin-bottom: 18px;
+        }
+
+
+        .form-group label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: var(--text);
+
+            font-size: 14px;
+
+            font-weight: 800;
+        }
+
+
+        .form-input {
+
+            width: 100%;
+
+            padding: 12px 14px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            background: var(--surface);
+
+            color: var(--text);
+
+            outline: none;
+
+            transition:
+                border-color 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+
+        .form-input:focus {
+
+            border-color:
+                var(--primary);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(
+                    37,
+                    99,
+                    235,
+                    0.12
+                );
+        }
+
+
+        textarea.form-input {
+
+            resize: vertical;
+        }
+
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .button {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            padding:
+                11px
+                18px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: var(--primary);
+
+            color: white;
+
+            text-decoration: none;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.18s ease,
+                opacity 0.18s ease;
+        }
+
+
+        .button:hover {
+
+            transform:
+                translateY(-1px);
+
+            opacity: 0.92;
+        }
+
+
+        .button-success {
+            background: var(--success);
+        }
+
+
+        .button-danger {
+            background: var(--danger);
+        }
+
+
+        .button-secondary {
+
+            background:
+                var(--surface-soft);
+
+            color:
+                var(--text);
+
+            border:
+                1px solid var(--border);
+        }
+
+
+        /* =====================================================
+           ALERTS
+        ===================================================== */
+
+        .messages {
+
+            width: min(
+                1200px,
+                calc(100% - 32px)
+            );
+
+            margin:
+                20px auto
+                0;
+        }
+
+
+        .message {
+
+            padding: 13px 16px;
+
+            margin-bottom: 10px;
+
+            border-radius: 10px;
+
+            border:
+                1px solid var(--border);
+
+            background: var(--surface);
+
+            color: var(--text);
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+
+            border-top:
+                1px solid var(--border);
+
+            background:
+                var(--surface);
+
+            color:
+                var(--muted);
+
+            text-align: center;
+
+            padding:
+                22px 16px;
+
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1050px) {
+
+            .navbar-inner {
+
+                min-height: auto;
+
+                padding:
+                    14px 0;
+
+                flex-direction: column;
+
+                align-items: stretch;
             }
-        })();
-    </script>
+
+
+            .brand {
+
+                justify-content: center;
+            }
+
+
+            .nav-actions {
+
+                justify-content: center;
+            }
+
+
+            .main-container {
+
+                padding-top: 28px;
+            }
+        }
+
+
+        @media (max-width: 700px) {
+
+            .navbar-inner {
+
+                width:
+                    calc(100% - 20px);
+            }
+
+
+            .brand-name {
+
+                font-size: 15px;
+            }
+
+
+            .brand-subtitle {
+
+                display: none;
+            }
+
+
+            .nav-actions {
+
+                display: grid;
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                width: 100%;
+            }
+
+
+            .nav-button {
+
+                width: 100%;
+            }
+
+
+            .main-container {
+
+                width:
+                    calc(100% - 20px);
+
+                padding:
+                    24px 0
+                    40px;
+            }
+        }
+
+
+        @media (max-width: 420px) {
+
+            .button-text {
+
+                display: none;
+            }
+
+
+            .nav-button {
+
+                min-width: 48px;
+
+                padding:
+                    10px;
+            }
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-<header class="app-header">
-
-    <div class="header-content">
-
-        <a href="/" class="brand">
-
-            <h1 class="brand-title">
-                🎱 ISC Pool Tracker
-            </h1>
-
-            <p class="brand-subtitle">
-                Track earnings, expenses and profit
-            </p>
-
-        </a>
-
-        <button
-            type="button"
-            class="theme-toggle"
-            id="themeToggle"
-            onclick="toggleTheme()"
-        >
-            🌙 Dark Mode
-        </button>
-
-    </div>
-
-</header>
+<div class="site-wrapper">
 
 
-<main class="container">
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
 
-    {% block content %}
-    {% endblock %}
+    <nav class="navbar">
 
-</main>
+        <div class="navbar-inner">
 
+
+            <!-- BRAND -->
+
+            <a
+                href="{% url 'dashboard' %}"
+                class="brand"
+            >
+
+                <div class="brand-icon">
+                    ISC
+                </div>
+
+                <div class="brand-text">
+
+                    <span class="brand-name">
+                        ISC Pool Tracker
+                    </span>
+
+                    <span class="brand-subtitle">
+                        Financial Management System
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- NAVIGATION -->
+
+            <div class="nav-actions">
+
+
+                <!-- Dashboard -->
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="nav-button"
+                    title="Dashboard"
+                >
+
+                    🏠
+
+                    <span class="button-text">
+                        Dashboard
+                    </span>
+
+                </a>
+
+
+                <!-- Earnings History -->
+
+                <a
+                    href="{% url 'earnings_list' %}"
+                    class="nav-button"
+                    title="Earnings History"
+                >
+
+                    💰
+
+                    <span class="button-text">
+                        Earnings
+                    </span>
+
+                </a>
+
+
+                <!-- Add Earnings -->
+
+                <a
+                    href="{% url 'add_earning' %}"
+                    class="nav-button primary"
+                    title="Add Today's Earnings"
+                >
+
+                    +
+
+                    <span class="button-text">
+                        Add Earnings
+                    </span>
+
+                </a>
+
+
+                <!-- Expenses History -->
+
+                <a
+                    href="{% url 'expenses_list' %}"
+                    class="nav-button"
+                    title="Expenses History"
+                >
+
+                    💸
+
+                    <span class="button-text">
+                        Expenses
+                    </span>
+
+                </a>
+
+
+                <!-- Add Expense -->
+
+                <a
+                    href="{% url 'add_expense' %}"
+                    class="nav-button"
+                    title="Add Expense"
+                >
+
+                    −
+
+                    <span class="button-text">
+                        Add Expense
+                    </span>
+
+                </a>
+
+
+                <!-- Reports -->
+
+                <a
+                    href="{% url 'reports' %}"
+                    class="nav-button"
+                    title="Financial Reports"
+                >
+
+                    📊
+
+                    <span class="button-text">
+                        Reports
+                    </span>
+
+                </a>
+
+
+                <!-- Theme -->
+
+                <button
+                    type="button"
+                    class="nav-button"
+                    onclick="toggleTheme()"
+                    title="Toggle dark/light theme"
+                >
+
+                    <span id="theme-icon">
+                        🌙
+                    </span>
+
+                    <span class="button-text">
+                        Theme
+                    </span>
+
+                </button>
+
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         DJANGO MESSAGES
+    ====================================================== -->
+
+    {% if messages %}
+
+        <div class="messages">
+
+            {% for message in messages %}
+
+                <div class="message">
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main>
+
+        <div class="main-container">
+
+            {% block content %}
+
+            {% endblock %}
+
+        </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+
+        ISC Pool Tracker
+
+        &nbsp;•&nbsp;
+
+        Financial Management System
+
+        &nbsp;•&nbsp;
+
+        {% now "Y" %}
+
+    </footer>
+
+
+</div>
+
+
+<!-- =========================================================
+     THEME SYSTEM
+========================================================= -->
 
 <script>
 
-function updateThemeButton() {
+    function applyTheme(theme) {
 
-    const button =
-        document.getElementById("themeToggle");
+        document.documentElement
+            .setAttribute(
+                "data-theme",
+                theme
+            );
 
-    if (!button) {
-        return;
+        const icon =
+            document.getElementById(
+                "theme-icon"
+            );
+
+        if (icon) {
+
+            icon.textContent =
+                theme === "dark"
+                    ? "☀️"
+                    : "🌙";
+        }
     }
 
-    const isDark =
-        document.documentElement
-            .classList
-            .contains("dark");
 
-    button.textContent =
-        isDark
-            ? "☀️ Light Mode"
-            : "🌙 Dark Mode";
-}
+    function toggleTheme() {
 
+        const currentTheme =
+            document.documentElement
+                .getAttribute(
+                    "data-theme"
+                ) || "light";
 
-function toggleTheme() {
+        const newTheme =
+            currentTheme === "dark"
+                ? "light"
+                : "dark";
 
-    const html =
-        document.documentElement;
+        localStorage.setItem(
+            "isc_pool_theme",
+            newTheme
+        );
 
-    html.classList.toggle("dark");
-
-    const isDark =
-        html.classList.contains("dark");
-
-    localStorage.setItem(
-        "isc-pool-theme",
-        isDark ? "dark" : "light"
-    );
-
-    updateThemeButton();
-}
+        applyTheme(newTheme);
+    }
 
 
-updateThemeButton();
+    (function () {
+
+        const savedTheme =
+            localStorage.getItem(
+                "isc_pool_theme"
+            );
+
+        const systemDark =
+            window.matchMedia &&
+            window.matchMedia(
+                "(prefers-color-scheme: dark)"
+            ).matches;
+
+        const theme =
+            savedTheme ||
+            (systemDark
+                ? "dark"
+                : "light");
+
+        applyTheme(theme);
+
+    })();
 
 </script>
 
 
-{% block extra_scripts %}
+{% block extra_js %}
 {% endblock %}
+
 
 </body>
 

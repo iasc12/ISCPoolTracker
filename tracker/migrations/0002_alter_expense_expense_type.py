@@ -16,3 +16,4 @@ class Migration(migrations.Migration):
             field=models.CharField(choices=[('EMPLOYEE', 'Employee Payment'), ('POLICE', 'Police Payment'), ('FUEL', 'Fuel'), ('OTHER', 'Other Expense')], max_length=20),
         ),
     ]
+

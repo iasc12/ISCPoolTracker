@@ -1,434 +1,860 @@
 {% extends "tracker/base.html" %}
 
-{% block title %}Dashboard | ISC Pool Tracker{% endblock %}
+{% block title %}
+    Dashboard | ISC Pool Tracker
+{% endblock %}
+
 
 {% block content %}
 
-<div class="page-header">
-
-    <div>
-        <h1>ISC Pool Tracker</h1>
-
-        <p>
-            {{ today|date:"l, d F Y" }}
-        </p>
-    </div>
-
-    <div class="actions">
-
-        <a
-            href="{% url 'add_earning' %}"
-            class="button button-primary"
-        >
-            + Today's Earnings
-        </a>
-
-        <a
-            href="{% url 'add_expense' %}"
-            class="button button-secondary"
-        >
-            + Expense
-        </a>
-
-    </div>
-
-</div>
+<div class="dashboard">
 
 
-<!-- ========================================================= -->
-<!-- TODAY -->
-<!-- ========================================================= -->
+    <!-- =====================================================
+         DASHBOARD HEADER
+         ===================================================== -->
 
-<section>
-
-    <div class="section-heading">
-
-        <div>
-            <h2>Today</h2>
-
-            <p>
-                {{ today|date:"d M Y" }}
-            </p>
-        </div>
-
-        {% if today_earning %}
-
-        <a
-            href="{% url 'add_earning' %}"
-            class="edit-link"
-        >
-            Edit today's earnings
-        </a>
-
-        {% endif %}
-
-    </div>
-
-
-    <div class="card-grid three">
-
-
-        <div class="money-card earnings-card">
-
-            <span class="card-label">
-                Earnings
-            </span>
-
-            <strong>
-                KSh {{ today_earnings|floatformat:2 }}
-            </strong>
-
-        </div>
-
-
-        <div class="money-card expense-card">
-
-            <span class="card-label">
-                Expenses
-            </span>
-
-            <strong>
-                KSh {{ today_expenses|floatformat:2 }}
-            </strong>
-
-        </div>
-
-
-        <div class="money-card profit-card">
-
-            <span class="card-label">
-                Profit
-            </span>
-
-            <strong>
-                KSh {{ today_profit|floatformat:2 }}
-            </strong>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================= -->
-<!-- WEEK -->
-<!-- ========================================================= -->
-
-<section>
-
-    <div class="section-heading">
+    <section class="dashboard-header">
 
         <div>
 
-            <h2>This Week</h2>
+            <span class="eyebrow">
+                FINANCIAL OVERVIEW
+            </span>
+
+            <h1>
+                Dashboard
+            </h1>
 
             <p>
-                {{ week_start|date:"d M" }}
-                –
-                {{ week_end|date:"d M Y" }}
+                Monitor your pool business performance.
             </p>
 
         </div>
 
-    </div>
+
+        <div class="dashboard-actions">
+
+            <a
+                href="{% url 'add_earning' %}"
+                class="action-button earning-button"
+            >
+                + Add Earning
+            </a>
+
+            <a
+                href="{% url 'add_expense' %}"
+                class="action-button expense-button"
+            >
+                + Add Expense
+            </a>
+
+        </div>
+
+    </section>
 
 
-    <div class="card-grid three">
+    <!-- =====================================================
+         THREE HORIZONTAL SUMMARY CARDS
+         ===================================================== -->
+
+    <section class="summary-grid">
 
 
-        <div class="money-card earnings-card">
+        <!-- TODAY -->
 
-            <span class="card-label">
-                Earnings
-            </span>
+        <article class="summary-card today-card">
 
-            <strong>
-                KSh {{ weekly_earnings|floatformat:2 }}
-            </strong>
+            <div class="card-top">
+
+                <div>
+
+                    <span class="card-label">
+                        TODAY
+                    </span>
+
+                    <h2>
+                        {{ today|date:"d M Y" }}
+                    </h2>
+
+                </div>
+
+                <div class="card-icon">
+                    📅
+                </div>
+
+            </div>
+
+
+            <div class="money-list">
+
+                <div class="money-item">
+
+                    <span>
+                        Earnings
+                    </span>
+
+                    <strong class="earning-text">
+                        KSh {{ today_earnings|floatformat:2 }}
+                    </strong>
+
+                </div>
+
+
+                <div class="money-item">
+
+                    <span>
+                        Expenses
+                    </span>
+
+                    <strong class="expense-text">
+                        KSh {{ today_expenses|floatformat:2 }}
+                    </strong>
+
+                </div>
+
+
+                <div class="money-item profit-row">
+
+                    <span>
+                        {% if today_profit >= 0 %}
+                            Profit
+                        {% else %}
+                            Loss
+                        {% endif %}
+                    </span>
+
+                    <strong
+                        class="{% if today_profit >= 0 %}profit-text{% else %}loss-text{% endif %}"
+                    >
+                        KSh {{ today_profit|floatformat:2 }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- THIS WEEK -->
+
+        <article class="summary-card week-card">
+
+            <div class="card-top">
+
+                <div>
+
+                    <span class="card-label">
+                        THIS WEEK
+                    </span>
+
+                    <h2>
+                        {{ week_start|date:"d M" }}
+                        –
+                        {{ week_end|date:"d M Y" }}
+                    </h2>
+
+                </div>
+
+                <div class="card-icon">
+                    📊
+                </div>
+
+            </div>
+
+
+            <div class="money-list">
+
+                <div class="money-item">
+
+                    <span>
+                        Earnings
+                    </span>
+
+                    <strong class="earning-text">
+                        KSh {{ weekly_earnings|floatformat:2 }}
+                    </strong>
+
+                </div>
+
+
+                <div class="money-item">
+
+                    <span>
+                        Expenses
+                    </span>
+
+                    <strong class="expense-text">
+                        KSh {{ weekly_expenses|floatformat:2 }}
+                    </strong>
+
+                </div>
+
+
+                <div class="money-item profit-row">
+
+                    <span>
+                        {% if weekly_profit >= 0 %}
+                            Profit
+                        {% else %}
+                            Loss
+                        {% endif %}
+                    </span>
+
+                    <strong
+                        class="{% if weekly_profit >= 0 %}profit-text{% else %}loss-text{% endif %}"
+                    >
+                        KSh {{ weekly_profit|floatformat:2 }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- THIS MONTH -->
+
+        <article class="summary-card month-card">
+
+            <div class="card-top">
+
+                <div>
+
+                    <span class="card-label">
+                        THIS MONTH
+                    </span>
+
+                    <h2>
+                        {{ month_start|date:"d M Y" }}
+                        –
+                        {{ month_end|date:"d M Y" }}
+                    </h2>
+
+                </div>
+
+                <div class="card-icon">
+                    💰
+                </div>
+
+            </div>
+
+
+            <div class="money-list">
+
+                <div class="money-item">
+
+                    <span>
+                        Earnings
+                    </span>
+
+                    <strong class="earning-text">
+                        KSh {{ monthly_earnings|floatformat:2 }}
+                    </strong>
+
+                </div>
+
+
+                <div class="money-item">
+
+                    <span>
+                        Expenses
+                    </span>
+
+                    <strong class="expense-text">
+                        KSh {{ monthly_expenses|floatformat:2 }}
+                    </strong>
+
+                </div>
+
+
+                <div class="money-item profit-row">
+
+                    <span>
+                        {% if monthly_profit >= 0 %}
+                            Profit
+                        {% else %}
+                            Loss
+                        {% endif %}
+                    </span>
+
+                    <strong
+                        class="{% if monthly_profit >= 0 %}profit-text{% else %}loss-text{% endif %}"
+                    >
+                        KSh {{ monthly_profit|floatformat:2 }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         DAILY EARNINGS GRAPH
+         ===================================================== -->
+
+    <section class="graph-card">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    PERFORMANCE
+                </span>
+
+                <h2>
+                    Daily Earnings
+                </h2>
+
+                <p>
+                    Earnings for the last 7 days
+                </p>
+
+            </div>
+
+            <div class="graph-badge">
+                7 DAYS
+            </div>
 
         </div>
 
 
-        <div class="money-card expense-card">
+        <div class="chart-wrapper">
 
-            <span class="card-label">
-                Expenses
-            </span>
-
-            <strong>
-                KSh {{ weekly_expenses|floatformat:2 }}
-            </strong>
+            <canvas
+                id="earningsGraph"
+            ></canvas>
 
         </div>
 
-
-        <div class="money-card profit-card">
-
-            <span class="card-label">
-                Profit
-            </span>
-
-            <strong>
-                KSh {{ weekly_profit|floatformat:2 }}
-            </strong>
-
-        </div>
-
-    </div>
-
-</section>
+    </section>
 
 
-<!-- ========================================================= -->
-<!-- MONTH -->
-<!-- ========================================================= -->
+    <!-- =====================================================
+         FORECAST CARD
+         ===================================================== -->
 
-<section>
-
-    <div class="section-heading">
+    <section class="forecast-card">
 
         <div>
 
-            <h2>This Month</h2>
-
-            <p>
-                {{ month_start|date:"d M Y" }}
-                –
-                {{ month_end|date:"d M Y" }}
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="card-grid three">
-
-
-        <div class="money-card earnings-card">
-
-            <span class="card-label">
-                Earnings
-            </span>
-
-            <strong>
-                KSh {{ monthly_earnings|floatformat:2 }}
-            </strong>
-
-        </div>
-
-
-        <div class="money-card expense-card">
-
-            <span class="card-label">
-                Expenses
-            </span>
-
-            <strong>
-                KSh {{ monthly_expenses|floatformat:2 }}
-            </strong>
-
-        </div>
-
-
-        <div class="money-card profit-card">
-
-            <span class="card-label">
-                Profit
-            </span>
-
-            <strong>
-                KSh {{ monthly_profit|floatformat:2 }}
-            </strong>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ========================================================= -->
-<!-- EXPECTED MONTH -->
-<!-- ========================================================= -->
-
-<section>
-
-    <div class="expected-card">
-
-        <div>
-
-            <span class="card-label">
-                Expected Monthly Earnings
+            <span class="eyebrow">
+                FORECAST
             </span>
 
             <h2>
-                KSh {{ expected_monthly_earnings|floatformat:2 }}
+                Expected Monthly Earnings
             </h2>
 
             <p>
-                Based on your current average of
-                <strong>
-                    KSh {{ average_daily_earnings|floatformat:2 }}
-                </strong>
-                per recorded earning day.
+                Based on your current average daily earnings.
             </p>
 
         </div>
 
-        <div class="expected-icon">
-            ↗
-        </div>
 
-    </div>
+        <div class="forecast-number">
 
-</section>
+            <span>
+                KSh
+            </span>
 
-
-<!-- ========================================================= -->
-<!-- RECENT ACTIVITY -->
-<!-- ========================================================= -->
-
-<section>
-
-    <div class="section-heading">
-
-        <div>
-
-            <h2>Recent Activity</h2>
-
-            <p>
-                Your latest records
-            </p>
+            {{ expected_monthly_earnings|floatformat:2 }}
 
         </div>
 
-    </div>
+    </section>
 
 
-    <div class="activity-grid">
+    <!-- =====================================================
+         ACTIVITY
+         ===================================================== -->
+
+    <section class="activity-grid">
 
 
-        <!-- EARNINGS -->
+        <!-- RECENT EARNINGS -->
 
-        <div class="activity-card">
+        <article class="activity-card">
 
-            <div class="activity-header">
+            <div class="activity-heading">
 
-                <h3>
-                    Earnings
-                </h3>
+                <div>
 
-                <a
-                    href="{% url 'add_earning' %}"
-                    class="small-action"
-                >
-                    + Add
-                </a>
+                    <span class="eyebrow">
+                        INCOME
+                    </span>
+
+                    <h2>
+                        Recent Earnings
+                    </h2>
+
+                </div>
+
+                <span class="activity-icon">
+                    ↑
+                </span>
 
             </div>
 
 
             {% if recent_earnings %}
 
-                {% for earning in recent_earnings %}
+                <div class="activity-list">
 
-                <div class="activity-row">
+                    {% for earning in recent_earnings %}
 
-                    <div>
+                        <div class="activity-row">
 
-                        <strong>
-                            {{ earning.date|date:"d M Y" }}
-                        </strong>
+                            <div>
 
-                        {% if earning.notes %}
+                                <strong>
+                                    {{ earning.date|date:"d M Y" }}
+                                </strong>
 
-                        <span>
-                            {{ earning.notes }}
-                        </span>
+                                <small>
+                                    Daily earning
+                                </small>
 
-                        {% endif %}
+                            </div>
 
-                    </div>
+                            <strong class="earning-text">
+                                + KSh
+                                {{ earning.amount_collected|floatformat:2 }}
+                            </strong>
 
-                    <strong class="positive">
-                        KSh {{ earning.amount_collected|floatformat:2 }}
-                    </strong>
+                        </div>
+
+                    {% endfor %}
 
                 </div>
 
-                {% endfor %}
-
             {% else %}
 
-                <div class="empty">
+                <div class="empty-state">
                     No earnings recorded yet.
                 </div>
 
             {% endif %}
 
-        </div>
+        </article>
 
 
-        <!-- EXPENSES -->
+        <!-- RECENT EXPENSES -->
 
-        <div class="activity-card">
+        <article class="activity-card">
 
-            <div class="activity-header">
+            <div class="activity-heading">
 
-                <h3>
-                    Expenses
-                </h3>
+                <div>
 
-                <a
-                    href="{% url 'add_expense' %}"
-                    class="small-action"
-                >
-                    + Add
-                </a>
+                    <span class="eyebrow">
+                        EXPENSES
+                    </span>
+
+                    <h2>
+                        Recent Expenses
+                    </h2>
+
+                </div>
+
+                <span class="activity-icon expense-icon">
+                    ↓
+                </span>
 
             </div>
 
 
             {% if recent_expenses %}
 
-                {% for expense in recent_expenses %}
+                <div class="activity-list">
 
-                <div class="activity-row">
+                    {% for expense in recent_expenses %}
 
-                    <div>
+                        <div class="activity-row">
 
-                        <strong>
-                            {{ expense.date|date:"d M Y" }}
-                        </strong>
+                            <div>
 
-                        <span>
-                            {{ expense.get_expense_type_display }}
-                        </span>
+                                <strong>
+                                    {{ expense.date|date:"d M Y" }}
+                                </strong>
 
-                    </div>
+                                <small>
+                                    {{ expense.category }}
+                                </small>
 
-                    <strong class="negative">
-                        KSh {{ expense.amount|floatformat:2 }}
-                    </strong>
+                            </div>
+
+                            <strong class="expense-text">
+                                - KSh
+                                {{ expense.amount|floatformat:2 }}
+                            </strong>
+
+                        </div>
+
+                    {% endfor %}
 
                 </div>
 
-                {% endfor %}
-
             {% else %}
 
-                <div class="empty">
+                <div class="empty-state">
                     No expenses recorded yet.
                 </div>
 
             {% endif %}
 
-        </div>
+        </article>
 
-    </div>
 
-</section>
+    </section>
+
+
+</div>
+
+
+<script>
+
+    /*
+     * ========================================================
+     * DAILY EARNINGS BAR GRAPH
+     * ========================================================
+     */
+
+    const chartLabels =
+        {{ chart_labels|safe }};
+
+    const chartValues =
+        {{ chart_values|safe }};
+
+
+    const canvas =
+        document.getElementById(
+            "earningsGraph"
+        );
+
+
+    if (canvas) {
+
+        const ctx =
+            canvas.getContext("2d");
+
+
+        function drawChart() {
+
+            const width =
+                canvas.clientWidth;
+
+            const height =
+                canvas.clientHeight;
+
+
+            const dpr =
+                window.devicePixelRatio || 1;
+
+
+            canvas.width =
+                width * dpr;
+
+            canvas.height =
+                height * dpr;
+
+
+            ctx.scale(
+                dpr,
+                dpr
+            );
+
+
+            ctx.clearRect(
+                0,
+                0,
+                width,
+                height
+            );
+
+
+            const isDark =
+                document.documentElement.classList.contains(
+                    "dark"
+                );
+
+
+            const textColor =
+                isDark
+                    ? "#d1d5db"
+                    : "#475569";
+
+
+            const gridColor =
+                isDark
+                    ? "#374151"
+                    : "#e2e8f0";
+
+
+            const barColor =
+                isDark
+                    ? "#60a5fa"
+                    : "#2563eb";
+
+
+            const maxValue =
+                Math.max(
+                    ...chartValues,
+                    1
+                );
+
+
+            const paddingLeft = 55;
+            const paddingRight = 20;
+            const paddingTop = 25;
+            const paddingBottom = 40;
+
+
+            const chartWidth =
+                width
+                - paddingLeft
+                - paddingRight;
+
+
+            const chartHeight =
+                height
+                - paddingTop
+                - paddingBottom;
+
+
+            /*
+             * Grid lines.
+             */
+
+            ctx.strokeStyle =
+                gridColor;
+
+            ctx.lineWidth = 1;
+
+
+            for (
+                let i = 0;
+                i <= 4;
+                i++
+            ) {
+
+                const y =
+                    paddingTop
+                    +
+                    (
+                        chartHeight
+                        / 4
+                    )
+                    * i;
+
+
+                ctx.beginPath();
+
+                ctx.moveTo(
+                    paddingLeft,
+                    y
+                );
+
+                ctx.lineTo(
+                    width - paddingRight,
+                    y
+                );
+
+                ctx.stroke();
+
+
+                const value =
+                    maxValue
+                    -
+                    (
+                        maxValue
+                        / 4
+                    )
+                    * i;
+
+
+                ctx.fillStyle =
+                    textColor;
+
+                ctx.font =
+                    "12px Arial";
+
+                ctx.textAlign =
+                    "right";
+
+                ctx.fillText(
+                    "KSh " +
+                    value.toFixed(0),
+                    paddingLeft - 8,
+                    y + 4
+                );
+
+            }
+
+
+            /*
+             * Bars.
+             */
+
+            const count =
+                chartValues.length;
+
+
+            const gap =
+                18;
+
+
+            const barWidth =
+                (
+                    chartWidth
+                    -
+                    gap * (count - 1)
+                )
+                / count;
+
+
+            chartValues.forEach(
+                function (
+                    value,
+                    index
+                ) {
+
+                    const barHeight =
+                        maxValue === 0
+                            ? 0
+                            :
+                            (
+                                value
+                                / maxValue
+                            )
+                            *
+                            chartHeight;
+
+
+                    const x =
+                        paddingLeft
+                        +
+                        index
+                        *
+                        (
+                            barWidth
+                            + gap
+                        );
+
+
+                    const y =
+                        paddingTop
+                        +
+                        chartHeight
+                        -
+                        barHeight;
+
+
+                    ctx.fillStyle =
+                        barColor;
+
+
+                    ctx.beginPath();
+
+                    ctx.roundRect(
+                        x,
+                        y,
+                        barWidth,
+                        barHeight,
+                        7
+                    );
+
+                    ctx.fill();
+
+
+                    /*
+                     * Amount above bar.
+                     */
+
+                    ctx.fillStyle =
+                        textColor;
+
+                    ctx.font =
+                        "bold 12px Arial";
+
+                    ctx.textAlign =
+                        "center";
+
+
+                    ctx.fillText(
+                        "KSh " +
+                        value.toFixed(0),
+                        x + barWidth / 2,
+                        y - 8
+                    );
+
+
+                    /*
+                     * Date.
+                     */
+
+                    ctx.font =
+                        "12px Arial";
+
+
+                    ctx.fillText(
+                        chartLabels[index],
+                        x + barWidth / 2,
+                        height - 15
+                    );
+
+                }
+            );
+
+        }
+
+
+        drawChart();
+
+
+        window.addEventListener(
+            "resize",
+            drawChart
+        );
+
+
+        window.addEventListener(
+            "storage",
+            drawChart
+        );
+
+
+        /*
+         * Redraw when theme changes.
+         */
+
+        const observer =
+            new MutationObserver(
+                drawChart
+            );
+
+
+        observer.observe(
+            document.documentElement,
+            {
+                attributes: true,
+                attributeFilter: [
+                    "class"
+                ]
+            }
+        );
+
+    }
+
+</script>
 
 {% endblock %}

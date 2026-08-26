@@ -1,0 +1,337 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}
+Earnings History | ISC Pool Tracker
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>Earnings History</h1>
+
+    <p>
+        View, search and manage all recorded earnings.
+    </p>
+
+</div>
+
+
+<div class="card" style="padding: 22px; margin-bottom: 22px;">
+
+    <form method="get">
+
+        <div style="
+            display:grid;
+            grid-template-columns:
+                repeat(auto-fit,minmax(170px,1fr));
+            gap:14px;
+            align-items:end;
+        ">
+
+            <div>
+
+                <label>
+                    From
+                </label>
+
+                <input
+                    type="date"
+                    name="date_from"
+                    value="{{ date_from }}"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    To
+                </label>
+
+                <input
+                    type="date"
+                    name="date_to"
+                    value="{{ date_to }}"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Search
+                </label>
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Amount or notes"
+                >
+
+            </div>
+
+
+            <div>
+
+                <button
+                    type="submit"
+                    class="button button-primary"
+                >
+                    🔎 Filter
+                </button>
+
+                <a
+                    href="{% url 'earnings_list' %}"
+                    class="button button-secondary"
+                >
+                    Reset
+                </a>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<div class="card" style="padding:22px; margin-bottom:22px;">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:20px;
+        flex-wrap:wrap;
+    ">
+
+        <div>
+
+            <div style="
+                color:var(--muted);
+                font-size:13px;
+                font-weight:700;
+            ">
+                FILTERED EARNINGS
+            </div>
+
+            <div style="
+                font-size:27px;
+                font-weight:850;
+                color:var(--success);
+                margin-top:4px;
+            ">
+                KSh {{ filtered_total|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <a
+            href="{% url 'add_earning' %}"
+            class="button button-primary"
+        >
+            + Add Earning
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="card" style="
+    padding:0;
+    overflow:hidden;
+">
+
+    {% if page_obj %}
+
+    <div style="overflow-x:auto;">
+
+        <table style="
+            width:100%;
+            border-collapse:collapse;
+        ">
+
+            <thead>
+
+                <tr style="
+                    background:var(--surface-secondary);
+                    border-bottom:1px solid var(--border);
+                ">
+
+                    <th style="padding:15px;text-align:left;">
+                        Date
+                    </th>
+
+                    <th style="padding:15px;text-align:right;">
+                        Earnings
+                    </th>
+
+                    <th style="padding:15px;text-align:left;">
+                        Notes
+                    </th>
+
+                    <th style="padding:15px;text-align:center;">
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for earning in page_obj %}
+
+                <tr style="
+                    border-bottom:1px solid var(--border);
+                ">
+
+                    <td style="padding:15px;">
+                        <strong>
+                            {{ earning.date|date:"d M Y" }}
+                        </strong>
+                    </td>
+
+
+                    <td style="
+                        padding:15px;
+                        text-align:right;
+                        color:var(--success);
+                        font-weight:800;
+                    ">
+                        KSh {{ earning.amount_collected|floatformat:2 }}
+                    </td>
+
+
+                    <td style="
+                        padding:15px;
+                        color:var(--muted);
+                    ">
+
+                        {% if earning.notes %}
+                            {{ earning.notes }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </td>
+
+
+                    <td style="
+                        padding:15px;
+                        text-align:center;
+                    ">
+
+                        <a
+                            href="{% url 'edit_earning' earning.id %}"
+                            class="button button-secondary"
+                        >
+                            ✏️ Edit
+                        </a>
+
+                        <a
+                            href="{% url 'delete_earning' earning.id %}"
+                            class="button button-danger"
+                        >
+                            🗑 Delete
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% else %}
+
+    <div style="
+        padding:50px;
+        text-align:center;
+        color:var(--muted);
+    ">
+
+        <div style="font-size:40px;">
+            💰
+        </div>
+
+        <h3>
+            No earnings found
+        </h3>
+
+        <p>
+            Try changing your filters or add a new earning.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+{% if page_obj.has_other_pages %}
+
+<div style="
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-top:22px;
+    flex-wrap:wrap;
+">
+
+    {% if page_obj.has_previous %}
+
+    <a
+        class="button button-secondary"
+        href="?page={{ page_obj.previous_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}&search={{ search }}"
+    >
+        ← Previous
+    </a>
+
+    {% endif %}
+
+
+    <span style="
+        padding:10px 14px;
+        color:var(--muted);
+        font-weight:700;
+    ">
+
+        Page {{ page_obj.number }}
+        of {{ page_obj.paginator.num_pages }}
+
+    </span>
+
+
+    {% if page_obj.has_next %}
+
+    <a
+        class="button button-secondary"
+        href="?page={{ page_obj.next_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}&search={{ search }}"
+    >
+        Next →
+    </a>
+
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+{% endblock %}
