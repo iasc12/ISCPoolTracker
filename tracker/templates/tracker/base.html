@@ -27,10 +27,8 @@
        ===================================================== */
 
     :root {
-
         --primary: #2563eb;
         --primary-dark: #1d4ed8;
-
         --success: #16a34a;
         --danger: #dc2626;
         --warning: #d97706;
@@ -58,7 +56,6 @@
        ===================================================== */
 
     [data-theme="dark"] {
-
         --background: #020617;
         --surface: #0f172a;
         --surface-soft: #1e293b;
@@ -86,17 +83,13 @@
     }
 
     html {
-
         scroll-behavior: smooth;
-
         width: 100%;
         max-width: 100%;
-
         overflow-x: hidden;
     }
 
     body {
-
         margin: 0;
 
         width: 100%;
@@ -145,9 +138,6 @@
         max-width: 100%;
     }
 
-
-    /* Prevent content from forcing horizontal scrolling */
-
     h1,
     h2,
     h3,
@@ -159,7 +149,6 @@
     strong,
     small,
     a {
-
         overflow-wrap: anywhere;
         word-wrap: break-word;
     }
@@ -170,7 +159,6 @@
        ===================================================== */
 
     .site-wrapper {
-
         width: 100%;
         max-width: 100%;
 
@@ -188,11 +176,8 @@
        ===================================================== */
 
     .navbar {
-
         position: sticky;
-
         top: 0;
-
         z-index: 1000;
 
         width: 100%;
@@ -216,9 +201,7 @@
         overflow: hidden;
     }
 
-
     .navbar-inner {
-
         width:
             min(
                 1400px,
@@ -246,9 +229,7 @@
        ===================================================== */
 
     .brand {
-
         display: flex;
-
         align-items: center;
 
         gap: 12px;
@@ -256,13 +237,10 @@
         text-decoration: none;
 
         min-width: 0;
-
         max-width: 100%;
     }
 
-
     .brand-icon {
-
         width: 46px;
         height: 46px;
 
@@ -271,7 +249,6 @@
         display: flex;
 
         align-items: center;
-
         justify-content: center;
 
         border-radius: 14px;
@@ -298,21 +275,16 @@
             );
     }
 
-
     .brand-text {
-
         display: flex;
 
         flex-direction: column;
 
         min-width: 0;
-
         max-width: 100%;
     }
 
-
     .brand-name {
-
         font-size: 17px;
 
         font-weight: 900;
@@ -322,9 +294,7 @@
         white-space: nowrap;
     }
 
-
     .brand-subtitle {
-
         margin-top: 2px;
 
         font-size: 11px;
@@ -340,7 +310,6 @@
        ===================================================== */
 
     .nav-actions {
-
         display: flex;
 
         align-items: center;
@@ -356,9 +325,7 @@
         max-width: 100%;
     }
 
-
     .nav-button {
-
         min-height: 42px;
 
         padding:
@@ -401,9 +368,7 @@
         max-width: 100%;
     }
 
-
     .nav-button:hover {
-
         transform:
             translateY(-2px);
 
@@ -419,9 +384,7 @@
             );
     }
 
-
     .nav-button.primary {
-
         border-color:
             var(--primary);
 
@@ -435,9 +398,7 @@
         color: white;
     }
 
-
     .nav-button.primary:hover {
-
         background:
             linear-gradient(
                 135deg,
@@ -452,19 +413,15 @@
        ===================================================== */
 
     main {
-
         flex: 1;
 
         width: 100%;
-
         max-width: 100%;
 
         overflow-x: hidden;
     }
 
-
     .main-container {
-
         width:
             min(
                 1200px,
@@ -489,9 +446,7 @@
        ===================================================== */
 
     .card {
-
         width: 100%;
-
         max-width: 100%;
 
         min-width: 0;
@@ -517,7 +472,6 @@
        ===================================================== */
 
     .form-container {
-
         width:
             min(
                 650px,
@@ -529,15 +483,11 @@
         margin: 0 auto;
     }
 
-
     .form-group {
-
         margin-bottom: 18px;
     }
 
-
     .form-group label {
-
         display: block;
 
         margin-bottom: 7px;
@@ -549,11 +499,8 @@
         font-weight: 800;
     }
 
-
     .form-input {
-
         width: 100%;
-
         max-width: 100%;
 
         padding:
@@ -578,9 +525,7 @@
             box-shadow 0.18s ease;
     }
 
-
     .form-input:focus {
-
         border-color:
             var(--primary);
 
@@ -594,9 +539,7 @@
             );
     }
 
-
     textarea.form-input {
-
         resize: vertical;
     }
 
@@ -606,7 +549,6 @@
        ===================================================== */
 
     .button {
-
         display: inline-flex;
 
         align-items: center;
@@ -641,32 +583,24 @@
         max-width: 100%;
     }
 
-
     .button:hover {
-
         transform:
             translateY(-1px);
 
         opacity: 0.92;
     }
 
-
     .button-success {
-
         background:
             var(--success);
     }
 
-
     .button-danger {
-
         background:
             var(--danger);
     }
 
-
     .button-secondary {
-
         background:
             var(--surface-soft);
 
@@ -683,7 +617,6 @@
        ===================================================== */
 
     .messages {
-
         width:
             min(
                 1200px,
@@ -697,11 +630,8 @@
             0;
     }
 
-
     .message {
-
         width: 100%;
-
         max-width: 100%;
 
         padding:
@@ -729,9 +659,7 @@
        ===================================================== */
 
     footer {
-
         width: 100%;
-
         max-width: 100%;
 
         border-top:
@@ -753,16 +681,24 @@
         overflow: hidden;
     }
 
-
     .footer-brand {
-
         font-size: 13px;
 
         font-weight: 800;
 
-        color: var(--muted);
+        color: var(--text);
 
         letter-spacing: 0.3px;
+    }
+
+    .footer-tagline {
+        margin-top: 5px;
+
+        font-size: 12px;
+
+        color: var(--muted);
+
+        font-style: italic;
     }
 
 
@@ -771,19 +707,14 @@
        ===================================================== */
 
     table {
-
         width: 100%;
-
         max-width: 100%;
 
         border-collapse: collapse;
     }
 
-
     .table-container {
-
         width: 100%;
-
         max-width: 100%;
 
         overflow-x: auto;
@@ -799,7 +730,6 @@
     @media (max-width: 1050px) {
 
         .navbar-inner {
-
             min-height: auto;
 
             padding:
@@ -810,21 +740,15 @@
             align-items: stretch;
         }
 
-
         .brand {
-
             justify-content: center;
         }
-
 
         .nav-actions {
-
             justify-content: center;
         }
 
-
         .main-container {
-
             padding-top: 28px;
         }
     }
@@ -838,39 +762,28 @@
 
         html,
         body {
-
             width: 100%;
-
             max-width: 100%;
 
             overflow-x: hidden;
-
             overflow-y: auto;
         }
 
-
         .site-wrapper {
-
             width: 100%;
-
             max-width: 100%;
 
             overflow-x: hidden;
         }
 
-
         .navbar {
-
             width: 100%;
-
             max-width: 100%;
 
             overflow: hidden;
         }
 
-
         .navbar-inner {
-
             width:
                 calc(100% - 20px);
 
@@ -883,31 +796,22 @@
             min-width: 0;
         }
 
-
         .brand {
-
             width: 100%;
-
             max-width: 100%;
 
             justify-content: center;
         }
 
-
         .brand-name {
-
             font-size: 15px;
         }
 
-
         .brand-subtitle {
-
             display: none;
         }
 
-
         .nav-actions {
-
             display: grid;
 
             grid-template-columns:
@@ -922,9 +826,7 @@
             gap: 8px;
         }
 
-
         .nav-button {
-
             width: 100%;
 
             max-width: 100%;
@@ -932,19 +834,14 @@
             min-width: 0;
         }
 
-
         main {
-
             width: 100%;
-
             max-width: 100%;
 
             overflow-x: hidden;
         }
 
-
         .main-container {
-
             width:
                 calc(100% - 20px);
 
@@ -962,9 +859,7 @@
                 0 auto;
         }
 
-
         .messages {
-
             width:
                 calc(100% - 20px);
 
@@ -972,19 +867,14 @@
                 calc(100% - 20px);
         }
 
-
         .card {
-
             width: 100%;
-
             max-width: 100%;
 
             min-width: 0;
         }
 
-
         .button {
-
             max-width: 100%;
         }
     }
@@ -997,27 +887,22 @@
     @media (max-width: 420px) {
 
         .navbar-inner {
-
             width:
                 calc(100% - 16px);
 
             max-width:
                 calc(100% - 16px);
         }
-
 
         .main-container {
-
             width:
                 calc(100% - 16px);
 
             max-width:
                 calc(100% - 16px);
         }
-
 
         .messages {
-
             width:
                 calc(100% - 16px);
 
@@ -1025,15 +910,11 @@
                 calc(100% - 16px);
         }
 
-
         .button-text {
-
             display: none;
         }
 
-
         .nav-button {
-
             min-width: 48px;
 
             padding:
@@ -1264,7 +1145,11 @@
 <footer>
 
     <div class="footer-brand">
-        Isaac Kanja Builds
+        Isaac Njoroge Build
+    </div>
+
+    <div class="footer-tagline">
+        Another day, another dollar.
     </div>
 
 </footer>
