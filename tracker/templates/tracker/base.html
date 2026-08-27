@@ -1,4 +1,3 @@
-
 {% load static %}
 
 <!DOCTYPE html>
@@ -45,7 +44,12 @@
             --border: #e2e8f0;
 
             --shadow:
-                0 10px 30px rgba(15, 23, 42, 0.08);
+                0 10px 30px rgba(
+                    15,
+                    23,
+                    42,
+                    0.08
+                );
 
             --navbar:
                 rgba(255, 255, 255, 0.96);
@@ -61,7 +65,6 @@
         [data-theme="dark"] {
 
             --background: #020617;
-
             --surface: #0f172a;
             --surface-soft: #1e293b;
 
@@ -71,7 +74,12 @@
             --border: #334155;
 
             --shadow:
-                0 10px 30px rgba(0, 0, 0, 0.35);
+                0 10px 30px rgba(
+                    0,
+                    0,
+                    0,
+                    0.35
+                );
 
             --navbar:
                 rgba(15, 23, 42, 0.96);
@@ -350,7 +358,8 @@
 
         .nav-button:hover {
 
-            transform: translateY(-2px);
+            transform:
+                translateY(-2px);
 
             border-color:
                 var(--primary);
@@ -543,7 +552,8 @@
 
             border-radius: 10px;
 
-            background: var(--primary);
+            background:
+                var(--primary);
 
             color: white;
 
@@ -821,7 +831,7 @@
                 </a>
 
 
-                <!-- Earnings History -->
+                <!-- Earnings -->
 
                 <a
                     href="{% url 'earnings_list' %}"
@@ -855,7 +865,7 @@
                 </a>
 
 
-                <!-- Expenses History -->
+                <!-- Expenses -->
 
                 <a
                     href="{% url 'expenses_list' %}"
@@ -944,9 +954,7 @@
             {% for message in messages %}
 
                 <div class="message">
-
                     {{ message }}
-
                 </div>
 
             {% endfor %}
@@ -965,7 +973,6 @@
         <div class="main-container">
 
             {% block content %}
-
             {% endblock %}
 
         </div>
@@ -1003,16 +1010,17 @@
 
     function applyTheme(theme) {
 
-        document.documentElement
-            .setAttribute(
-                "data-theme",
-                theme
-            );
+        document.documentElement.setAttribute(
+            "data-theme",
+            theme
+        );
+
 
         const icon =
             document.getElementById(
                 "theme-icon"
             );
+
 
         if (icon) {
 
@@ -1021,6 +1029,22 @@
                     ? "☀️"
                     : "🌙";
         }
+
+
+        /*
+         * Notify the page that the theme changed.
+         */
+
+        window.dispatchEvent(
+            new CustomEvent(
+                "iscThemeChanged",
+                {
+                    detail: {
+                        theme: theme
+                    }
+                }
+            )
+        );
     }
 
 
@@ -1032,19 +1056,26 @@
                     "data-theme"
                 ) || "light";
 
+
         const newTheme =
             currentTheme === "dark"
                 ? "light"
                 : "dark";
+
 
         localStorage.setItem(
             "isc_pool_theme",
             newTheme
         );
 
+
         applyTheme(newTheme);
     }
 
+
+    /*
+     * Apply saved theme immediately.
+     */
 
     (function () {
 
@@ -1053,17 +1084,22 @@
                 "isc_pool_theme"
             );
 
+
         const systemDark =
             window.matchMedia &&
             window.matchMedia(
                 "(prefers-color-scheme: dark)"
             ).matches;
 
+
         const theme =
             savedTheme ||
-            (systemDark
-                ? "dark"
-                : "light");
+            (
+                systemDark
+                    ? "dark"
+                    : "light"
+            );
+
 
         applyTheme(theme);
 
