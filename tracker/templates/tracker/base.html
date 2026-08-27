@@ -1,4 +1,3 @@
-
 {% load static %}
 
 <!DOCTYPE html>
@@ -82,6 +81,7 @@
             box-sizing: border-box;
         }
 
+
         html {
             scroll-behavior: smooth;
             width: 100%;
@@ -89,11 +89,14 @@
             overflow-x: hidden;
         }
 
+
         body {
+
             margin: 0;
 
             width: 100%;
             max-width: 100%;
+
             min-height: 100vh;
 
             overflow-x: hidden;
@@ -119,9 +122,11 @@
                 color 0.25s ease;
         }
 
+
         a {
             color: inherit;
         }
+
 
         button,
         input,
@@ -130,12 +135,14 @@
             font: inherit;
         }
 
+
         img,
         video,
         canvas,
         iframe {
             max-width: 100%;
         }
+
 
         h1,
         h2,
@@ -158,8 +165,10 @@
            ===================================================== */
 
         .site-wrapper {
+
             width: 100%;
             max-width: 100%;
+
             min-height: 100vh;
 
             display: flex;
@@ -176,6 +185,7 @@
         .navbar {
 
             position: sticky;
+
             top: 0;
 
             z-index: 1000;
@@ -198,8 +208,9 @@
                     0.05
                 );
 
-            overflow: hidden;
+            overflow: visible;
         }
+
 
         .navbar-inner {
 
@@ -244,6 +255,7 @@
             max-width: 100%;
         }
 
+
         .brand-icon {
 
             width: 46px;
@@ -254,7 +266,6 @@
             display: flex;
 
             align-items: center;
-
             justify-content: center;
 
             border-radius: 14px;
@@ -281,6 +292,7 @@
                 );
         }
 
+
         .brand-text {
 
             display: flex;
@@ -292,6 +304,7 @@
             max-width: 100%;
         }
 
+
         .brand-name {
 
             font-size: 17px;
@@ -302,6 +315,7 @@
 
             white-space: nowrap;
         }
+
 
         .brand-subtitle {
 
@@ -335,6 +349,11 @@
 
             max-width: 100%;
         }
+
+
+        /* =====================================================
+           NAV BUTTONS
+           ===================================================== */
 
         .nav-button {
 
@@ -380,6 +399,7 @@
             max-width: 100%;
         }
 
+
         .nav-button:hover {
 
             transform:
@@ -397,6 +417,7 @@
                 );
         }
 
+
         .nav-button.primary {
 
             border-color:
@@ -412,6 +433,7 @@
             color: white;
         }
 
+
         .nav-button.primary:hover {
 
             background:
@@ -420,6 +442,123 @@
                     var(--primary-dark),
                     #1e40af
                 );
+        }
+
+
+        /* =====================================================
+           DROPDOWN
+           ===================================================== */
+
+        .dropdown {
+
+            position: relative;
+
+            display: inline-flex;
+
+            min-width: 0;
+        }
+
+
+        .dropdown-toggle {
+
+            border: 1px solid var(--border);
+        }
+
+
+        .dropdown-arrow {
+
+            font-size: 10px;
+
+            margin-left: 2px;
+
+            transition:
+                transform 0.18s ease;
+        }
+
+
+        .dropdown:hover .dropdown-arrow {
+
+            transform:
+                rotate(180deg);
+        }
+
+
+        .dropdown-menu {
+
+            position: absolute;
+
+            top: calc(100% + 8px);
+
+            left: 0;
+
+            min-width: 210px;
+
+            padding: 8px;
+
+            background: var(--surface);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 14px;
+
+            box-shadow:
+                0 15px 35px rgba(
+                    15,
+                    23,
+                    42,
+                    0.15
+                );
+
+            display: none;
+
+            z-index: 2000;
+        }
+
+
+        .dropdown:hover .dropdown-menu {
+
+            display: block;
+        }
+
+
+        .dropdown-menu a {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            width: 100%;
+
+            padding:
+                11px
+                12px;
+
+            border-radius: 9px;
+
+            text-decoration: none;
+
+            color: var(--text);
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            transition:
+                background 0.15s ease,
+                color 0.15s ease;
+        }
+
+
+        .dropdown-menu a:hover {
+
+            background:
+                var(--surface-soft);
+
+            color:
+                var(--primary);
         }
 
 
@@ -437,6 +576,7 @@
 
             overflow-x: hidden;
         }
+
 
         .main-container {
 
@@ -504,9 +644,11 @@
             margin: 0 auto;
         }
 
+
         .form-group {
             margin-bottom: 18px;
         }
+
 
         .form-group label {
 
@@ -520,6 +662,7 @@
 
             font-weight: 800;
         }
+
 
         .form-input {
 
@@ -549,6 +692,7 @@
                 box-shadow 0.18s ease;
         }
 
+
         .form-input:focus {
 
             border-color:
@@ -563,6 +707,7 @@
                     0.12
                 );
         }
+
 
         textarea.form-input {
             resize: vertical;
@@ -609,6 +754,7 @@
             max-width: 100%;
         }
 
+
         .button:hover {
 
             transform:
@@ -617,15 +763,18 @@
             opacity: 0.92;
         }
 
+
         .button-success {
             background:
                 var(--success);
         }
 
+
         .button-danger {
             background:
                 var(--danger);
         }
+
 
         .button-secondary {
 
@@ -659,6 +808,7 @@
                 0;
         }
 
+
         .message {
 
             width: 100%;
@@ -666,8 +816,7 @@
             max-width: 100%;
 
             padding:
-                13px
-                16px;
+                13px 16px;
 
             margin-bottom: 10px;
 
@@ -708,8 +857,7 @@
             text-align: center;
 
             padding:
-                22px
-                16px;
+                22px 16px;
 
             font-size: 12px;
 
@@ -718,9 +866,18 @@
             overflow: hidden;
         }
 
+
         .footer-brand {
+
             color: var(--text);
+
             font-weight: 900;
+        }
+
+
+        .footer-tagline {
+
+            color: var(--muted);
         }
 
 
@@ -736,6 +893,7 @@
 
             border-collapse: collapse;
         }
+
 
         .table-container {
 
@@ -760,23 +918,28 @@
                 min-height: auto;
 
                 padding:
-                    14px
-                    0;
+                    14px 0;
 
                 flex-direction: column;
 
                 align-items: stretch;
             }
 
+
             .brand {
+
                 justify-content: center;
             }
+
 
             .nav-actions {
+
                 justify-content: center;
             }
 
+
             .main-container {
+
                 padding-top: 28px;
             }
         }
@@ -800,6 +963,7 @@
                 overflow-y: auto;
             }
 
+
             .site-wrapper {
 
                 width: 100%;
@@ -809,14 +973,16 @@
                 overflow-x: hidden;
             }
 
+
             .navbar {
 
                 width: 100%;
 
                 max-width: 100%;
 
-                overflow: hidden;
+                overflow: visible;
             }
+
 
             .navbar-inner {
 
@@ -832,6 +998,7 @@
                 min-width: 0;
             }
 
+
             .brand {
 
                 width: 100%;
@@ -841,13 +1008,18 @@
                 justify-content: center;
             }
 
+
             .brand-name {
+
                 font-size: 15px;
             }
 
+
             .brand-subtitle {
+
                 display: none;
             }
+
 
             .nav-actions {
 
@@ -868,6 +1040,7 @@
                 gap: 8px;
             }
 
+
             .nav-button {
 
                 width: 100%;
@@ -877,6 +1050,39 @@
                 min-width: 0;
             }
 
+
+            .dropdown {
+
+                width: 100%;
+            }
+
+
+            .dropdown-toggle {
+
+                width: 100%;
+            }
+
+
+            .dropdown-menu {
+
+                position: absolute;
+
+                left: 0;
+
+                right: 0;
+
+                width: 100%;
+
+                min-width: 0;
+            }
+
+
+            .dropdown:hover .dropdown-menu {
+
+                display: block;
+            }
+
+
             main {
 
                 width: 100%;
@@ -885,6 +1091,7 @@
 
                 overflow-x: hidden;
             }
+
 
             .main-container {
 
@@ -905,6 +1112,7 @@
                     0 auto;
             }
 
+
             .messages {
 
                 width:
@@ -913,6 +1121,7 @@
                 max-width:
                     calc(100% - 20px);
             }
+
 
             .card {
 
@@ -923,7 +1132,9 @@
                 min-width: 0;
             }
 
+
             .button {
+
                 max-width: 100%;
             }
         }
@@ -944,6 +1155,7 @@
                     calc(100% - 16px);
             }
 
+
             .main-container {
 
                 width:
@@ -952,6 +1164,7 @@
                 max-width:
                     calc(100% - 16px);
             }
+
 
             .messages {
 
@@ -962,9 +1175,12 @@
                     calc(100% - 16px);
             }
 
+
             .button-text {
+
                 display: none;
             }
+
 
             .nav-button {
 
@@ -972,6 +1188,12 @@
 
                 padding:
                     10px;
+            }
+
+
+            .dropdown-menu {
+
+                width: 100%;
             }
         }
 
@@ -1025,7 +1247,7 @@
             <div class="nav-actions">
 
 
-                <!-- Dashboard -->
+                <!-- DASHBOARD -->
 
                 <a
                     href="{% url 'dashboard' %}"
@@ -1042,75 +1264,121 @@
                 </a>
 
 
-                <!-- Earnings -->
+                <!-- =================================================
+                     EARNINGS DROPDOWN
+                     ================================================= -->
 
-                <a
-                    href="{% url 'earnings_list' %}"
-                    class="nav-button"
-                    title="Earnings History"
-                >
+                <div class="dropdown">
 
-                    💰
+                    <button
+                        type="button"
+                        class="nav-button dropdown-toggle"
+                        title="Earnings"
+                    >
 
-                    <span class="button-text">
-                        Earnings
-                    </span>
+                        💰
 
-                </a>
+                        <span class="button-text">
+                            Earnings
+                        </span>
 
+                        <span class="dropdown-arrow">
+                            ▼
+                        </span>
 
-                <!-- Add Earnings -->
-
-                <a
-                    href="{% url 'add_earning' %}"
-                    class="nav-button primary"
-                    title="Add Today's Earnings"
-                >
-
-                    +
-
-                    <span class="button-text">
-                        Add Earnings
-                    </span>
-
-                </a>
+                    </button>
 
 
-                <!-- Expenses -->
+                    <div class="dropdown-menu">
 
-                <a
-                    href="{% url 'expenses_list' %}"
-                    class="nav-button"
-                    title="Expenses History"
-                >
+                        <a
+                            href="{% url 'earnings_list' %}"
+                        >
 
-                    💸
+                            📋
 
-                    <span class="button-text">
-                        Expenses
-                    </span>
+                            <span>
+                                Earnings History
+                            </span>
 
-                </a>
+                        </a>
 
 
-                <!-- Add Expense -->
+                        <a
+                            href="{% url 'add_earning' %}"
+                        >
 
-                <a
-                    href="{% url 'add_expense' %}"
-                    class="nav-button"
-                    title="Add Expense"
-                >
+                            ➕
 
-                    −
+                            <span>
+                                Add Earnings
+                            </span>
 
-                    <span class="button-text">
-                        Add Expense
-                    </span>
+                        </a>
 
-                </a>
+                    </div>
+
+                </div>
 
 
-                <!-- Reports -->
+                <!-- =================================================
+                     EXPENSES DROPDOWN
+                     ================================================= -->
+
+                <div class="dropdown">
+
+                    <button
+                        type="button"
+                        class="nav-button dropdown-toggle"
+                        title="Expenses"
+                    >
+
+                        💸
+
+                        <span class="button-text">
+                            Expenses
+                        </span>
+
+                        <span class="dropdown-arrow">
+                            ▼
+                        </span>
+
+                    </button>
+
+
+                    <div class="dropdown-menu">
+
+                        <a
+                            href="{% url 'expenses_list' %}"
+                        >
+
+                            📋
+
+                            <span>
+                                Expenses History
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="{% url 'add_expense' %}"
+                        >
+
+                            ➕
+
+                            <span>
+                                Add Expense
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REPORTS -->
 
                 <a
                     href="{% url 'reports' %}"
@@ -1127,7 +1395,7 @@
                 </a>
 
 
-                <!-- Theme -->
+                <!-- THEME -->
 
                 <button
                     type="button"
@@ -1203,7 +1471,9 @@
 
         &nbsp;•&nbsp;
 
-        Another Day, Another Dollar
+        <span class="footer-tagline">
+            Another Day, Another Dollar
+        </span>
 
         &nbsp;•&nbsp;
 
@@ -1245,7 +1515,6 @@
 
 
         window.dispatchEvent(
-
             new CustomEvent(
                 "iscThemeChanged",
                 {
@@ -1254,9 +1523,7 @@
                     }
                 }
             )
-
         );
-
     }
 
 
@@ -1282,13 +1549,12 @@
 
 
         applyTheme(newTheme);
-
     }
 
 
-    /*
-     * Apply saved theme immediately.
-     */
+    /* =====================================================
+       APPLY SAVED THEME
+       ===================================================== */
 
     (function () {
 
