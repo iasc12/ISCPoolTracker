@@ -1,14 +1,7 @@
 {% load static %}
-
 <!DOCTYPE html>
 
 <html lang="en">
-{% load static %}
-
-<link rel="manifest" href="{% static 'tracker/manifest.json' %}">
-<meta name="theme-color" content="#2563eb">
-<link rel="icon" type="image/png" sizes="192x192" href="{% static 'tracker/icons/icon-192.png' %}">
-<link rel="apple-touch-icon" href="{% static 'tracker/icons/icon-192.png' %}">
 
 <head>
 
@@ -25,6 +18,61 @@
         {% endblock %}
     </title>
 
+
+    <!-- =====================================================
+         ISC POOL TRACKER PWA
+         ===================================================== -->
+
+    <link
+        rel="manifest"
+        href="{% static 'tracker/manifest.json' %}"
+    >
+
+    <meta
+        name="theme-color"
+        content="#2563eb"
+    >
+
+
+    <!-- =====================================================
+         BROWSER FAVICON
+         ===================================================== -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="192x192"
+        href="{% static 'tracker/icons/icon-192.png' %}"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="512x512"
+        href="{% static 'tracker/icons/icon-512.png' %}"
+    >
+
+
+    <!-- =====================================================
+         APPLE / IOS ICON
+         ===================================================== -->
+
+    <link
+        rel="apple-touch-icon"
+        sizes="192x192"
+        href="{% static 'tracker/icons/icon-192.png' %}"
+    >
+
+    <link
+        rel="apple-touch-icon"
+        sizes="512x512"
+        href="{% static 'tracker/icons/icon-512.png' %}"
+    >
+
+
+    <!-- =====================================================
+         STYLES
+         ===================================================== -->
 
     <style>
 
@@ -51,10 +99,20 @@
             --border: #e2e8f0;
 
             --shadow:
-                0 10px 30px rgba(15, 23, 42, 0.08);
+                0 10px 30px rgba(
+                    15,
+                    23,
+                    42,
+                    0.08
+                );
 
             --navbar:
-                rgba(255, 255, 255, 0.96);
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.96
+                );
 
             --radius: 16px;
         }
@@ -67,19 +125,32 @@
         [data-theme="dark"] {
 
             --background: #020617;
+
             --surface: #0f172a;
+
             --surface-soft: #1e293b;
 
             --text: #f8fafc;
+
             --muted: #94a3b8;
 
             --border: #334155;
 
             --shadow:
-                0 10px 30px rgba(0, 0, 0, 0.35);
+                0 10px 30px rgba(
+                    0,
+                    0,
+                    0,
+                    0.35
+                );
 
             --navbar:
-                rgba(15, 23, 42, 0.96);
+                rgba(
+                    15,
+                    23,
+                    42,
+                    0.96
+                );
         }
 
 
@@ -147,6 +218,7 @@
         input,
         select,
         textarea {
+
             font: inherit;
         }
 
@@ -155,6 +227,7 @@
         video,
         canvas,
         iframe {
+
             max-width: 100%;
         }
 
@@ -170,7 +243,9 @@
         strong,
         small,
         a {
+
             overflow-wrap: anywhere;
+
             word-wrap: break-word;
         }
 
@@ -187,6 +262,7 @@
             min-height: 100vh;
 
             display: flex;
+
             flex-direction: column;
 
             overflow-x: hidden;
@@ -208,9 +284,11 @@
             width: 100%;
             max-width: 100%;
 
-            background: var(--navbar);
+            background:
+                var(--navbar);
 
-            backdrop-filter: blur(14px);
+            backdrop-filter:
+                blur(14px);
 
             border-bottom:
                 1px solid var(--border);
@@ -271,13 +349,14 @@
         }
 
 
-        /*
-         * REAL ISC POOL TRACKER LOGO
-         */
+        /* =====================================================
+           REAL ISC POOL TRACKER LOGO
+           ===================================================== */
 
         .brand-icon {
 
             width: 52px;
+
             height: 52px;
 
             flex-shrink: 0;
@@ -285,6 +364,7 @@
             display: flex;
 
             align-items: center;
+
             justify-content: center;
 
             border-radius: 14px;
@@ -310,6 +390,7 @@
         .brand-icon img {
 
             width: 100%;
+
             height: 100%;
 
             display: block;
@@ -336,7 +417,8 @@
 
             font-weight: 900;
 
-            color: var(--text);
+            color:
+                var(--text);
 
             white-space: nowrap;
         }
@@ -348,7 +430,8 @@
 
             font-size: 11px;
 
-            color: var(--muted);
+            color:
+                var(--muted);
 
             white-space: nowrap;
         }
@@ -385,8 +468,7 @@
             min-height: 42px;
 
             padding:
-                9px
-                13px;
+                9px 13px;
 
             display: inline-flex;
 
@@ -563,8 +645,7 @@
             width: 100%;
 
             padding:
-                11px
-                12px;
+                11px 12px;
 
             border-radius: 9px;
 
@@ -624,9 +705,7 @@
             margin: 0 auto;
 
             padding:
-                40px
-                0
-                60px;
+                40px 0 60px;
         }
 
 
@@ -677,6 +756,7 @@
 
 
         .form-group {
+
             margin-bottom: 18px;
         }
 
@@ -703,8 +783,7 @@
             max-width: 100%;
 
             padding:
-                12px
-                14px;
+                12px 14px;
 
             border:
                 1px solid var(--border);
@@ -742,6 +821,7 @@
 
 
         textarea.form-input {
+
             resize: vertical;
         }
 
@@ -761,8 +841,7 @@
             gap: 8px;
 
             padding:
-                11px
-                18px;
+                11px 18px;
 
             border: none;
 
@@ -797,12 +876,14 @@
 
 
         .button-success {
+
             background:
                 var(--success);
         }
 
 
         .button-danger {
+
             background:
                 var(--danger);
         }
@@ -836,8 +917,7 @@
             max-width: 100%;
 
             margin:
-                20px auto
-                0;
+                20px auto 0;
         }
 
 
@@ -937,7 +1017,8 @@
 
             overflow-x: auto;
 
-            -webkit-overflow-scrolling: touch;
+            -webkit-overflow-scrolling:
+                touch;
         }
 
 
@@ -1148,9 +1229,7 @@
                 min-width: 0;
 
                 padding:
-                    24px
-                    0
-                    40px;
+                    24px 0 40px;
 
                 margin:
                     0 auto;
@@ -1240,8 +1319,7 @@
 
                 min-width: 48px;
 
-                padding:
-                    10px;
+                padding: 10px;
             }
 
 
@@ -1270,7 +1348,9 @@
         <div class="navbar-inner">
 
 
-            <!-- BRAND -->
+            <!-- =================================================
+                 ISC POOL TRACKER BRAND / LOGO
+                 ================================================= -->
 
             <a
                 href="{% url 'dashboard' %}"
@@ -1282,6 +1362,8 @@
                     <img
                         src="{% static 'tracker/images/pool-logo.png' %}"
                         alt="ISC Pool Tracker Logo"
+                        width="52"
+                        height="52"
                     >
 
                 </div>
@@ -1302,7 +1384,9 @@
             </a>
 
 
-            <!-- NAVIGATION -->
+            <!-- =================================================
+                 NAVIGATION
+                 ================================================= -->
 
             <div class="nav-actions">
 
@@ -1474,7 +1558,6 @@
 
                 </button>
 
-
             </div>
 
         </div>
@@ -1493,9 +1576,7 @@
             {% for message in messages %}
 
                 <div class="message">
-
                     {{ message }}
-
                 </div>
 
             {% endfor %}
@@ -1578,6 +1659,7 @@
 
 
         window.dispatchEvent(
+
             new CustomEvent(
                 "iscThemeChanged",
                 {
@@ -1586,8 +1668,8 @@
                     }
                 }
             )
-        );
 
+        );
     }
 
 
@@ -1613,7 +1695,6 @@
 
 
         applyTheme(newTheme);
-
     }
 
 
@@ -1650,18 +1731,47 @@
     })();
 
 </script>
+
+
+<!-- =========================================================
+     SERVICE WORKER
+     ========================================================= -->
+
 <script>
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-        navigator.serviceWorker.register("{% static 'tracker/sw.js' %}")
-            .then(function (registration) {
-                console.log("ISC Pool Tracker service worker registered");
-            })
-            .catch(function (error) {
-                console.error("Service worker registration failed:", error);
-            });
-    });
-}
+
+    if ("serviceWorker" in navigator) {
+
+        window.addEventListener(
+            "load",
+            function () {
+
+                navigator.serviceWorker.register(
+                    "{% static 'tracker/sw.js' %}"
+                )
+
+                .then(function (registration) {
+
+                    console.log(
+                        "ISC Pool Tracker service worker registered:",
+                        registration.scope
+                    );
+
+                })
+
+                .catch(function (error) {
+
+                    console.error(
+                        "ISC Pool Tracker service worker registration failed:",
+                        error
+                    );
+
+                });
+
+            }
+        );
+
+    }
+
 </script>
 
 
