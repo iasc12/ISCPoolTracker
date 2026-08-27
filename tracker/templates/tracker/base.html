@@ -1,6 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -18,6 +19,7 @@
         {% endblock %}
     </title>
 
+
     <style>
 
         /* =====================================================
@@ -25,8 +27,10 @@
            ===================================================== */
 
         :root {
+
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
+
             --success: #16a34a;
             --danger: #dc2626;
             --warning: #d97706;
@@ -37,6 +41,7 @@
 
             --text: #0f172a;
             --muted: #64748b;
+
             --border: #e2e8f0;
 
             --shadow:
@@ -61,6 +66,7 @@
 
             --text: #f8fafc;
             --muted: #94a3b8;
+
             --border: #334155;
 
             --shadow:
@@ -83,9 +89,12 @@
 
 
         html {
+
             scroll-behavior: smooth;
+
             width: 100%;
             max-width: 100%;
+
             overflow-x: hidden;
         }
 
@@ -256,10 +265,14 @@
         }
 
 
+        /*
+         * REAL ISC POOL TRACKER LOGO
+         */
+
         .brand-icon {
 
-            width: 46px;
-            height: 46px;
+            width: 52px;
+            height: 52px;
 
             flex-shrink: 0;
 
@@ -270,26 +283,32 @@
 
             border-radius: 14px;
 
+            overflow: hidden;
+
             background:
-                linear-gradient(
-                    135deg,
-                    var(--primary),
-                    #7c3aed
-                );
+                var(--surface-soft);
 
-            color: white;
-
-            font-weight: 900;
-
-            letter-spacing: -1px;
+            border:
+                1px solid var(--border);
 
             box-shadow:
                 0 8px 20px rgba(
                     37,
                     99,
                     235,
-                    0.25
+                    0.15
                 );
+        }
+
+
+        .brand-icon img {
+
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: cover;
         }
 
 
@@ -376,9 +395,11 @@
             border:
                 1px solid var(--border);
 
-            background: var(--surface);
+            background:
+                var(--surface);
 
-            color: var(--text);
+            color:
+                var(--text);
 
             text-decoration: none;
 
@@ -461,7 +482,8 @@
 
         .dropdown-toggle {
 
-            border: 1px solid var(--border);
+            border:
+                1px solid var(--border);
         }
 
 
@@ -487,7 +509,8 @@
 
             position: absolute;
 
-            top: calc(100% + 8px);
+            top:
+                calc(100% + 8px);
 
             left: 0;
 
@@ -495,7 +518,8 @@
 
             padding: 8px;
 
-            background: var(--surface);
+            background:
+                var(--surface);
 
             border:
                 1px solid var(--border);
@@ -540,7 +564,8 @@
 
             text-decoration: none;
 
-            color: var(--text);
+            color:
+                var(--text);
 
             font-size: 13px;
 
@@ -656,7 +681,8 @@
 
             margin-bottom: 7px;
 
-            color: var(--text);
+            color:
+                var(--text);
 
             font-size: 14px;
 
@@ -869,7 +895,8 @@
 
         .footer-brand {
 
-            color: var(--text);
+            color:
+                var(--text);
 
             font-weight: 900;
         }
@@ -877,7 +904,8 @@
 
         .footer-tagline {
 
-            color: var(--muted);
+            color:
+                var(--muted);
         }
 
 
@@ -1006,6 +1034,16 @@
                 max-width: 100%;
 
                 justify-content: center;
+            }
+
+
+            .brand-icon {
+
+                width: 48px;
+
+                height: 48px;
+
+                border-radius: 13px;
             }
 
 
@@ -1176,6 +1214,16 @@
             }
 
 
+            .brand-icon {
+
+                width: 44px;
+
+                height: 44px;
+
+                border-radius: 12px;
+            }
+
+
             .button-text {
 
                 display: none;
@@ -1224,8 +1272,14 @@
             >
 
                 <div class="brand-icon">
-                    ISC
+
+                    <img
+                        src="{% static 'tracker/images/pool-logo.png' %}"
+                        alt="ISC Pool Tracker Logo"
+                    >
+
                 </div>
+
 
                 <div class="brand-text">
 
@@ -1433,7 +1487,9 @@
             {% for message in messages %}
 
                 <div class="message">
+
                     {{ message }}
+
                 </div>
 
             {% endfor %}
@@ -1452,6 +1508,7 @@
         <div class="main-container">
 
             {% block content %}
+
             {% endblock %}
 
         </div>
@@ -1524,6 +1581,7 @@
                 }
             )
         );
+
     }
 
 
@@ -1549,6 +1607,7 @@
 
 
         applyTheme(newTheme);
+
     }
 
 
@@ -1588,6 +1647,7 @@
 
 
 {% block extra_js %}
+
 {% endblock %}
 
 
