@@ -16,10 +16,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
-    "django-insecure-+&4=l&@u71!6x%r4vfi)(%lsgm*r%)azv5tng8g&rop#28(n6&",
+    "django-insecure-change-this-in-production",
 )
 
-DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
 
 # ============================================================
@@ -40,6 +40,7 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "https://iscpooltracker.onrender.com",
+    "https://isac1213.pythonanywhere.com",
 ]
 
 
@@ -99,6 +100,10 @@ TEMPLATES = [
     },
 ]
 
+
+# ============================================================
+# WSGI
+# ============================================================
 
 WSGI_APPLICATION = "config.wsgi.application"
 
@@ -170,14 +175,12 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # ============================================================
-# EMAIL CONFIGURATION - DJANGO 6.1
+# EMAIL CONFIGURATION
 # ============================================================
 
 MAILERS = {
     "default": {
-        "BACKEND": (
-            "django.core.mail.backends.smtp.EmailBackend"
-        ),
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
         "OPTIONS": {
             "host": os.getenv(
                 "EMAIL_HOST",
