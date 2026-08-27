@@ -9,7 +9,7 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
 
     <title>
@@ -18,18 +18,15 @@
         {% endblock %}
     </title>
 
-
     <style>
 
         /* =====================================================
            THEME VARIABLES
-        ===================================================== */
+           ===================================================== */
 
         :root {
-
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
-
             --success: #16a34a;
             --danger: #dc2626;
             --warning: #d97706;
@@ -40,16 +37,10 @@
 
             --text: #0f172a;
             --muted: #64748b;
-
             --border: #e2e8f0;
 
             --shadow:
-                0 10px 30px rgba(
-                    15,
-                    23,
-                    42,
-                    0.08
-                );
+                0 10px 30px rgba(15, 23, 42, 0.08);
 
             --navbar:
                 rgba(255, 255, 255, 0.96);
@@ -60,7 +51,7 @@
 
         /* =====================================================
            DARK THEME
-        ===================================================== */
+           ===================================================== */
 
         [data-theme="dark"] {
 
@@ -70,16 +61,10 @@
 
             --text: #f8fafc;
             --muted: #94a3b8;
-
             --border: #334155;
 
             --shadow:
-                0 10px 30px rgba(
-                    0,
-                    0,
-                    0,
-                    0.35
-                );
+                0 10px 30px rgba(0, 0, 0, 0.35);
 
             --navbar:
                 rgba(15, 23, 42, 0.96);
@@ -88,15 +73,20 @@
 
         /* =====================================================
            RESET
-        ===================================================== */
+           ===================================================== */
 
-        * {
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
         }
 
 
         html {
             scroll-behavior: smooth;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
 
@@ -104,7 +94,12 @@
 
             margin: 0;
 
+            width: 100%;
+            max-width: 100%;
             min-height: 100vh;
+
+            overflow-x: hidden;
+            overflow-y: auto;
 
             background:
                 linear-gradient(
@@ -140,33 +135,63 @@
         }
 
 
+        img,
+        video,
+        canvas,
+        iframe {
+            max-width: 100%;
+        }
+
+
+        /* Prevent content from forcing horizontal scrolling */
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        span,
+        strong,
+        small,
+        a {
+            overflow-wrap: anywhere;
+            word-wrap: break-word;
+        }
+
+
         /* =====================================================
            SITE WRAPPER
-        ===================================================== */
+           ===================================================== */
 
         .site-wrapper {
+
+            width: 100%;
+            max-width: 100%;
 
             min-height: 100vh;
 
             display: flex;
-
             flex-direction: column;
+
+            overflow-x: hidden;
         }
 
 
         /* =====================================================
            NAVBAR
-        ===================================================== */
+           ===================================================== */
 
         .navbar {
 
             position: sticky;
-
             top: 0;
 
             z-index: 1000;
 
             width: 100%;
+            max-width: 100%;
 
             background: var(--navbar);
 
@@ -182,15 +207,20 @@
                     42,
                     0.05
                 );
+
+            overflow: hidden;
         }
 
 
         .navbar-inner {
 
-            width: min(
-                1400px,
-                calc(100% - 32px)
-            );
+            width:
+                min(
+                    1400px,
+                    calc(100% - 32px)
+                );
+
+            max-width: 100%;
 
             min-height: 76px;
 
@@ -208,7 +238,7 @@
 
         /* =====================================================
            BRAND
-        ===================================================== */
+           ===================================================== */
 
         .brand {
 
@@ -221,13 +251,14 @@
             text-decoration: none;
 
             min-width: 0;
+
+            max-width: 100%;
         }
 
 
         .brand-icon {
 
             width: 46px;
-
             height: 46px;
 
             flex-shrink: 0;
@@ -235,7 +266,6 @@
             display: flex;
 
             align-items: center;
-
             justify-content: center;
 
             border-radius: 14px;
@@ -270,6 +300,8 @@
             flex-direction: column;
 
             min-width: 0;
+
+            max-width: 100%;
         }
 
 
@@ -299,7 +331,7 @@
 
         /* =====================================================
            NAV ACTIONS
-        ===================================================== */
+           ===================================================== */
 
         .nav-actions {
 
@@ -312,6 +344,10 @@
             gap: 8px;
 
             flex-wrap: wrap;
+
+            min-width: 0;
+
+            max-width: 100%;
         }
 
 
@@ -353,6 +389,10 @@
                 background 0.18s ease,
                 border-color 0.18s ease,
                 box-shadow 0.18s ease;
+
+            min-width: 0;
+
+            max-width: 100%;
         }
 
 
@@ -402,23 +442,31 @@
 
 
         /* =====================================================
-           MAIN CONTENT
-        ===================================================== */
+           MAIN
+           ===================================================== */
 
         main {
 
             flex: 1;
 
             width: 100%;
+            max-width: 100%;
+
+            overflow-x: hidden;
         }
 
 
         .main-container {
 
-            width: min(
-                1200px,
-                calc(100% - 32px)
-            );
+            width:
+                min(
+                    1200px,
+                    calc(100% - 32px)
+                );
+
+            max-width: 100%;
+
+            min-width: 0;
 
             margin: 0 auto;
 
@@ -431,11 +479,17 @@
 
         /* =====================================================
            GENERIC CARDS
-        ===================================================== */
+           ===================================================== */
 
         .card {
 
-            background: var(--surface);
+            width: 100%;
+            max-width: 100%;
+
+            min-width: 0;
+
+            background:
+                var(--surface);
 
             border:
                 1px solid var(--border);
@@ -452,21 +506,23 @@
 
         /* =====================================================
            FORMS
-        ===================================================== */
+           ===================================================== */
 
         .form-container {
 
-            width: min(
-                650px,
-                100%
-            );
+            width:
+                min(
+                    650px,
+                    100%
+                );
+
+            max-width: 100%;
 
             margin: 0 auto;
         }
 
 
         .form-group {
-
             margin-bottom: 18px;
         }
 
@@ -488,17 +544,22 @@
         .form-input {
 
             width: 100%;
+            max-width: 100%;
 
-            padding: 12px 14px;
+            padding:
+                12px
+                14px;
 
             border:
                 1px solid var(--border);
 
             border-radius: 10px;
 
-            background: var(--surface);
+            background:
+                var(--surface);
 
-            color: var(--text);
+            color:
+                var(--text);
 
             outline: none;
 
@@ -525,14 +586,13 @@
 
 
         textarea.form-input {
-
             resize: vertical;
         }
 
 
         /* =====================================================
            BUTTONS
-        ===================================================== */
+           ===================================================== */
 
         .button {
 
@@ -566,6 +626,8 @@
             transition:
                 transform 0.18s ease,
                 opacity 0.18s ease;
+
+            max-width: 100%;
         }
 
 
@@ -579,12 +641,14 @@
 
 
         .button-success {
-            background: var(--success);
+            background:
+                var(--success);
         }
 
 
         .button-danger {
-            background: var(--danger);
+            background:
+                var(--danger);
         }
 
 
@@ -603,14 +667,17 @@
 
         /* =====================================================
            ALERTS
-        ===================================================== */
+           ===================================================== */
 
         .messages {
 
-            width: min(
-                1200px,
-                calc(100% - 32px)
-            );
+            width:
+                min(
+                    1200px,
+                    calc(100% - 32px)
+                );
+
+            max-width: 100%;
 
             margin:
                 20px auto
@@ -620,7 +687,11 @@
 
         .message {
 
-            padding: 13px 16px;
+            width: 100%;
+            max-width: 100%;
+
+            padding:
+                13px 16px;
 
             margin-bottom: 10px;
 
@@ -629,17 +700,24 @@
             border:
                 1px solid var(--border);
 
-            background: var(--surface);
+            background:
+                var(--surface);
 
-            color: var(--text);
+            color:
+                var(--text);
+
+            overflow-wrap: anywhere;
         }
 
 
         /* =====================================================
            FOOTER
-        ===================================================== */
+           ===================================================== */
 
         footer {
+
+            width: 100%;
+            max-width: 100%;
 
             border-top:
                 1px solid var(--border);
@@ -656,12 +734,38 @@
                 22px 16px;
 
             font-size: 12px;
+
+            overflow: hidden;
+        }
+
+
+        /* =====================================================
+           TABLES
+           ===================================================== */
+
+        table {
+
+            width: 100%;
+            max-width: 100%;
+
+            border-collapse: collapse;
+        }
+
+
+        .table-container {
+
+            width: 100%;
+            max-width: 100%;
+
+            overflow-x: auto;
+
+            -webkit-overflow-scrolling: touch;
         }
 
 
         /* =====================================================
            RESPONSIVE
-        ===================================================== */
+           ===================================================== */
 
         @media (max-width: 1050px) {
 
@@ -697,12 +801,62 @@
         }
 
 
+        /* =====================================================
+           TABLET / PHONE
+           ===================================================== */
+
         @media (max-width: 700px) {
+
+            html,
+            body {
+
+                width: 100%;
+                max-width: 100%;
+
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+
+
+            .site-wrapper {
+
+                width: 100%;
+                max-width: 100%;
+
+                overflow-x: hidden;
+            }
+
+
+            .navbar {
+
+                width: 100%;
+                max-width: 100%;
+
+                overflow: hidden;
+            }
+
 
             .navbar-inner {
 
                 width:
                     calc(100% - 20px);
+
+                max-width:
+                    calc(100% - 20px);
+
+                margin:
+                    0 auto;
+
+                min-width: 0;
+            }
+
+
+            .brand {
+
+                width: 100%;
+                max-width: 100%;
+
+                justify-content: center;
             }
 
 
@@ -713,7 +867,6 @@
 
 
             .brand-subtitle {
-
                 display: none;
             }
 
@@ -723,15 +876,32 @@
                 display: grid;
 
                 grid-template-columns:
-                    repeat(2, 1fr);
+                    repeat(2, minmax(0, 1fr));
 
                 width: 100%;
+                max-width: 100%;
+
+                min-width: 0;
+
+                gap: 8px;
             }
 
 
             .nav-button {
 
                 width: 100%;
+                max-width: 100%;
+
+                min-width: 0;
+            }
+
+
+            main {
+
+                width: 100%;
+                max-width: 100%;
+
+                overflow-x: hidden;
             }
 
 
@@ -740,17 +910,84 @@
                 width:
                     calc(100% - 20px);
 
+                max-width:
+                    calc(100% - 20px);
+
+                min-width: 0;
+
                 padding:
-                    24px 0
+                    24px
+                    0
                     40px;
+
+                margin:
+                    0 auto;
+            }
+
+
+            .messages {
+
+                width:
+                    calc(100% - 20px);
+
+                max-width:
+                    calc(100% - 20px);
+            }
+
+
+            .card {
+
+                width: 100%;
+                max-width: 100%;
+
+                min-width: 0;
+            }
+
+
+            .button {
+
+                max-width: 100%;
             }
         }
 
 
+        /* =====================================================
+           SMALL PHONES
+           ===================================================== */
+
         @media (max-width: 420px) {
 
-            .button-text {
+            .navbar-inner {
 
+                width:
+                    calc(100% - 16px);
+
+                max-width:
+                    calc(100% - 16px);
+            }
+
+
+            .main-container {
+
+                width:
+                    calc(100% - 16px);
+
+                max-width:
+                    calc(100% - 16px);
+            }
+
+
+            .messages {
+
+                width:
+                    calc(100% - 16px);
+
+                max-width:
+                    calc(100% - 16px);
+            }
+
+
+            .button-text {
                 display: none;
             }
 
@@ -776,7 +1013,7 @@
 
     <!-- =====================================================
          NAVIGATION
-    ====================================================== -->
+         ===================================================== -->
 
     <nav class="navbar">
 
@@ -945,7 +1182,7 @@
 
     <!-- =====================================================
          DJANGO MESSAGES
-    ====================================================== -->
+         ===================================================== -->
 
     {% if messages %}
 
@@ -966,7 +1203,7 @@
 
     <!-- =====================================================
          MAIN CONTENT
-    ====================================================== -->
+         ===================================================== -->
 
     <main>
 
@@ -982,7 +1219,7 @@
 
     <!-- =====================================================
          FOOTER
-    ====================================================== -->
+         ===================================================== -->
 
     <footer>
 
@@ -1004,7 +1241,7 @@
 
 <!-- =========================================================
      THEME SYSTEM
-========================================================= -->
+     ========================================================= -->
 
 <script>
 
@@ -1032,7 +1269,8 @@
 
 
         /*
-         * Notify the page that the theme changed.
+         * Tell other components that the
+         * theme has changed.
          */
 
         window.dispatchEvent(
