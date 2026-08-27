@@ -3,6 +3,12 @@
 <!DOCTYPE html>
 
 <html lang="en">
+{% load static %}
+
+<link rel="manifest" href="{% static 'tracker/manifest.json' %}">
+<meta name="theme-color" content="#2563eb">
+<link rel="icon" type="image/png" sizes="192x192" href="{% static 'tracker/icons/icon-192.png' %}">
+<link rel="apple-touch-icon" href="{% static 'tracker/icons/icon-192.png' %}">
 
 <head>
 
@@ -1643,6 +1649,19 @@
 
     })();
 
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+        navigator.serviceWorker.register("{% static 'tracker/sw.js' %}")
+            .then(function (registration) {
+                console.log("ISC Pool Tracker service worker registered");
+            })
+            .catch(function (error) {
+                console.error("Service worker registration failed:", error);
+            });
+    });
+}
 </script>
 
 
