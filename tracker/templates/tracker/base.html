@@ -1,1038 +1,1102 @@
 ﻿{% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
+<!DOCTYPE html>
+
+<html lang="en">
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
 
-    <meta
-        name="theme-color"
-        content="#2563eb"
-    >
+<meta name="theme-color" content="#2563eb">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ISC Pool">
 
-    <meta
-        name="mobile-web-app-capable"
-        content="yes"
-    >
+<title>
+    {% block title %}
+        ISC Pool Tracker
+    {% endblock %}
+</title>
 
-    <meta
-        name="apple-mobile-web-app-capable"
-        content="yes"
-    >
+<link
+    rel="icon"
+    type="image/png"
+    href="{% static 'tracker/icon.png' %}"
+>
 
-    <meta
-        name="apple-mobile-web-app-status-bar-style"
-        content="default"
-    >
+<link
+    rel="apple-touch-icon"
+    href="{% static 'tracker/icon.png' %}"
+>
 
-    <meta
-        name="apple-mobile-web-app-title"
-        content="ISC Pool"
-    >
+<link
+    rel="manifest"
+    href="{% static 'tracker/manifest.json' %}"
+>
 
-    <title>
-        {% block title %}
-            ISC Pool Tracker
-        {% endblock %}
-    </title>
+<style>
 
-    <!-- APP ICON -->
+    /* =====================================================
+       GLOBAL
+       ===================================================== */
 
-    <link
-        rel="icon"
-        type="image/png"
-        href="{% static 'tracker/icon.png' %}"
-    >
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
 
-    <link
-        rel="apple-touch-icon"
-        href="{% static 'tracker/icon.png' %}"
-    >
+    html {
+        width: 100%;
+        min-height: 100%;
+        overflow-x: hidden;
+        -webkit-text-size-adjust: 100%;
+    }
 
-    <!-- PWA -->
+    body {
+        margin: 0;
+        width: 100%;
+        min-height: 100vh;
 
-    <link
-        rel="manifest"
-        href="{% static 'tracker/manifest.json' %}"
-    >
+        font-family:
+            Arial,
+            Helvetica,
+            sans-serif;
 
-    <style>
+        background: var(--background);
+        color: var(--text);
 
-        /* =====================================================
-           ROOT
-           ===================================================== */
+        overflow-x: hidden;
 
-        :root {
+        transition:
+            background 0.25s ease,
+            color 0.25s ease;
+    }
 
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
+    img,
+    canvas {
+        max-width: 100%;
+    }
 
-            --success: #16a34a;
-            --danger: #dc2626;
+    button,
+    input,
+    select,
+    textarea {
+        font: inherit;
+    }
 
-            --background: #f8fafc;
-            --surface: #ffffff;
-            --surface-soft: #f1f5f9;
+    a {
+        color: inherit;
+    }
 
-            --text: #0f172a;
-            --muted: #64748b;
 
-            --border: #e2e8f0;
+    /* =====================================================
+       LIGHT THEME
+       ===================================================== */
 
-            --shadow:
-                0 8px 25px rgba(15, 23, 42, 0.07);
+    :root {
+        --background: #f1f5f9;
+        --surface: #ffffff;
+        --surface-soft: #f8fafc;
 
-            --radius: 16px;
+        --text: #0f172a;
+        --muted: #64748b;
 
-            --nav-height: 72px;
+        --border: #e2e8f0;
+
+        --primary: #2563eb;
+        --success: #16a34a;
+        --danger: #dc2626;
+
+        --radius: 16px;
+
+        --shadow:
+            0 6px 22px rgba(15, 23, 42, 0.07);
+    }
+
+
+    /* =====================================================
+       DARK THEME
+       ===================================================== */
+
+    html[data-theme="dark"] {
+        --background: #0b1120;
+        --surface: #111827;
+        --surface-soft: #1f2937;
+
+        --text: #f8fafc;
+        --muted: #94a3b8;
+
+        --border: #334155;
+
+        --primary: #60a5fa;
+        --success: #4ade80;
+        --danger: #f87171;
+
+        --shadow:
+            0 6px 22px rgba(0, 0, 0, 0.28);
+    }
+
+
+    /* =====================================================
+       APP SHELL
+       ===================================================== */
+
+    .app-shell {
+        width: 100%;
+        min-height: 100vh;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    /* =====================================================
+       NAVIGATION
+       ===================================================== */
+
+    .topbar {
+        width: 100%;
+
+        background: var(--surface);
+
+        border-bottom:
+            1px solid var(--border);
+
+        box-shadow:
+            var(--shadow);
+
+        position: sticky;
+        top: 0;
+
+        z-index: 1000;
+    }
+
+    .nav-inner {
+        width: 100%;
+        max-width: 1450px;
+
+        min-height: 66px;
+
+        margin: 0 auto;
+
+        padding:
+            8px 20px;
+
+        display: flex;
+        align-items: center;
+
+        gap: 12px;
+    }
+
+
+    /* =====================================================
+       BRAND
+       ===================================================== */
+
+    .brand {
+        display: flex;
+        align-items: center;
+
+        gap: 9px;
+
+        text-decoration: none;
+
+        font-weight: 900;
+
+        white-space: nowrap;
+
+        flex-shrink: 0;
+    }
+
+    .brand img {
+        width: 40px;
+        height: 40px;
+
+        object-fit: contain;
+
+        border-radius: 10px;
+
+        flex-shrink: 0;
+    }
+
+    .brand-name {
+        display: block;
+
+        font-size: 14px;
+
+        line-height: 1.1;
+    }
+
+    .brand-subtitle {
+        display: block;
+
+        margin-top: 3px;
+
+        color: var(--muted);
+
+        font-size: 8px;
+
+        letter-spacing: 1px;
+    }
+
+
+    /* =====================================================
+       NAV LINKS
+       ===================================================== */
+
+    .nav-links {
+        flex: 1;
+
+        min-width: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 4px;
+    }
+
+    .nav-link {
+        min-height: 40px;
+
+        padding:
+            9px 12px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 9px;
+
+        text-decoration: none;
+
+        color: var(--muted);
+
+        font-size: 12px;
+        font-weight: 800;
+
+        white-space: nowrap;
+
+        transition:
+            background 0.18s ease,
+            color 0.18s ease,
+            transform 0.18s ease;
+    }
+
+    .nav-link:hover {
+        background: var(--surface-soft);
+        color: var(--text);
+
+        transform:
+            translateY(-1px);
+    }
+
+    .nav-link.active {
+        background:
+            rgba(37, 99, 235, 0.10);
+
+        color: var(--primary);
+    }
+
+
+    /* =====================================================
+       NAV RIGHT
+       ===================================================== */
+
+    .nav-right {
+        display: flex;
+        align-items: center;
+
+        gap: 6px;
+
+        flex-shrink: 0;
+    }
+
+    .theme-button,
+    .menu-button {
+        width: 40px;
+        height: 40px;
+
+        border:
+            1px solid var(--border);
+
+        border-radius: 9px;
+
+        background:
+            var(--surface-soft);
+
+        color: var(--text);
+
+        cursor: pointer;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        font-size: 17px;
+
+        transition:
+            transform 0.15s ease,
+            background 0.15s ease;
+    }
+
+    .theme-button:hover,
+    .menu-button:hover {
+        transform:
+            translateY(-1px);
+    }
+
+    .menu-button {
+        display: none;
+    }
+
+
+    /* =====================================================
+       MAIN CONTENT
+       ===================================================== */
+
+    .app-container {
+        width: 100%;
+        max-width: 1450px;
+
+        margin:
+            0 auto;
+
+        padding:
+            18px 20px 12px;
+
+        flex: 0 0 auto;
+    }
+
+
+    /* =====================================================
+       MESSAGES
+       ===================================================== */
+
+    .messages-container {
+        position: fixed;
+
+        top: 78px;
+
+        left: 50%;
+
+        transform:
+            translateX(-50%);
+
+        width:
+            min(92vw, 500px);
+
+        z-index: 2000;
+    }
+
+    .message {
+        padding:
+            13px 17px;
+
+        margin-bottom: 8px;
+
+        border-radius: 11px;
+
+        background:
+            var(--surface);
+
+        border:
+            1px solid var(--border);
+
+        box-shadow:
+            var(--shadow);
+
+        font-size: 13px;
+
+        font-weight: 800;
+
+        text-align: center;
+
+        animation:
+            messageIn
+            0.25s ease;
+    }
+
+    .message.success {
+        border-color:
+            rgba(22, 163, 74, 0.35);
+
+        color:
+            var(--success);
+    }
+
+    .message.error {
+        border-color:
+            rgba(220, 38, 38, 0.35);
+
+        color:
+            var(--danger);
+    }
+
+    @keyframes messageIn {
+
+        from {
+            opacity: 0;
+
+            transform:
+                translateY(-10px);
         }
 
+        to {
+            opacity: 1;
 
-        /* =====================================================
-           DARK THEME
-           ===================================================== */
+            transform:
+                translateY(0);
+        }
+    }
 
-        html[data-theme="dark"] {
 
-            --background: #0f172a;
+    /* =====================================================
+       FOOTER
+       ===================================================== */
 
-            --surface: #1e293b;
+    .app-footer {
+        width: 100%;
 
-            --surface-soft: #334155;
+        margin-top: 10px;
 
-            --text: #f8fafc;
+        padding:
+            16px 15px 18px;
 
-            --muted: #94a3b8;
+        text-align: center;
 
-            --border: #334155;
+        color: var(--muted);
 
-            --shadow:
-                0 8px 25px rgba(0, 0, 0, 0.25);
+        font-size: 11px;
+
+        line-height: 1.45;
+    }
+
+    .footer-main {
+        font-weight: 800;
+
+        color: var(--text);
+
+        margin-bottom: 2px;
+    }
+
+
+    /* =====================================================
+       TABLET
+       ===================================================== */
+
+    @media (max-width: 900px) {
+
+        .nav-inner {
+            padding:
+                8px 14px;
         }
 
+        .nav-link {
+            padding:
+                9px 9px;
 
-        /* =====================================================
-           RESET
-           ===================================================== */
-
-        * {
-
-            box-sizing: border-box;
-
-            margin: 0;
-
-            padding: 0;
+            font-size: 11px;
         }
 
+        .app-container {
+            padding:
+                15px 14px 10px;
+        }
+    }
 
-        html {
 
-            width: 100%;
+    /* =====================================================
+       MOBILE
+       ===================================================== */
 
-            min-width: 100%;
+    @media (max-width: 700px) {
 
-            overflow-x: hidden;
+        .nav-inner {
+            min-height: 60px;
 
-            scroll-behavior: smooth;
+            padding:
+                7px 10px;
         }
 
-
-        body {
-
-            width: 100%;
+        .brand {
+            flex: 1;
 
             min-width: 0;
+        }
 
-            min-height: 100vh;
+        .brand img {
+            width: 36px;
+            height: 36px;
+        }
 
-            overflow-x: hidden;
+        .brand-name {
+            font-size: 12px;
+        }
 
-            background:
-                var(--background);
-
-            color:
-                var(--text);
-
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
-
-            font-size: 15px;
-
-            line-height: 1.5;
-
-            -webkit-text-size-adjust: 100%;
-
-            text-size-adjust: 100%;
-
-            transition:
-                background 0.2s ease,
-                color 0.2s ease;
+        .brand-subtitle {
+            font-size: 7px;
         }
 
 
-        button,
-        input,
-        select,
-        textarea {
+        /* Mobile navigation menu */
 
-            font:
-                inherit;
-        }
+        .nav-links {
+            display: none;
 
+            position: absolute;
 
-        img {
+            top: 59px;
 
-            max-width: 100%;
+            left: 8px;
+            right: 8px;
 
-            height: auto;
-        }
-
-
-        a {
-
-            color: inherit;
-        }
-
-
-        /* =====================================================
-           APP
-           ===================================================== */
-
-        .app {
-
-            width: 100%;
-
-            min-height: 100vh;
-
-            display: flex;
-
-            flex-direction: column;
-        }
-
-
-        /* =====================================================
-           NAVBAR
-           ===================================================== */
-
-        .navbar {
-
-            width: 100%;
-
-            min-height:
-                var(--nav-height);
+            padding: 8px;
 
             background:
                 var(--surface);
 
-            border-bottom:
+            border:
                 1px solid var(--border);
 
-            box-shadow:
-                0 2px 12px rgba(
-                    15,
-                    23,
-                    42,
-                    0.05
-                );
-
-            position: sticky;
-
-            top: 0;
-
-            z-index: 1000;
-        }
-
-
-        .nav-inner {
-
-            width: 100%;
-
-            max-width: 1400px;
-
-            min-width: 0;
-
-            margin: 0 auto;
-
-            min-height:
-                var(--nav-height);
-
-            padding:
-                10px 24px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 20px;
-        }
-
-
-        /* =====================================================
-           BRAND
-           ===================================================== */
-
-        .brand {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 11px;
-
-            min-width: 0;
-
-            text-decoration: none;
-        }
-
-
-        .brand-logo {
-
-            width: 45px;
-
-            height: 45px;
-
-            flex-shrink: 0;
-
-            object-fit: contain;
-
-            border-radius: 11px;
+            border-radius: 12px;
 
             box-shadow:
-                0 4px 12px
-                rgba(15, 23, 42, 0.12);
+                var(--shadow);
+
+            flex-direction: column;
+
+            align-items: stretch;
+
+            gap: 3px;
         }
 
-
-        .brand-text {
-
-            min-width: 0;
-        }
-
-
-        .brand-name {
-
-            display: block;
-
-            font-size: 16px;
-
-            font-weight: 900;
-
-            line-height: 1.1;
-
-            white-space: nowrap;
-        }
-
-
-        .brand-subtitle {
-
-            display: block;
-
-            margin-top: 2px;
-
-            color:
-                var(--muted);
-
-            font-size: 10px;
-
-            font-weight: 700;
-
-            letter-spacing: 0.6px;
-
-            white-space: nowrap;
-        }
-
-
-        /* =====================================================
-           NAV LINKS
-           ===================================================== */
-
-        .nav-links {
-
+        .nav-links.open {
             display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            gap: 5px;
-
-            min-width: 0;
-
-            flex: 1;
         }
-
 
         .nav-link {
+            width: 100%;
 
             min-height: 42px;
 
+            justify-content: flex-start;
+
+            padding:
+                10px 13px;
+
+            font-size: 13px;
+        }
+
+        .menu-button {
             display: inline-flex;
+        }
 
-            align-items: center;
 
-            justify-content: center;
+        /* Main content */
+
+        .app-container {
+            width: 100%;
 
             padding:
-                9px 13px;
-
-            border-radius: 10px;
-
-            text-decoration: none;
-
-            color:
-                var(--muted);
-
-            font-size: 13px;
-
-            font-weight: 800;
-
-            white-space: nowrap;
-
-            transition:
-                background 0.18s ease,
-                color 0.18s ease,
-                transform 0.18s ease;
+                12px 10px 8px;
         }
 
 
-        .nav-link:hover {
+        /* Messages */
 
-            background:
-                var(--surface-soft);
+        .messages-container {
+            top: 68px;
 
-            color:
-                var(--text);
-
-            transform:
-                translateY(-1px);
+            width:
+                min(94vw, 450px);
         }
 
 
-        .nav-link.active {
+        /* Footer */
 
-            background:
-                rgba(37, 99, 235, 0.10);
-
-            color:
-                var(--primary);
-        }
-
-
-        /* =====================================================
-           THEME BUTTON
-           ===================================================== */
-
-        .theme-button {
-
-            min-width: 42px;
-
-            width: 42px;
-
-            height: 42px;
-
-            border: 1px solid var(--border);
-
-            border-radius: 10px;
-
-            background:
-                var(--surface-soft);
-
-            color:
-                var(--text);
-
-            cursor: pointer;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            flex-shrink: 0;
-
-            font-size: 18px;
-
-            transition:
-                transform 0.18s ease,
-                background 0.18s ease;
-        }
-
-
-        .theme-button:hover {
-
-            transform:
-                translateY(-2px);
-        }
-
-
-        /* =====================================================
-           MAIN
-           ===================================================== */
-
-        .main {
-
-            width: 100%;
-
-            flex: 1;
-
-            min-width: 0;
-        }
-
-
-        .main-inner {
-
-            width: 100%;
-
-            max-width: 1400px;
-
-            min-width: 0;
-
-            margin: 0 auto;
-
-            padding:
-                30px 24px 40px;
-        }
-
-
-        /* =====================================================
-           FOOTER
-           ===================================================== */
-
-        .footer {
-
-            width: 100%;
-
-            background:
-                var(--surface);
-
-            border-top:
-                1px solid var(--border);
-
-            margin-top: auto;
-        }
-
-
-        .footer-inner {
-
-            width: 100%;
-
-            max-width: 1400px;
-
-            margin: 0 auto;
-
-            padding:
-                24px;
-
-            text-align: center;
-        }
-
-
-        .footer-title {
-
-            font-size: 13px;
-
-            font-weight: 900;
-
-            color:
-                var(--text);
-
-            letter-spacing: 0.4px;
-        }
-
-
-        .footer-slogan {
-
-            margin-top: 5px;
-
-            color:
-                var(--muted);
-
-            font-size: 12px;
-
-            font-weight: 600;
-
-            font-style: italic;
-        }
-
-
-        .footer-copy {
-
+        .app-footer {
             margin-top: 8px;
 
-            color:
-                var(--muted);
+            padding:
+                13px 10px 15px;
 
             font-size: 10px;
         }
+    }
 
 
-        /* =====================================================
-           TABLET
-           ===================================================== */
+    /* =====================================================
+       SMALL PHONES
+       ===================================================== */
 
-        @media (max-width: 900px) {
+    @media (max-width: 420px) {
 
-            .nav-inner {
-
-                padding:
-                    9px 16px;
-
-                gap: 10px;
-            }
-
-
-            .brand-subtitle {
-
-                display: none;
-            }
-
-
-            .nav-links {
-
-                gap: 2px;
-            }
-
-
-            .nav-link {
-
-                padding:
-                    8px 9px;
-
-                font-size: 12px;
-            }
-
-
-            .main-inner {
-
-                padding:
-                    24px 16px 35px;
-            }
+        .nav-inner {
+            padding:
+                6px 8px;
         }
 
-
-        /* =====================================================
-           MOBILE
-           ===================================================== */
-
-        @media (max-width: 700px) {
-
-            :root {
-
-                --nav-height: auto;
-            }
-
-
-            .navbar {
-
-                position: relative;
-            }
-
-
-            .nav-inner {
-
-                min-height: auto;
-
-                padding:
-                    10px 10px 8px;
-
-                display: grid;
-
-                grid-template-columns:
-                    auto 1fr auto;
-
-                gap: 8px;
-
-                align-items: center;
-            }
-
-
-            .brand {
-
-                gap: 7px;
-
-                min-width: 0;
-            }
-
-
-            .brand-logo {
-
-                width: 40px;
-
-                height: 40px;
-
-                border-radius: 9px;
-            }
-
-
-            .brand-name {
-
-                font-size: 13px;
-            }
-
-
-            .nav-links {
-
-                width: 100%;
-
-                min-width: 0;
-
-                overflow-x: auto;
-
-                overflow-y: hidden;
-
-                justify-content: flex-start;
-
-                scrollbar-width: none;
-
-                -webkit-overflow-scrolling: touch;
-            }
-
-
-            .nav-links::-webkit-scrollbar {
-
-                display: none;
-            }
-
-
-            .nav-link {
-
-                flex-shrink: 0;
-
-                min-height: 38px;
-
-                padding:
-                    8px 9px;
-
-                font-size: 11px;
-
-                border-radius: 8px;
-            }
-
-
-            .theme-button {
-
-                width: 38px;
-
-                height: 38px;
-
-                min-width: 38px;
-
-                font-size: 16px;
-            }
-
-
-            .main-inner {
-
-                padding:
-                    18px 12px 30px;
-            }
-
-
-            .footer-inner {
-
-                padding:
-                    20px 12px;
-            }
+        .brand img {
+            width: 34px;
+            height: 34px;
         }
 
-
-        /* =====================================================
-           SMALL PHONES
-           ===================================================== */
-
-        @media (max-width: 420px) {
-
-            .nav-inner {
-
-                grid-template-columns:
-                    auto 1fr auto;
-
-                padding:
-                    8px;
-            }
-
-
-            .brand-logo {
-
-                width: 36px;
-
-                height: 36px;
-            }
-
-
-            .brand-name {
-
-                font-size: 12px;
-            }
-
-
-            .nav-link {
-
-                padding:
-                    7px 8px;
-
-                font-size: 10px;
-            }
-
-
-            .theme-button {
-
-                width: 36px;
-
-                height: 36px;
-
-                min-width: 36px;
-            }
-
-
-            .main-inner {
-
-                padding:
-                    14px 9px 25px;
-            }
+        .brand-name {
+            font-size: 11px;
         }
 
+        .theme-button,
+        .menu-button {
+            width: 37px;
+            height: 37px;
 
-    </style>
+            font-size: 16px;
+        }
+
+        .app-container {
+            padding:
+                10px 8px 6px;
+        }
+
+        .app-footer {
+            font-size: 9px;
+
+            padding:
+                11px 8px 13px;
+        }
+    }
+
+</style>
+```
 
 </head>
 
-
 <body>
 
-<div class="app">
+<div class="app-shell">
+
+```
+<!-- =====================================================
+     NAVIGATION
+     ===================================================== -->
+
+<header class="topbar">
+
+    <div class="nav-inner">
 
 
-    <!-- =====================================================
-         NAVIGATION
-         ===================================================== -->
+        <a
+            href="{% url 'dashboard' %}"
+            class="brand"
+        >
 
-    <header class="navbar">
+            <img
+                src="{% static 'tracker/icon.png' %}"
+                alt="ISC Pool Tracker"
+            >
 
-        <div class="nav-inner">
+            <span>
+
+                <span class="brand-name">
+                    ISC Pool Tracker
+                </span>
+
+                <span class="brand-subtitle">
+                    FINANCIAL MANAGEMENT
+                </span>
+
+            </span>
+
+        </a>
 
 
-            <!-- BRAND -->
+        <nav
+            class="nav-links"
+            id="mainNavigation"
+        >
 
             <a
                 href="{% url 'dashboard' %}"
-                class="brand"
+                class="nav-link"
             >
-
-                <img
-                    src="{% static 'tracker/images/pool-logo.png' %}"
-                    alt="ISC Pool Tracker"
-                    class="brand-logo"
-                >
-
-                <span class="brand-text">
-
-                    <span class="brand-name">
-                        ISC Pool
-                    </span>
-
-                    <span class="brand-subtitle">
-                        TRACKER
-                    </span>
-
-                </span>
-
+                Dashboard
             </a>
 
+            <a
+                href="{% url 'earnings_list' %}"
+                class="nav-link"
+            >
+                Earnings
+            </a>
 
-            <!-- LINKS -->
+            <a
+                href="{% url 'expenses_list' %}"
+                class="nav-link"
+            >
+                Expenses
+            </a>
 
-            <nav class="nav-links">
+            <a
+                href="{% url 'reports' %}"
+                class="nav-link"
+            >
+                Reports
+            </a>
 
-                <a
-                    href="{% url 'dashboard' %}"
-                    class="nav-link"
-                >
-                    Dashboard
-                </a>
-
-
-                <a
-                    href="{% url 'earnings_list' %}"
-                    class="nav-link"
-                >
-                    Earnings
-                </a>
-
-
-                <a
-                    href="{% url 'expenses_list' %}"
-                    class="nav-link"
-                >
-                    Expenses
-                </a>
+        </nav>
 
 
-                <a
-                    href="{% url 'reports' %}"
-                    class="nav-link"
-                >
-                    Reports
-                </a>
-
-            </nav>
-
-
-            <!-- THEME -->
+        <div class="nav-right">
 
             <button
                 type="button"
                 class="theme-button"
                 id="themeButton"
-                aria-label="Toggle theme"
+                aria-label="Toggle dark and light theme"
             >
-                ☀️
+                🌙
             </button>
 
+            <button
+                type="button"
+                class="menu-button"
+                id="menuButton"
+                aria-label="Open navigation"
+            >
+                ☰
+            </button>
 
         </div>
 
-    </header>
+
+    </div>
+
+</header>
 
 
-    <!-- =====================================================
-         MAIN CONTENT
-         ===================================================== -->
+<!-- =====================================================
+     MESSAGES
+     ===================================================== -->
 
-    <main class="main">
+{% if messages %}
 
-        <div class="main-inner">
+    <div class="messages-container">
 
-            {% block content %}
+        {% for message in messages %}
 
-            {% endblock %}
-
-        </div>
-
-    </main>
-
-
-    <!-- =====================================================
-         FOOTER
-         ===================================================== -->
-
-    <footer class="footer">
-
-        <div class="footer-inner">
-
-            <div class="footer-title">
-                Isaac Njoroge Build
+            <div
+                class="message
+                {% if message.tags %}
+                    {{ message.tags }}
+                {% endif %}"
+            >
+                {{ message }}
             </div>
 
-            <div class="footer-slogan">
-                Another Day, Another Dollar
-            </div>
+        {% endfor %}
 
-            <div class="footer-copy">
-                © {% now "Y" %} ISC Pool Tracker. All rights reserved.
-            </div>
+    </div>
 
-        </div>
+{% endif %}
 
-    </footer>
 
+<!-- =====================================================
+     MAIN CONTENT
+     ===================================================== -->
+
+<main class="app-container">
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+     ===================================================== -->
+
+<footer class="app-footer">
+
+    <div class="footer-main">
+        Isaac Njoroge — Built with dedication.
+    </div>
+
+    <div>
+        Another Day, Another Dollar 💰
+    </div>
+
+    <div>
+        © {% now "Y" %} ISC Pool Tracker
+    </div>
+
+</footer>
+```
 
 </div>
-
 
 <script>
 
 (function () {
 
-    const root =
+    const html =
         document.documentElement;
 
-    const button =
+    const themeButton =
         document.getElementById(
             "themeButton"
         );
 
+    const menuButton =
+        document.getElementById(
+            "menuButton"
+        );
 
-    function getTheme() {
+    const navigation =
+        document.getElementById(
+            "mainNavigation"
+        );
 
-        return localStorage.getItem(
-            "iscTheme"
-        ) || "light";
+
+    /* =====================================================
+       THEME
+       ===================================================== */
+
+    function getSavedTheme() {
+
+        try {
+
+            return localStorage.getItem(
+                "isc_pool_theme"
+            );
+
+        } catch (error) {
+
+            return null;
+
+        }
+    }
+
+
+    function saveTheme(theme) {
+
+        try {
+
+            localStorage.setItem(
+                "isc_pool_theme",
+                theme
+            );
+
+        } catch (error) {
+
+        }
     }
 
 
     function applyTheme(theme) {
 
-        root.setAttribute(
+        html.setAttribute(
             "data-theme",
             theme
         );
 
 
-        if (button) {
+        if (themeButton) {
 
-            button.textContent =
+            themeButton.textContent =
                 theme === "dark"
                     ? "☀️"
                     : "🌙";
+
+            themeButton.setAttribute(
+                "aria-label",
+                theme === "dark"
+                    ? "Switch to light theme"
+                    : "Switch to dark theme"
+            );
+
         }
 
 
         window.dispatchEvent(
-            new CustomEvent(
+            new Event(
                 "iscThemeChanged"
             )
         );
+
     }
 
 
-    applyTheme(
-        getTheme()
-    );
+    let savedTheme =
+        getSavedTheme();
 
 
-    if (button) {
+    if (
+        savedTheme !== "dark" &&
+        savedTheme !== "light"
+    ) {
 
-        button.addEventListener(
+        savedTheme =
+            window.matchMedia &&
+            window.matchMedia(
+                "(prefers-color-scheme: dark)"
+            ).matches
+                ? "dark"
+                : "light";
+
+    }
+
+
+    applyTheme(savedTheme);
+
+
+    if (themeButton) {
+
+        themeButton.addEventListener(
             "click",
             function () {
 
                 const current =
-                    getTheme();
+                    html.getAttribute(
+                        "data-theme"
+                    );
 
                 const next =
                     current === "dark"
                         ? "light"
                         : "dark";
 
-                localStorage.setItem(
-                    "iscTheme",
-                    next
-                );
+                applyTheme(next);
 
-                applyTheme(
-                    next
+                saveTheme(next);
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       MOBILE MENU
+       ===================================================== */
+
+    if (
+        menuButton &&
+        navigation
+    ) {
+
+        menuButton.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+                navigation.classList.toggle(
+                    "open"
                 );
 
             }
         );
+
+
+        navigation
+            .querySelectorAll("a")
+            .forEach(
+                function (link) {
+
+                    link.addEventListener(
+                        "click",
+                        function () {
+
+                            navigation.classList.remove(
+                                "open"
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    !navigation.contains(
+                        event.target
+                    ) &&
+                    !menuButton.contains(
+                        event.target
+                    )
+                ) {
+
+                    navigation.classList.remove(
+                        "open"
+                    );
+
+                }
+
+            }
+        );
+
     }
+
+
+    /* =====================================================
+       AUTO HIDE MESSAGES
+       ===================================================== */
+
+    setTimeout(
+        function () {
+
+            document
+                .querySelectorAll(
+                    ".message"
+                )
+                .forEach(
+                    function (message) {
+
+                        message.style.opacity =
+                            "0";
+
+                        message.style.transform =
+                            "translateY(-10px)";
+
+                        message.style.transition =
+                            "all 0.3s ease";
+
+                        setTimeout(
+                            function () {
+
+                                message.remove();
+
+                            },
+                            300
+                        );
+
+                    }
+                );
+
+        },
+        3500
+    );
 
 })();
 
 </script>
 
-
 </body>
-
 </html>

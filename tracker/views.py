@@ -1,7 +1,7 @@
-﻿
-from datetime import date, timedelta
+﻿from datetime import date, timedelta
 from decimal import Decimal
 
+from django.contrib import messages
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -41,7 +41,7 @@ def dashboard(request):
     today_profit = today_earnings - today_expenses
 
     # --------------------------------------------------------
-    # THIS WEEK
+    # WEEK
     # --------------------------------------------------------
 
     week_start = today - timedelta(days=today.weekday())
@@ -66,7 +66,7 @@ def dashboard(request):
     weekly_profit = weekly_earnings - weekly_expenses
 
     # --------------------------------------------------------
-    # THIS MONTH
+    # MONTH
     # --------------------------------------------------------
 
     month_start = today.replace(day=1)
@@ -104,7 +104,7 @@ def dashboard(request):
     monthly_profit = monthly_earnings - monthly_expenses
 
     # --------------------------------------------------------
-    # ALL-TIME AVERAGE & FORECAST
+    # FORECAST
     # --------------------------------------------------------
 
     earning_days = DailyEarning.objects.count()
@@ -123,7 +123,8 @@ def dashboard(request):
         )
 
         expected_monthly_earnings = (
-            average_daily_earnings * Decimal(month_end.day)
+            average_daily_earnings
+            * Decimal(month_end.day)
         )
 
     else:
@@ -146,7 +147,7 @@ def dashboard(request):
     )
 
     # --------------------------------------------------------
-    # 7-DAY GRAPH
+    # 7 DAY GRAPH
     # --------------------------------------------------------
 
     chart_labels = []
@@ -156,22 +157,23 @@ def dashboard(request):
 
         chart_date = today - timedelta(days=offset)
 
-        earning = (
+        daily_total = (
             DailyEarning.objects
             .filter(date=chart_date)
-            .first()
+            .aggregate(
+                total=Sum("amount_collected")
+            )
+            .get("total")
+            or Decimal("0.00")
         )
 
         chart_labels.append(
             chart_date.strftime("%d %b")
         )
 
-        if earning:
-            chart_values.append(
-                float(earning.amount_collected)
-            )
-        else:
-            chart_values.append(0)
+        chart_values.append(
+            float(daily_total)
+        )
 
     # --------------------------------------------------------
     # CONTEXT
@@ -254,6 +256,11 @@ def add_earning(request):
             earning.date = today
             earning.save()
 
+            messages.success(
+                request,
+                "Earning added successfully!"
+            )
+
             return redirect("dashboard")
 
     else:
@@ -331,6 +338,11 @@ def edit_earning(request, earning_id):
 
             form.save()
 
+            messages.success(
+                request,
+                "Earning updated successfully!"
+            )
+
             return redirect(
                 "earnings_list"
             )
@@ -367,6 +379,11 @@ def delete_earning(request, earning_id):
 
         earning.delete()
 
+        messages.success(
+            request,
+            "Earning deleted successfully!"
+        )
+
         return redirect(
             "earnings_list"
         )
@@ -395,6 +412,11 @@ def add_expense(request):
         if form.is_valid():
 
             form.save()
+
+            messages.success(
+                request,
+                "Expense added successfully!"
+            )
 
             return redirect(
                 "dashboard"
@@ -465,6 +487,11 @@ def edit_expense(request, expense_id):
 
             form.save()
 
+            messages.success(
+                request,
+                "Expense updated successfully!"
+            )
+
             return redirect(
                 "expenses_list"
             )
@@ -500,6 +527,11 @@ def delete_expense(request, expense_id):
 
         expense.delete()
 
+        messages.success(
+            request,
+            "Expense deleted successfully!"
+        )
+
         return redirect(
             "expenses_list"
         )
@@ -521,10 +553,6 @@ def reports(request):
 
     today = timezone.localdate()
 
-    # --------------------------------------------------------
-    # GET DATE FILTERS
-    # --------------------------------------------------------
-
     start_date_value = request.GET.get(
         "start_date",
         ""
@@ -538,10 +566,6 @@ def reports(request):
     start_date = None
     end_date = None
 
-    # --------------------------------------------------------
-    # PARSE START DATE
-    # --------------------------------------------------------
-
     if start_date_value:
 
         try:
@@ -553,10 +577,6 @@ def reports(request):
         except ValueError:
 
             start_date = None
-
-    # --------------------------------------------------------
-    # PARSE END DATE
-    # --------------------------------------------------------
 
     if end_date_value:
 
@@ -570,10 +590,6 @@ def reports(request):
 
             end_date = None
 
-    # --------------------------------------------------------
-    # BASE QUERYSETS
-    # --------------------------------------------------------
-
     earning_queryset = (
         DailyEarning.objects.all()
     )
@@ -581,10 +597,6 @@ def reports(request):
     expense_queryset = (
         Expense.objects.all()
     )
-
-    # --------------------------------------------------------
-    # APPLY START DATE
-    # --------------------------------------------------------
 
     if start_date:
 
@@ -598,10 +610,6 @@ def reports(request):
             .filter(date__gte=start_date)
         )
 
-    # --------------------------------------------------------
-    # APPLY END DATE
-    # --------------------------------------------------------
-
     if end_date:
 
         earning_queryset = (
@@ -614,10 +622,6 @@ def reports(request):
             .filter(date__lte=end_date)
         )
 
-    # --------------------------------------------------------
-    # TOTAL EARNINGS
-    # --------------------------------------------------------
-
     total_earnings = (
         earning_queryset
         .aggregate(
@@ -626,10 +630,6 @@ def reports(request):
         .get("total")
         or Decimal("0.00")
     )
-
-    # --------------------------------------------------------
-    # TOTAL EXPENSES
-    # --------------------------------------------------------
 
     total_expenses = (
         expense_queryset
@@ -640,22 +640,12 @@ def reports(request):
         or Decimal("0.00")
     )
 
-    # --------------------------------------------------------
-    # TOTAL PROFIT
-    # --------------------------------------------------------
-
     total_profit = (
         total_earnings
         - total_expenses
     )
 
-    # --------------------------------------------------------
-    # CURRENT MONTH
-    # --------------------------------------------------------
-
-    month_start = today.replace(
-        day=1
-    )
+    month_start = today.replace(day=1)
 
     if today.month == 12:
 
@@ -712,10 +702,6 @@ def reports(request):
         - monthly_expenses
     )
 
-    # --------------------------------------------------------
-    # EXPENSE BREAKDOWN
-    # --------------------------------------------------------
-
     expense_breakdown = []
 
     for value, label in Expense.EXPENSE_TYPE_CHOICES:
@@ -751,19 +737,11 @@ def reports(request):
             }
         )
 
-    # --------------------------------------------------------
-    # BEST EARNING DAY
-    # --------------------------------------------------------
-
     best_day = (
         earning_queryset
         .order_by("-amount_collected")
         .first()
     )
-
-    # --------------------------------------------------------
-    # HIGHEST EXPENSE
-    # --------------------------------------------------------
 
     highest_expense = (
         expense_queryset
@@ -771,17 +749,9 @@ def reports(request):
         .first()
     )
 
-    # --------------------------------------------------------
-    # NUMBER OF EARNING DAYS
-    # --------------------------------------------------------
-
     earning_days = (
         earning_queryset.count()
     )
-
-    # --------------------------------------------------------
-    # AVERAGE DAILY EARNINGS
-    # --------------------------------------------------------
 
     if earning_days:
 
@@ -792,13 +762,7 @@ def reports(request):
 
     else:
 
-        average_daily_earnings = (
-            Decimal("0.00")
-        )
-
-    # --------------------------------------------------------
-    # MONTHLY FORECAST
-    # --------------------------------------------------------
+        average_daily_earnings = Decimal("0.00")
 
     if earning_days:
 
@@ -809,13 +773,7 @@ def reports(request):
 
     else:
 
-        forecast_monthly = (
-            Decimal("0.00")
-        )
-
-    # --------------------------------------------------------
-    # PROFIT MARGIN
-    # --------------------------------------------------------
+        forecast_monthly = Decimal("0.00")
 
     if total_earnings > 0:
 
@@ -826,40 +784,28 @@ def reports(request):
 
     else:
 
-        profit_margin = (
-            Decimal("0.00")
-        )
-
-    # --------------------------------------------------------
-    # CONTEXT
-    # --------------------------------------------------------
+        profit_margin = Decimal("0.00")
 
     context = {
 
         "today": today,
 
-        # Date filter values
         "start_date": start_date_value,
         "end_date": end_date_value,
 
-        # Report totals
         "total_earnings": total_earnings,
         "total_expenses": total_expenses,
         "total_profit": total_profit,
 
-        # Current month
         "monthly_earnings": monthly_earnings,
         "monthly_expenses": monthly_expenses,
         "monthly_profit": monthly_profit,
 
-        # Expense breakdown
         "expense_breakdown": expense_breakdown,
 
-        # Highlights
         "best_day": best_day,
         "highest_expense": highest_expense,
 
-        # Analytics
         "earning_days": earning_days,
         "average_daily_earnings": average_daily_earnings,
         "forecast_monthly": forecast_monthly,
