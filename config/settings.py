@@ -1,3 +1,4 @@
+
 """
 Django settings for config project.
 
@@ -22,7 +23,7 @@ SECRET_KEY = os.getenv(
 
 DEBUG = os.getenv(
     "DJANGO_DEBUG",
-    "true",
+    "false",
 ).lower() == "true"
 
 
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "tracker",
 ]
 
@@ -69,6 +71,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
+    # IMPORTANT:
+    # WhiteNoise serves collected static files on Render.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
 
@@ -144,31 +150,27 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
 
     {
-        "NAME": (
+        "NAME":
             "django.contrib.auth.password_validation."
-            "UserAttributeSimilarityValidator"
-        ),
+            "UserAttributeSimilarityValidator",
     },
 
     {
-        "NAME": (
+        "NAME":
             "django.contrib.auth.password_validation."
-            "MinimumLengthValidator"
-        ),
+            "MinimumLengthValidator",
     },
 
     {
-        "NAME": (
+        "NAME":
             "django.contrib.auth.password_validation."
-            "CommonPasswordValidator"
-        ),
+            "CommonPasswordValidator",
     },
 
     {
-        "NAME": (
+        "NAME":
             "django.contrib.auth.password_validation."
-            "NumericPasswordValidator"
-        ),
+            "NumericPasswordValidator",
     },
 
 ]
@@ -191,17 +193,30 @@ USE_TZ = True
 # STATIC FILES
 # ============================================================
 
-# URL used by Django templates.
 STATIC_URL = "/static/"
 
-
-# Directory where collectstatic places production files.
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-
-# Tell Django where additional project-level static files
-# are located.
 STATICFILES_DIRS = []
+
+
+# ============================================================
+# WHITE NOISE STATIC STORAGE
+# ============================================================
+
+STORAGES = {
+
+    "default": {
+        "BACKEND":
+            "django.core.files.storage.FileSystemStorage",
+    },
+
+    "staticfiles": {
+        "BACKEND":
+            "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+
+}
 
 
 # ============================================================
