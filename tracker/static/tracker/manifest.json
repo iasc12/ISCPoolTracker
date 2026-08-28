@@ -3,20 +3,23 @@
     "short_name": "ISC Pool",
     "description": "ISC Pool financial management system",
     "start_url": "/",
+    "scope": "/",
     "display": "standalone",
-    "background_color": "#f1f5f9",
+    "background_color": "#ffffff",
     "theme_color": "#2563eb",
     "orientation": "portrait-primary",
     "icons": [
         {
-            "src": "/static/tracker/icons/icon-192.png",
+            "src": "/static/tracker/icon.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         },
         {
-            "src": "/static/tracker/icons/icon-512.png",
+            "src": "/static/tracker/icon.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         }
     ]
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = "isc-pool-tracker-v1";
+const CACHE_NAME = "isc-pool-tracker-v2";
 
 const APP_SHELL = [
     "/",
