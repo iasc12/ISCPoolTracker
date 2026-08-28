@@ -1,7 +1,8 @@
 {% extends "tracker/base.html" %}
+{% load static %}
 
 {% block title %}
-    Dashboard | ISC Pool Tracker
+Dashboard | ISC Pool Tracker
 {% endblock %}
 
 
@@ -9,23 +10,16 @@
 
 <style>
 
-    /* =====================================================
-       DASHBOARD
-       ===================================================== */
-
     .dashboard {
 
         width: 100%;
-        max-width: 100%;
 
         min-width: 0;
-
-        overflow: visible;
     }
 
 
     /* =====================================================
-       DASHBOARD HEADER
+       HEADER
        ===================================================== */
 
     .dashboard-header {
@@ -38,22 +32,67 @@
 
         gap: 20px;
 
-        margin-bottom: 28px;
+        margin-bottom: 24px;
+    }
 
-        width: 100%;
-        max-width: 100%;
+
+    .dashboard-brand {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 13px;
 
         min-width: 0;
+    }
+
+
+    .dashboard-logo {
+
+        width: 58px;
+
+        height: 58px;
+
+        object-fit: contain;
+
+        border-radius: 14px;
+
+        flex-shrink: 0;
+
+        box-shadow:
+            var(--shadow);
+    }
+
+
+    .dashboard-brand-text {
+
+        min-width: 0;
+    }
+
+
+    .eyebrow {
+
+        display: block;
+
+        color:
+            var(--primary);
+
+        font-size: 10px;
+
+        font-weight: 900;
+
+        letter-spacing: 1.3px;
     }
 
 
     .dashboard-header h1 {
 
         margin:
-            6px 0 8px;
+            3px 0 4px;
 
         font-size:
-            clamp(28px, 5vw, 42px);
+            clamp(28px, 5vw, 40px);
 
         line-height: 1.1;
     }
@@ -61,25 +100,10 @@
 
     .dashboard-header p {
 
-        margin: 0;
+        color:
+            var(--muted);
 
-        color: var(--muted);
-
-        font-size: 15px;
-    }
-
-
-    .eyebrow {
-
-        display: inline-block;
-
-        color: var(--primary);
-
-        font-size: 11px;
-
-        font-weight: 900;
-
-        letter-spacing: 1.4px;
+        font-size: 13px;
     }
 
 
@@ -87,11 +111,7 @@
 
         display: flex;
 
-        align-items: center;
-
-        gap: 10px;
-
-        flex-wrap: wrap;
+        gap: 9px;
 
         flex-shrink: 0;
     }
@@ -99,29 +119,31 @@
 
     .action-button {
 
+        min-height: 42px;
+
+        padding:
+            10px 14px;
+
         display: inline-flex;
 
         align-items: center;
 
         justify-content: center;
 
-        min-height: 44px;
-
-        padding:
-            11px
-            16px;
-
         border-radius: 10px;
 
         text-decoration: none;
 
-        font-size: 13px;
+        color: white;
 
-        font-weight: 800;
+        font-size: 12px;
+
+        font-weight: 900;
+
+        white-space: nowrap;
 
         transition:
-            transform 0.18s ease,
-            opacity 0.18s ease;
+            transform 0.18s ease;
     }
 
 
@@ -129,8 +151,6 @@
 
         transform:
             translateY(-2px);
-
-        opacity: 0.92;
     }
 
 
@@ -138,8 +158,6 @@
 
         background:
             var(--success);
-
-        color: white;
     }
 
 
@@ -147,13 +165,11 @@
 
         background:
             var(--danger);
-
-        color: white;
     }
 
 
     /* =====================================================
-       SUMMARY GRID
+       SUMMARY
        ===================================================== */
 
     .summary-grid {
@@ -163,21 +179,13 @@
         grid-template-columns:
             repeat(3, minmax(0, 1fr));
 
-        gap: 18px;
+        gap: 16px;
 
-        width: 100%;
-        max-width: 100%;
-
-        min-width: 0;
-
-        margin-bottom: 20px;
+        margin-bottom: 18px;
     }
 
 
     .summary-card {
-
-        width: 100%;
-        max-width: 100%;
 
         min-width: 0;
 
@@ -190,7 +198,7 @@
         border-radius:
             var(--radius);
 
-        padding: 22px;
+        padding: 20px;
 
         box-shadow:
             var(--shadow);
@@ -207,19 +215,18 @@
 
         justify-content: space-between;
 
-        gap: 12px;
+        gap: 10px;
 
-        margin-bottom: 22px;
+        margin-bottom: 20px;
     }
 
 
     .card-label {
 
-        display: block;
+        color:
+            var(--muted);
 
-        color: var(--muted);
-
-        font-size: 11px;
+        font-size: 10px;
 
         font-weight: 900;
 
@@ -229,10 +236,9 @@
 
     .summary-card h2 {
 
-        margin:
-            6px 0 0;
+        margin-top: 5px;
 
-        font-size: 18px;
+        font-size: 16px;
 
         line-height: 1.3;
     }
@@ -240,22 +246,24 @@
 
     .card-icon {
 
-        width: 44px;
-        height: 44px;
+        width: 40px;
+
+        height: 40px;
 
         flex-shrink: 0;
 
         display: flex;
 
         align-items: center;
+
         justify-content: center;
 
-        border-radius: 12px;
+        border-radius: 11px;
 
         background:
             var(--surface-soft);
 
-        font-size: 21px;
+        font-size: 19px;
     }
 
 
@@ -265,7 +273,7 @@
 
         flex-direction: column;
 
-        gap: 12px;
+        gap: 9px;
     }
 
 
@@ -277,11 +285,9 @@
 
         justify-content: space-between;
 
-        gap: 12px;
+        gap: 10px;
 
-        min-width: 0;
-
-        padding-bottom: 10px;
+        padding-bottom: 8px;
 
         border-bottom:
             1px solid var(--border);
@@ -289,15 +295,17 @@
 
 
     .money-item:last-child {
+
         border-bottom: none;
     }
 
 
     .money-item span {
 
-        color: var(--muted);
+        color:
+            var(--muted);
 
-        font-size: 13px;
+        font-size: 12px;
     }
 
 
@@ -305,53 +313,53 @@
 
         text-align: right;
 
-        font-size: 14px;
+        font-size: 13px;
 
         overflow-wrap: anywhere;
     }
 
 
     .earning-text {
-        color: var(--success);
+
+        color:
+            var(--success);
     }
 
 
     .expense-text {
-        color: var(--danger);
+
+        color:
+            var(--danger);
     }
 
 
     .profit-text {
-        color: var(--success);
+
+        color:
+            var(--success);
     }
 
 
     .loss-text {
-        color: var(--danger);
+
+        color:
+            var(--danger);
     }
 
 
-    .profit-row {
-
-        padding-top: 5px;
+    .profit-row strong {
 
         font-size: 15px;
     }
 
 
-    .profit-row strong {
-        font-size: 16px;
-    }
-
-
     /* =====================================================
-       GRAPH CARD
+       GRAPH
        ===================================================== */
 
     .graph-card {
 
         width: 100%;
-        max-width: 100%;
 
         min-width: 0;
 
@@ -367,9 +375,9 @@
         box-shadow:
             var(--shadow);
 
-        padding: 24px;
+        padding: 22px;
 
-        margin-bottom: 20px;
+        margin-bottom: 18px;
 
         overflow: hidden;
     }
@@ -383,40 +391,36 @@
 
         justify-content: space-between;
 
-        gap: 15px;
+        gap: 10px;
 
-        margin-bottom: 20px;
+        margin-bottom: 16px;
     }
 
 
     .section-heading h2 {
 
         margin:
-            5px 0;
+            3px 0;
 
-        font-size: 22px;
+        font-size: 20px;
     }
 
 
     .section-heading p {
 
-        margin: 0;
+        color:
+            var(--muted);
 
-        color: var(--muted);
-
-        font-size: 13px;
+        font-size: 12px;
     }
 
 
     .graph-badge {
 
-        flex-shrink: 0;
-
         padding:
-            7px
-            10px;
+            6px 9px;
 
-        border-radius: 8px;
+        border-radius: 7px;
 
         background:
             var(--surface-soft);
@@ -427,11 +431,11 @@
         color:
             var(--muted);
 
-        font-size: 10px;
+        font-size: 9px;
 
         font-weight: 900;
 
-        letter-spacing: 1px;
+        white-space: nowrap;
     }
 
 
@@ -440,11 +444,10 @@
         position: relative;
 
         width: 100%;
-        max-width: 100%;
 
-        height: 320px;
+        height: 300px;
 
-        min-height: 320px;
+        min-height: 300px;
 
         overflow: hidden;
     }
@@ -455,8 +458,6 @@
         display: block;
 
         width: 100% !important;
-
-        max-width: 100%;
 
         height: 100% !important;
     }
@@ -469,9 +470,6 @@
     .forecast-card {
 
         width: 100%;
-        max-width: 100%;
-
-        min-width: 0;
 
         display: flex;
 
@@ -480,6 +478,13 @@
         justify-content: space-between;
 
         gap: 20px;
+
+        padding: 23px;
+
+        margin-bottom: 18px;
+
+        border-radius:
+            var(--radius);
 
         background:
             linear-gradient(
@@ -490,17 +495,8 @@
 
         color: white;
 
-        border-radius:
-            var(--radius);
-
-        padding: 25px;
-
-        margin-bottom: 20px;
-
         box-shadow:
             var(--shadow);
-
-        overflow: hidden;
     }
 
 
@@ -514,20 +510,18 @@
     .forecast-card h2 {
 
         margin:
-            6px 0;
+            4px 0;
 
-        font-size: 21px;
+        font-size: 20px;
     }
 
 
     .forecast-card p {
 
-        margin: 0;
-
         color:
             rgba(255,255,255,0.80);
 
-        font-size: 13px;
+        font-size: 12px;
     }
 
 
@@ -537,7 +531,8 @@
 
         text-align: right;
 
-        font-size: clamp(22px, 4vw, 34px);
+        font-size:
+            clamp(23px, 4vw, 32px);
 
         font-weight: 900;
 
@@ -547,14 +542,14 @@
 
     .forecast-number span {
 
-        font-size: 13px;
+        font-size: 12px;
 
         opacity: 0.8;
     }
 
 
     /* =====================================================
-       ACTIVITY GRID
+       ACTIVITY
        ===================================================== */
 
     .activity-grid {
@@ -564,19 +559,11 @@
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
 
-        gap: 18px;
-
-        width: 100%;
-        max-width: 100%;
-
-        min-width: 0;
+        gap: 16px;
     }
 
 
     .activity-card {
-
-        width: 100%;
-        max-width: 100%;
 
         min-width: 0;
 
@@ -589,10 +576,10 @@
         border-radius:
             var(--radius);
 
+        padding: 21px;
+
         box-shadow:
             var(--shadow);
-
-        padding: 24px;
 
         overflow: hidden;
     }
@@ -606,32 +593,33 @@
 
         justify-content: space-between;
 
-        gap: 15px;
+        gap: 10px;
 
-        margin-bottom: 18px;
+        margin-bottom: 14px;
     }
 
 
     .activity-heading h2 {
 
-        margin:
-            5px 0 0;
+        margin-top: 3px;
 
-        font-size: 20px;
+        font-size: 18px;
     }
 
 
     .activity-icon {
 
-        width: 38px;
-        height: 38px;
+        width: 36px;
+
+        height: 36px;
+
+        flex-shrink: 0;
 
         display: flex;
 
         align-items: center;
-        justify-content: center;
 
-        flex-shrink: 0;
+        justify-content: center;
 
         border-radius: 10px;
 
@@ -655,14 +643,6 @@
     }
 
 
-    .activity-list {
-
-        display: flex;
-
-        flex-direction: column;
-    }
-
-
     .activity-row {
 
         display: flex;
@@ -671,12 +651,10 @@
 
         justify-content: space-between;
 
-        gap: 15px;
-
-        min-width: 0;
+        gap: 10px;
 
         padding:
-            13px 0;
+            12px 0;
 
         border-bottom:
             1px solid var(--border);
@@ -684,6 +662,7 @@
 
 
     .activity-row:last-child {
+
         border-bottom: none;
     }
 
@@ -698,7 +677,7 @@
 
         display: block;
 
-        font-size: 13px;
+        font-size: 12px;
 
         overflow-wrap: anywhere;
     }
@@ -708,14 +687,12 @@
 
         display: block;
 
-        margin-top: 4px;
+        margin-top: 3px;
 
         color:
             var(--muted);
 
-        font-size: 11px;
-
-        overflow-wrap: anywhere;
+        font-size: 10px;
     }
 
 
@@ -729,7 +706,7 @@
         color:
             var(--muted);
 
-        font-size: 13px;
+        font-size: 12px;
     }
 
 
@@ -760,30 +737,37 @@
 
     @media (max-width: 700px) {
 
-        .dashboard {
-
-            width: 100%;
-            max-width: 100%;
-
-            min-width: 0;
-        }
-
-
         .dashboard-header {
-
-            flex-direction: column;
 
             align-items: stretch;
 
-            gap: 16px;
+            flex-direction: column;
 
-            margin-bottom: 20px;
+            gap: 13px;
+
+            margin-bottom: 17px;
+        }
+
+
+        .dashboard-logo {
+
+            width: 50px;
+
+            height: 50px;
+
+            border-radius: 12px;
         }
 
 
         .dashboard-header h1 {
 
-            font-size: 30px;
+            font-size: 29px;
+        }
+
+
+        .dashboard-header p {
+
+            font-size: 12px;
         }
 
 
@@ -801,8 +785,6 @@
         .action-button {
 
             width: 100%;
-
-            min-width: 0;
         }
 
 
@@ -811,7 +793,7 @@
             grid-template-columns:
                 1fr !important;
 
-            gap: 14px;
+            gap: 12px;
         }
 
 
@@ -819,51 +801,29 @@
 
             grid-column: auto !important;
 
-            padding: 18px;
-        }
-
-
-        .summary-card h2 {
-
-            font-size: 16px;
+            padding: 17px;
         }
 
 
         .graph-card {
 
-            padding: 18px;
+            padding: 16px;
 
             margin-bottom: 14px;
         }
 
 
-        .section-heading {
-
-            align-items: flex-start;
-        }
-
-
         .section-heading h2 {
 
-            font-size: 19px;
-        }
-
-
-        .section-heading p {
-
-            font-size: 12px;
+            font-size: 18px;
         }
 
 
         .chart-wrapper {
 
-            height: 280px;
+            height: 270px;
 
-            min-height: 280px;
-
-            width: 100%;
-
-            overflow: hidden;
+            min-height: 270px;
         }
 
 
@@ -873,9 +833,9 @@
 
             align-items: stretch;
 
-            gap: 18px;
+            padding: 19px;
 
-            padding: 20px;
+            gap: 14px;
         }
 
 
@@ -890,54 +850,42 @@
         .activity-grid {
 
             grid-template-columns:
-                1fr !important;
+                1fr;
 
-            gap: 14px;
+            gap: 12px;
         }
 
 
         .activity-card {
 
-            padding: 18px;
-        }
-
-
-        .activity-heading h2 {
-
-            font-size: 18px;
-        }
-
-
-        .activity-row {
-
-            gap: 10px;
-        }
-
-
-        .activity-row > strong {
-
-            max-width: 45%;
-
-            text-align: right;
+            padding: 17px;
         }
     }
 
 
     /* =====================================================
-       SMALL PHONE
+       SMALL PHONES
        ===================================================== */
 
     @media (max-width: 420px) {
 
-        .dashboard-header h1 {
+        .dashboard-brand {
 
-            font-size: 27px;
+            gap: 9px;
         }
 
 
-        .dashboard-header p {
+        .dashboard-logo {
 
-            font-size: 13px;
+            width: 45px;
+
+            height: 45px;
+        }
+
+
+        .dashboard-header h1 {
+
+            font-size: 26px;
         }
 
 
@@ -950,48 +898,33 @@
 
         .summary-card {
 
-            padding: 16px;
-        }
-
-
-        .card-top {
-
-            margin-bottom: 17px;
-        }
-
-
-        .card-icon {
-
-            width: 38px;
-            height: 38px;
-
-            font-size: 18px;
+            padding: 15px;
         }
 
 
         .graph-card {
 
-            padding: 14px;
+            padding: 13px;
         }
 
 
         .chart-wrapper {
 
-            height: 250px;
+            height: 245px;
 
-            min-height: 250px;
+            min-height: 245px;
         }
 
 
         .forecast-card {
 
-            padding: 17px;
+            padding: 16px;
         }
 
 
         .activity-card {
 
-            padding: 16px;
+            padding: 15px;
         }
     }
 
@@ -1002,24 +935,34 @@
 
 
     <!-- =====================================================
-         DASHBOARD HEADER
+         HEADER
          ===================================================== -->
 
     <section class="dashboard-header">
 
-        <div>
+        <div class="dashboard-brand">
 
-            <span class="eyebrow">
-                FINANCIAL OVERVIEW
-            </span>
+            <img
+                src="{% static 'tracker/images/pool-logo.png' %}"
+                alt="ISC Pool Tracker Logo"
+                class="dashboard-logo"
+            >
 
-            <h1>
-                Dashboard
-            </h1>
+            <div class="dashboard-brand-text">
 
-            <p>
-                Monitor your pool business performance.
-            </p>
+                <span class="eyebrow">
+                    FINANCIAL OVERVIEW
+                </span>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p>
+                    Monitor your pool business performance.
+                </p>
+
+            </div>
 
         </div>
 
@@ -1032,7 +975,6 @@
             >
                 + Add Earning
             </a>
-
 
             <a
                 href="{% url 'add_expense' %}"
@@ -1047,15 +989,13 @@
 
 
     <!-- =====================================================
-         SUMMARY CARDS
+         SUMMARY
          ===================================================== -->
 
     <section class="summary-grid">
 
 
-        <!-- TODAY -->
-
-        <article class="summary-card today-card">
+        <article class="summary-card">
 
             <div class="card-top">
 
@@ -1071,7 +1011,6 @@
 
                 </div>
 
-
                 <div class="card-icon">
                     📅
                 </div>
@@ -1080,7 +1019,6 @@
 
 
             <div class="money-list">
-
 
                 <div class="money-item">
 
@@ -1111,36 +1049,27 @@
                 <div class="money-item profit-row">
 
                     <span>
-
                         {% if today_profit >= 0 %}
                             Profit
                         {% else %}
                             Loss
                         {% endif %}
-
                     </span>
-
 
                     <strong
                         class="{% if today_profit >= 0 %}profit-text{% else %}loss-text{% endif %}"
                     >
-
-                        KSh
-                        {{ today_profit|floatformat:2 }}
-
+                        KSh {{ today_profit|floatformat:2 }}
                     </strong>
 
                 </div>
-
 
             </div>
 
         </article>
 
 
-        <!-- WEEK -->
-
-        <article class="summary-card week-card">
+        <article class="summary-card">
 
             <div class="card-top">
 
@@ -1151,17 +1080,12 @@
                     </span>
 
                     <h2>
-
                         {{ week_start|date:"d M" }}
-
                         –
-
                         {{ week_end|date:"d M Y" }}
-
                     </h2>
 
                 </div>
-
 
                 <div class="card-icon">
                     📊
@@ -1171,7 +1095,6 @@
 
 
             <div class="money-list">
-
 
                 <div class="money-item">
 
@@ -1202,23 +1125,17 @@
                 <div class="money-item profit-row">
 
                     <span>
-
                         {% if weekly_profit >= 0 %}
                             Profit
                         {% else %}
                             Loss
                         {% endif %}
-
                     </span>
-
 
                     <strong
                         class="{% if weekly_profit >= 0 %}profit-text{% else %}loss-text{% endif %}"
                     >
-
-                        KSh
-                        {{ weekly_profit|floatformat:2 }}
-
+                        KSh {{ weekly_profit|floatformat:2 }}
                     </strong>
 
                 </div>
@@ -1228,9 +1145,7 @@
         </article>
 
 
-        <!-- MONTH -->
-
-        <article class="summary-card month-card">
+        <article class="summary-card">
 
             <div class="card-top">
 
@@ -1241,17 +1156,12 @@
                     </span>
 
                     <h2>
-
                         {{ month_start|date:"d M Y" }}
-
                         –
-
                         {{ month_end|date:"d M Y" }}
-
                     </h2>
 
                 </div>
-
 
                 <div class="card-icon">
                     💰
@@ -1261,7 +1171,6 @@
 
 
             <div class="money-list">
-
 
                 <div class="money-item">
 
@@ -1292,23 +1201,17 @@
                 <div class="money-item profit-row">
 
                     <span>
-
                         {% if monthly_profit >= 0 %}
                             Profit
                         {% else %}
                             Loss
                         {% endif %}
-
                     </span>
-
 
                     <strong
                         class="{% if monthly_profit >= 0 %}profit-text{% else %}loss-text{% endif %}"
                     >
-
-                        KSh
-                        {{ monthly_profit|floatformat:2 }}
-
+                        KSh {{ monthly_profit|floatformat:2 }}
                     </strong>
 
                 </div>
@@ -1317,12 +1220,11 @@
 
         </article>
 
-
     </section>
 
 
     <!-- =====================================================
-         DAILY EARNINGS GRAPH
+         BAR GRAPH
          ===================================================== -->
 
     <section class="graph-card">
@@ -1345,7 +1247,6 @@
 
             </div>
 
-
             <div class="graph-badge">
                 7 DAYS
             </div>
@@ -1355,9 +1256,7 @@
 
         <div class="chart-wrapper">
 
-            <canvas
-                id="earningsGraph"
-            ></canvas>
+            <canvas id="earningsGraph"></canvas>
 
         </div>
 
@@ -1407,8 +1306,6 @@
     <section class="activity-grid">
 
 
-        <!-- RECENT EARNINGS -->
-
         <article class="activity-card">
 
             <div class="activity-heading">
@@ -1425,7 +1322,6 @@
 
                 </div>
 
-
                 <span class="activity-icon">
                     ↑
                 </span>
@@ -1435,38 +1331,31 @@
 
             {% if recent_earnings %}
 
-                <div class="activity-list">
+                {% for earning in recent_earnings %}
 
-                    {% for earning in recent_earnings %}
+                    <div class="activity-row">
 
-                        <div class="activity-row">
+                        <div>
 
-                            <div>
-
-                                <strong>
-                                    {{ earning.date|date:"d M Y" }}
-                                </strong>
-
-                                <small>
-                                    Daily earning
-                                </small>
-
-                            </div>
-
-
-                            <strong class="earning-text">
-
-                                +
-                                KSh
-                                {{ earning.amount_collected|floatformat:2 }}
-
+                            <strong>
+                                {{ earning.date|date:"d M Y" }}
                             </strong>
+
+                            <small>
+                                Daily earning
+                            </small>
 
                         </div>
 
-                    {% endfor %}
 
-                </div>
+                        <strong class="earning-text">
+                            + KSh
+                            {{ earning.amount_collected|floatformat:2 }}
+                        </strong>
+
+                    </div>
+
+                {% endfor %}
 
             {% else %}
 
@@ -1478,8 +1367,6 @@
 
         </article>
 
-
-        <!-- RECENT EXPENSES -->
 
         <article class="activity-card">
 
@@ -1497,7 +1384,6 @@
 
                 </div>
 
-
                 <span class="activity-icon expense-icon">
                     ↓
                 </span>
@@ -1507,38 +1393,31 @@
 
             {% if recent_expenses %}
 
-                <div class="activity-list">
+                {% for expense in recent_expenses %}
 
-                    {% for expense in recent_expenses %}
+                    <div class="activity-row">
 
-                        <div class="activity-row">
+                        <div>
 
-                            <div>
-
-                                <strong>
-                                    {{ expense.date|date:"d M Y" }}
-                                </strong>
-
-                                <small>
-                                    {{ expense.category }}
-                                </small>
-
-                            </div>
-
-
-                            <strong class="expense-text">
-
-                                -
-                                KSh
-                                {{ expense.amount|floatformat:2 }}
-
+                            <strong>
+                                {{ expense.date|date:"d M Y" }}
                             </strong>
+
+                            <small>
+                                {{ expense.category }}
+                            </small>
 
                         </div>
 
-                    {% endfor %}
 
-                </div>
+                        <strong class="expense-text">
+                            - KSh
+                            {{ expense.amount|floatformat:2 }}
+                        </strong>
+
+                    </div>
+
+                {% endfor %}
 
             {% else %}
 
@@ -1553,31 +1432,34 @@
 
     </section>
 
-
 </div>
 
 
 <!-- =========================================================
-     EARNINGS GRAPH
+     BAR GRAPH JAVASCRIPT
      ========================================================= -->
 
 <script>
 
-const chartLabels =
-    {{ chart_labels|safe }};
+(function () {
+
+    const labels =
+        {{ chart_labels|safe }};
+
+    const values =
+        {{ chart_values|safe }};
+
+    const canvas =
+        document.getElementById(
+            "earningsGraph"
+        );
 
 
-const chartValues =
-    {{ chart_values|safe }};
+    if (!canvas) {
 
+        return;
+    }
 
-const canvas =
-    document.getElementById(
-        "earningsGraph"
-    );
-
-
-if (canvas) {
 
     const ctx =
         canvas.getContext("2d");
@@ -1587,7 +1469,6 @@ if (canvas) {
 
         const width =
             canvas.clientWidth;
-
 
         const height =
             canvas.clientHeight;
@@ -1608,7 +1489,6 @@ if (canvas) {
 
         canvas.width =
             width * dpr;
-
 
         canvas.height =
             height * dpr;
@@ -1632,11 +1512,7 @@ if (canvas) {
         );
 
 
-        /*
-         * Correctly detect the theme.
-         */
-
-        const isDark =
+        const dark =
             document.documentElement
                 .getAttribute(
                     "data-theme"
@@ -1644,104 +1520,108 @@ if (canvas) {
 
 
         const textColor =
-            isDark
-                ? "#d1d5db"
+            dark
+                ? "#cbd5e1"
                 : "#475569";
 
 
         const gridColor =
-            isDark
-                ? "#374151"
+            dark
+                ? "#334155"
                 : "#e2e8f0";
 
 
         const barColor =
-            isDark
+            dark
                 ? "#60a5fa"
                 : "#2563eb";
 
 
-        const numericValues =
-            Array.isArray(chartValues)
-                ? chartValues.map(
-                    value =>
-                        Number(value) || 0
+        const numbers =
+            Array.isArray(values)
+                ? values.map(
+                    function (value) {
+
+                        return (
+                            Number(value) || 0
+                        );
+
+                    }
                 )
                 : [];
 
 
-        const maxValue =
+        if (!numbers.length) {
+
+            return;
+        }
+
+
+        const max =
             Math.max(
-                ...numericValues,
+                ...numbers,
                 1
             );
 
 
-        const isSmallPhone =
-            width < 480;
+        const small =
+            width < 420;
 
 
-        const isPhone =
+        const phone =
             width < 700;
 
 
-        const paddingLeft =
-            isSmallPhone
+        const left =
+            small
                 ? 43
-                : isPhone
+                : phone
                     ? 50
-                    : 58;
+                    : 60;
 
 
-        const paddingRight =
-            isSmallPhone
+        const right =
+            small
                 ? 8
-                : isPhone
+                : phone
                     ? 12
                     : 20;
 
 
-        const paddingTop =
-            isSmallPhone
+        const top =
+            small
                 ? 28
                 : 25;
 
 
-        const paddingBottom =
-            isSmallPhone
+        const bottom =
+            small
                 ? 35
                 : 40;
 
 
         const chartWidth =
             Math.max(
-                width
-                -
-                paddingLeft
-                -
-                paddingRight,
+                width -
+                left -
+                right,
                 1
             );
 
 
         const chartHeight =
             Math.max(
-                height
-                -
-                paddingTop
-                -
-                paddingBottom,
+                height -
+                top -
+                bottom,
                 1
             );
 
 
-        /* =====================================================
-           GRID
-           ===================================================== */
+        /* GRID */
 
         ctx.strokeStyle =
             gridColor;
-
 
         ctx.lineWidth = 1;
 
@@ -1753,50 +1633,41 @@ if (canvas) {
         ) {
 
             const y =
-                paddingTop
-                +
+                top +
                 (
                     chartHeight / 4
-                )
-                * i;
+                ) * i;
 
 
             ctx.beginPath();
 
-
             ctx.moveTo(
-                paddingLeft,
+                left,
                 y
             );
-
 
             ctx.lineTo(
-                width - paddingRight,
+                width - right,
                 y
             );
-
 
             ctx.stroke();
 
 
-            const value =
-                maxValue
-                -
+            const amount =
+                max -
                 (
-                    maxValue / 4
-                )
-                * i;
+                    max / 4
+                ) * i;
 
 
             ctx.fillStyle =
                 textColor;
 
-
             ctx.font =
-                isSmallPhone
+                small
                     ? "9px Arial"
-                    : "11px Arial";
-
+                    : "10px Arial";
 
             ctx.textAlign =
                 "right";
@@ -1804,109 +1675,85 @@ if (canvas) {
 
             ctx.fillText(
                 "KSh " +
-                value.toFixed(0),
-                paddingLeft - 6,
+                amount.toFixed(0),
+                left - 6,
                 y + 4
             );
 
         }
 
 
-        /* =====================================================
-           BARS
-           ===================================================== */
+        /* BARS */
 
         const count =
-            numericValues.length;
-
-
-        if (count === 0) {
-
-            return;
-        }
+            numbers.length;
 
 
         const gap =
-            isSmallPhone
+            small
                 ? 5
-                : isPhone
+                : phone
                     ? 8
-                    : 16;
+                    : 15;
 
 
-        const usableWidth =
+        const totalGap =
+            gap *
             Math.max(
-                chartWidth
-                -
-                gap * (count - 1),
-                1
+                count - 1,
+                0
             );
 
 
-        let barWidth =
-            usableWidth / count;
-
-
-        barWidth =
+        const barWidth =
             Math.max(
-                barWidth,
+                (
+                    chartWidth -
+                    totalGap
+                ) / count,
                 4
             );
 
 
-        numericValues.forEach(
+        numbers.forEach(
             function (
                 value,
                 index
             ) {
 
+                let x =
+                    left +
+                    index *
+                    (
+                        barWidth +
+                        gap
+                    );
+
+
+                x =
+                    Math.min(
+                        x,
+                        width -
+                        right -
+                        barWidth
+                    );
+
+
                 const barHeight =
-                    maxValue > 0
+                    max > 0
                         ?
                         (
-                            value
-                            /
-                            maxValue
-                        )
-                        *
+                            value /
+                            max
+                        ) *
                         chartHeight
                         :
                         0;
 
 
-                let x =
-                    paddingLeft
-                    +
-                    index
-                    *
-                    (
-                        barWidth
-                        + gap
-                    );
-
-
-                /*
-                 * Make absolutely sure
-                 * the bar remains inside
-                 * the phone screen.
-                 */
-
-                x =
-                    Math.min(
-                        x,
-                        width
-                        -
-                        paddingRight
-                        -
-                        barWidth
-                    );
-
-
                 const y =
-                    paddingTop
-                    +
-                    chartHeight
-                    -
+                    top +
+                    chartHeight -
                     barHeight;
 
 
@@ -1927,9 +1774,7 @@ if (canvas) {
                         y,
                         barWidth,
                         barHeight,
-                        isSmallPhone
-                            ? 4
-                            : 6
+                        small ? 4 : 6
                     );
 
                 } else {
@@ -1940,37 +1785,25 @@ if (canvas) {
                         barWidth,
                         barHeight
                     );
+
                 }
 
 
                 ctx.fill();
 
 
-                /* =================================================
-                   VALUE ABOVE BAR
-                   ================================================= */
+                /* VALUE */
 
                 ctx.fillStyle =
                     textColor;
 
-
                 ctx.font =
-                    isSmallPhone
+                    small
                         ? "bold 8px Arial"
-                        : isPhone
-                            ? "bold 9px Arial"
-                            : "bold 11px Arial";
-
+                        : "bold 10px Arial";
 
                 ctx.textAlign =
                     "center";
-
-
-                const amountY =
-                    Math.max(
-                        y - 6,
-                        11
-                    );
 
 
                 ctx.fillText(
@@ -1978,25 +1811,24 @@ if (canvas) {
                     value.toFixed(0),
                     x +
                     barWidth / 2,
-                    amountY
+                    Math.max(
+                        y - 6,
+                        11
+                    )
                 );
 
 
-                /* =================================================
-                   DATE
-                   ================================================= */
+                /* DATE */
 
                 ctx.font =
-                    isSmallPhone
+                    small
                         ? "8px Arial"
-                        : isPhone
-                            ? "9px Arial"
-                            : "11px Arial";
+                        : "10px Arial";
 
 
                 const label =
-                    Array.isArray(chartLabels)
-                        ? chartLabels[index] || ""
+                    Array.isArray(labels)
+                        ? labels[index] || ""
                         : "";
 
 
@@ -2013,36 +1845,21 @@ if (canvas) {
     }
 
 
-    /* =========================================================
-       INITIAL DRAW
-       ========================================================= */
-
     drawChart();
 
 
-    /* =========================================================
-       RESIZE
-       ========================================================= */
-
-    let resizeTimer;
+    let timer;
 
 
     window.addEventListener(
         "resize",
         function () {
 
-            clearTimeout(
-                resizeTimer
-            );
+            clearTimeout(timer);
 
-
-            resizeTimer =
+            timer =
                 setTimeout(
-                    function () {
-
-                        drawChart();
-
-                    },
+                    drawChart,
                     100
                 );
 
@@ -2050,37 +1867,11 @@ if (canvas) {
     );
 
 
-    /* =========================================================
-       THEME CHANGE
-       ========================================================= */
-
     window.addEventListener(
         "iscThemeChanged",
-        function () {
-
-            drawChart();
-
-        }
+        drawChart
     );
 
-
-    /* =========================================================
-       STORAGE CHANGE
-       ========================================================= */
-
-    window.addEventListener(
-        "storage",
-        function () {
-
-            drawChart();
-
-        }
-    );
-
-
-    /* =========================================================
-       PAGE VISIBILITY
-       ========================================================= */
 
     document.addEventListener(
         "visibilitychange",
@@ -2093,7 +1884,7 @@ if (canvas) {
 
                 setTimeout(
                     drawChart,
-                    50
+                    100
                 );
 
             }
@@ -2101,7 +1892,8 @@ if (canvas) {
         }
     );
 
-}
+
+})();
 
 </script>
 

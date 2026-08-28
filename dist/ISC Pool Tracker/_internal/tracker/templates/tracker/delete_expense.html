@@ -1,0 +1,79 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}
+Delete Expense | ISC Pool Tracker
+{% endblock %}
+
+{% block content %}
+
+<div class="card" style="
+    max-width:600px;
+    margin:40px auto;
+    padding:32px;
+    text-align:center;
+">
+
+    <div style="font-size:48px;">
+        ⚠️
+    </div>
+
+    <h1>
+        Delete Expense?
+    </h1>
+
+    <p style="color:var(--muted);">
+        You are about to permanently delete:
+    </p>
+
+    <div style="
+        margin:20px 0;
+        padding:18px;
+        border-radius:12px;
+        background:var(--surface-secondary);
+        border:1px solid var(--border);
+    ">
+
+        <strong>
+            {{ expense.get_expense_type_display }}
+        </strong>
+
+        <br>
+
+        {{ expense.date|date:"d M Y" }}
+
+        <br>
+
+        <span style="
+            color:var(--danger);
+            font-size:22px;
+            font-weight:800;
+        ">
+            KSh {{ expense.amount|floatformat:2 }}
+        </span>
+
+    </div>
+
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="button button-danger"
+        >
+            🗑 Yes, Delete
+        </button>
+
+        <a
+            href="{% url 'expenses_list' %}"
+            class="button button-secondary"
+        >
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

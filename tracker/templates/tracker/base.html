@@ -42,10 +42,7 @@
         {% endblock %}
     </title>
 
-
-    <!-- =====================================================
-         APP ICON
-         ===================================================== -->
+    <!-- APP ICON -->
 
     <link
         rel="icon"
@@ -58,109 +55,42 @@
         href="{% static 'tracker/icon.png' %}"
     >
 
-
-    <!-- =====================================================
-         PWA MANIFEST
-         ===================================================== -->
+    <!-- PWA -->
 
     <link
         rel="manifest"
         href="{% static 'tracker/manifest.json' %}"
     >
 
-
     <style>
 
         /* =====================================================
-           RESET
-           ===================================================== */
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-
-        html {
-            width: 100%;
-            min-height: 100%;
-            overflow-x: hidden;
-
-            -webkit-text-size-adjust: 100%;
-            text-size-adjust: 100%;
-
-            touch-action: manipulation;
-        }
-
-
-        body {
-            width: 100%;
-            min-width: 0;
-            min-height: 100vh;
-
-            overflow-x: hidden;
-
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Roboto,
-                Helvetica,
-                Arial,
-                sans-serif;
-
-            background: var(--background);
-            color: var(--text);
-
-            transition:
-                background 0.2s ease,
-                color 0.2s ease;
-        }
-
-
-        img {
-            max-width: 100%;
-        }
-
-
-        button,
-        a,
-        input,
-        select,
-        textarea {
-            font: inherit;
-        }
-
-
-        /* =====================================================
-           LIGHT THEME
+           ROOT
            ===================================================== */
 
         :root {
 
-            --background: #f1f5f9;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
 
+            --success: #16a34a;
+            --danger: #dc2626;
+
+            --background: #f8fafc;
             --surface: #ffffff;
+            --surface-soft: #f1f5f9;
 
-            --surface-soft: #f8fafc;
+            --text: #0f172a;
+            --muted: #64748b;
 
             --border: #e2e8f0;
 
-            --text: #0f172a;
-
-            --muted: #64748b;
-
-            --primary: #2563eb;
-
-            --success: #16a34a;
-
-            --danger: #dc2626;
+            --shadow:
+                0 8px 25px rgba(15, 23, 42, 0.07);
 
             --radius: 16px;
 
-            --shadow:
-                0 8px 25px rgba(15, 23, 42, 0.07);
+            --nav-height: 72px;
         }
 
 
@@ -174,66 +104,165 @@
 
             --surface: #1e293b;
 
-            --surface-soft: #273449;
-
-            --border: #334155;
+            --surface-soft: #334155;
 
             --text: #f8fafc;
 
             --muted: #94a3b8;
 
-            --primary: #60a5fa;
-
-            --success: #4ade80;
-
-            --danger: #f87171;
+            --border: #334155;
 
             --shadow:
-                0 8px 25px rgba(0, 0, 0, 0.30);
+                0 8px 25px rgba(0, 0, 0, 0.25);
         }
 
 
         /* =====================================================
-           MAIN APPLICATION
+           RESET
+           ===================================================== */
+
+        * {
+
+            box-sizing: border-box;
+
+            margin: 0;
+
+            padding: 0;
+        }
+
+
+        html {
+
+            width: 100%;
+
+            min-width: 100%;
+
+            overflow-x: hidden;
+
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            width: 100%;
+
+            min-width: 0;
+
+            min-height: 100vh;
+
+            overflow-x: hidden;
+
+            background:
+                var(--background);
+
+            color:
+                var(--text);
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            font-size: 15px;
+
+            line-height: 1.5;
+
+            -webkit-text-size-adjust: 100%;
+
+            text-size-adjust: 100%;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease;
+        }
+
+
+        button,
+        input,
+        select,
+        textarea {
+
+            font:
+                inherit;
+        }
+
+
+        img {
+
+            max-width: 100%;
+
+            height: auto;
+        }
+
+
+        a {
+
+            color: inherit;
+        }
+
+
+        /* =====================================================
+           APP
            ===================================================== */
 
         .app {
 
             width: 100%;
+
             min-height: 100vh;
 
-            overflow-x: hidden;
+            display: flex;
+
+            flex-direction: column;
         }
 
 
         /* =====================================================
-           TOP HEADER
+           NAVBAR
            ===================================================== */
 
-        .app-header {
+        .navbar {
 
             width: 100%;
 
-            background: var(--surface);
+            min-height:
+                var(--nav-height);
+
+            background:
+                var(--surface);
 
             border-bottom:
                 1px solid var(--border);
 
+            box-shadow:
+                0 2px 12px rgba(
+                    15,
+                    23,
+                    42,
+                    0.05
+                );
+
             position: sticky;
+
             top: 0;
 
             z-index: 1000;
         }
 
 
-        .header-inner {
+        .nav-inner {
 
             width: 100%;
+
             max-width: 1400px;
+
+            min-width: 0;
 
             margin: 0 auto;
 
-            min-height: 72px;
+            min-height:
+                var(--nav-height);
 
             padding:
                 10px 24px;
@@ -258,30 +287,29 @@
 
             align-items: center;
 
-            gap: 12px;
+            gap: 11px;
 
             min-width: 0;
 
-            flex-shrink: 0;
-
             text-decoration: none;
-
-            color: var(--text);
         }
 
 
         .brand-logo {
 
-            width: 46px;
-            height: 46px;
+            width: 45px;
 
-            border-radius: 12px;
-
-            object-fit: contain;
+            height: 45px;
 
             flex-shrink: 0;
 
-            box-shadow: var(--shadow);
+            object-fit: contain;
+
+            border-radius: 11px;
+
+            box-shadow:
+                0 4px 12px
+                rgba(15, 23, 42, 0.12);
         }
 
 
@@ -291,11 +319,15 @@
         }
 
 
-        .brand-title {
+        .brand-name {
 
-            font-size: 17px;
+            display: block;
+
+            font-size: 16px;
 
             font-weight: 900;
+
+            line-height: 1.1;
 
             white-space: nowrap;
         }
@@ -303,29 +335,36 @@
 
         .brand-subtitle {
 
-            color: var(--muted);
-
-            font-size: 11px;
+            display: block;
 
             margin-top: 2px;
+
+            color:
+                var(--muted);
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            letter-spacing: 0.6px;
 
             white-space: nowrap;
         }
 
 
         /* =====================================================
-           NAVIGATION
+           NAV LINKS
            ===================================================== */
 
-        .main-nav {
+        .nav-links {
 
             display: flex;
 
             align-items: center;
 
-            justify-content: flex-end;
+            justify-content: center;
 
-            gap: 6px;
+            gap: 5px;
 
             min-width: 0;
 
@@ -335,22 +374,23 @@
 
         .nav-link {
 
+            min-height: 42px;
+
             display: inline-flex;
 
             align-items: center;
 
             justify-content: center;
 
-            min-height: 42px;
-
             padding:
                 9px 13px;
 
             border-radius: 10px;
 
-            color: var(--muted);
-
             text-decoration: none;
+
+            color:
+                var(--muted);
 
             font-size: 13px;
 
@@ -367,19 +407,24 @@
 
         .nav-link:hover {
 
-            background: var(--surface-soft);
+            background:
+                var(--surface-soft);
 
-            color: var(--text);
+            color:
+                var(--text);
 
-            transform: translateY(-1px);
+            transform:
+                translateY(-1px);
         }
 
 
         .nav-link.active {
 
-            background: var(--primary);
+            background:
+                rgba(37, 99, 235, 0.10);
 
-            color: white;
+            color:
+                var(--primary);
         }
 
 
@@ -389,26 +434,29 @@
 
         .theme-button {
 
-            display: inline-flex;
-
-            align-items: center;
-
-            justify-content: center;
+            min-width: 42px;
 
             width: 42px;
-            height: 42px;
 
-            padding: 0;
+            height: 42px;
 
             border: 1px solid var(--border);
 
             border-radius: 10px;
 
-            background: var(--surface-soft);
+            background:
+                var(--surface-soft);
 
-            color: var(--text);
+            color:
+                var(--text);
 
             cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
 
             flex-shrink: 0;
 
@@ -422,227 +470,124 @@
 
         .theme-button:hover {
 
-            transform: translateY(-1px);
-
-            background: var(--border);
+            transform:
+                translateY(-2px);
         }
 
 
         /* =====================================================
-           PAGE CONTAINER
+           MAIN
            ===================================================== */
 
-        .page-container {
+        .main {
 
             width: 100%;
+
+            flex: 1;
+
+            min-width: 0;
+        }
+
+
+        .main-inner {
+
+            width: 100%;
+
+            max-width: 1400px;
+
+            min-width: 0;
+
+            margin: 0 auto;
+
+            padding:
+                30px 24px 40px;
+        }
+
+
+        /* =====================================================
+           FOOTER
+           ===================================================== */
+
+        .footer {
+
+            width: 100%;
+
+            background:
+                var(--surface);
+
+            border-top:
+                1px solid var(--border);
+
+            margin-top: auto;
+        }
+
+
+        .footer-inner {
+
+            width: 100%;
+
             max-width: 1400px;
 
             margin: 0 auto;
 
             padding:
-                30px 24px 50px;
+                24px;
 
-            min-width: 0;
+            text-align: center;
+        }
 
-            overflow-x: hidden;
+
+        .footer-title {
+
+            font-size: 13px;
+
+            font-weight: 900;
+
+            color:
+                var(--text);
+
+            letter-spacing: 0.4px;
+        }
+
+
+        .footer-slogan {
+
+            margin-top: 5px;
+
+            color:
+                var(--muted);
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            font-style: italic;
+        }
+
+
+        .footer-copy {
+
+            margin-top: 8px;
+
+            color:
+                var(--muted);
+
+            font-size: 10px;
         }
 
 
         /* =====================================================
-           CONTENT
+           TABLET
            ===================================================== */
 
-        main {
+        @media (max-width: 900px) {
 
-            width: 100%;
-
-            min-width: 0;
-
-            overflow-x: hidden;
-        }
-
-
-        /* =====================================================
-           TABLE RESPONSIVENESS
-           ===================================================== */
-
-        .table-container {
-
-            width: 100%;
-
-            overflow-x: auto;
-
-            -webkit-overflow-scrolling: touch;
-        }
-
-
-        table {
-
-            max-width: 100%;
-        }
-
-
-        /* =====================================================
-           FORMS
-           ===================================================== */
-
-        input,
-        select,
-        textarea {
-
-            max-width: 100%;
-        }
-
-
-        /* =====================================================
-           MOBILE NAVIGATION
-           ===================================================== */
-
-        @media (max-width: 800px) {
-
-            .app-header {
-
-                position: sticky;
-
-                top: 0;
-            }
-
-
-            .header-inner {
-
-                min-height: auto;
+            .nav-inner {
 
                 padding:
-                    10px 14px;
-
-                flex-direction: column;
-
-                align-items: stretch;
+                    9px 16px;
 
                 gap: 10px;
-            }
-
-
-            .brand {
-
-                width: 100%;
-
-                justify-content: center;
-            }
-
-
-            .brand-logo {
-
-                width: 42px;
-                height: 42px;
-            }
-
-
-            .brand-title {
-
-                font-size: 16px;
-            }
-
-
-            .brand-subtitle {
-
-                font-size: 10px;
-            }
-
-
-            .main-nav {
-
-                width: 100%;
-
-                display: grid;
-
-                grid-template-columns:
-                    repeat(5, minmax(0, 1fr));
-
-                gap: 5px;
-
-                align-items: stretch;
-
-                justify-content: stretch;
-            }
-
-
-            .nav-link {
-
-                width: 100%;
-
-                min-width: 0;
-
-                min-height: 42px;
-
-                padding:
-                    8px 4px;
-
-                border-radius: 9px;
-
-                font-size: 11px;
-
-                text-align: center;
-
-                overflow: hidden;
-
-                text-overflow: ellipsis;
-            }
-
-
-            .theme-button {
-
-                width: 100%;
-
-                min-height: 42px;
-
-                height: 42px;
-
-                border-radius: 9px;
-
-                font-size: 16px;
-            }
-
-
-            .page-container {
-
-                padding:
-                    18px 12px 35px;
-            }
-        }
-
-
-        /* =====================================================
-           SMALL PHONES
-           ===================================================== */
-
-        @media (max-width: 430px) {
-
-            .header-inner {
-
-                padding:
-                    8px 8px;
-            }
-
-
-            .brand {
-
-                gap: 9px;
-            }
-
-
-            .brand-logo {
-
-                width: 38px;
-                height: 38px;
-
-                border-radius: 10px;
-            }
-
-
-            .brand-title {
-
-                font-size: 14px;
             }
 
 
@@ -652,50 +597,7 @@
             }
 
 
-            .main-nav {
-
-                gap: 3px;
-            }
-
-
-            .nav-link {
-
-                min-height: 40px;
-
-                padding:
-                    7px 2px;
-
-                font-size: 10px;
-
-                border-radius: 8px;
-            }
-
-
-            .theme-button {
-
-                min-height: 40px;
-
-                height: 40px;
-
-                font-size: 15px;
-            }
-
-
-            .page-container {
-
-                padding:
-                    14px 9px 30px;
-            }
-        }
-
-
-        /* =====================================================
-           VERY SMALL PHONES
-           ===================================================== */
-
-        @media (max-width: 360px) {
-
-            .main-nav {
+            .nav-links {
 
                 gap: 2px;
             }
@@ -703,48 +605,203 @@
 
             .nav-link {
 
-                font-size: 9px;
+                padding:
+                    8px 9px;
+
+                font-size: 12px;
+            }
+
+
+            .main-inner {
 
                 padding:
-                    7px 1px;
+                    24px 16px 35px;
+            }
+        }
+
+
+        /* =====================================================
+           MOBILE
+           ===================================================== */
+
+        @media (max-width: 700px) {
+
+            :root {
+
+                --nav-height: auto;
+            }
+
+
+            .navbar {
+
+                position: relative;
+            }
+
+
+            .nav-inner {
+
+                min-height: auto;
+
+                padding:
+                    10px 10px 8px;
+
+                display: grid;
+
+                grid-template-columns:
+                    auto 1fr auto;
+
+                gap: 8px;
+
+                align-items: center;
+            }
+
+
+            .brand {
+
+                gap: 7px;
+
+                min-width: 0;
+            }
+
+
+            .brand-logo {
+
+                width: 40px;
+
+                height: 40px;
+
+                border-radius: 9px;
+            }
+
+
+            .brand-name {
+
+                font-size: 13px;
+            }
+
+
+            .nav-links {
+
+                width: 100%;
+
+                min-width: 0;
+
+                overflow-x: auto;
+
+                overflow-y: hidden;
+
+                justify-content: flex-start;
+
+                scrollbar-width: none;
+
+                -webkit-overflow-scrolling: touch;
+            }
+
+
+            .nav-links::-webkit-scrollbar {
+
+                display: none;
+            }
+
+
+            .nav-link {
+
+                flex-shrink: 0;
+
+                min-height: 38px;
+
+                padding:
+                    8px 9px;
+
+                font-size: 11px;
+
+                border-radius: 8px;
             }
 
 
             .theme-button {
 
-                font-size: 14px;
+                width: 38px;
+
+                height: 38px;
+
+                min-width: 38px;
+
+                font-size: 16px;
+            }
+
+
+            .main-inner {
+
+                padding:
+                    18px 12px 30px;
+            }
+
+
+            .footer-inner {
+
+                padding:
+                    20px 12px;
             }
         }
 
 
         /* =====================================================
-           PREVENT DOUBLE-TAP ZOOM
+           SMALL PHONES
            ===================================================== */
 
-        a,
-        button {
+        @media (max-width: 420px) {
 
-            touch-action: manipulation;
-        }
+            .nav-inner {
+
+                grid-template-columns:
+                    auto 1fr auto;
+
+                padding:
+                    8px;
+            }
 
 
-        /* =====================================================
-           SAFE AREA FOR IPHONE
-           ===================================================== */
+            .brand-logo {
 
-        @supports (
-            padding: env(safe-area-inset-bottom)
-        ) {
+                width: 36px;
 
-            .page-container {
+                height: 36px;
+            }
 
-                padding-bottom:
-                    calc(
-                        30px +
-                        env(safe-area-inset-bottom)
-                    );
+
+            .brand-name {
+
+                font-size: 12px;
+            }
+
+
+            .nav-link {
+
+                padding:
+                    7px 8px;
+
+                font-size: 10px;
+            }
+
+
+            .theme-button {
+
+                width: 36px;
+
+                height: 36px;
+
+                min-width: 36px;
+            }
+
+
+            .main-inner {
+
+                padding:
+                    14px 9px 25px;
             }
         }
+
 
     </style>
 
@@ -753,17 +810,16 @@
 
 <body>
 
-
 <div class="app">
 
 
     <!-- =====================================================
-         HEADER
+         NAVIGATION
          ===================================================== -->
 
-    <header class="app-header">
+    <header class="navbar">
 
-        <div class="header-inner">
+        <div class="nav-inner">
 
 
             <!-- BRAND -->
@@ -774,37 +830,33 @@
             >
 
                 <img
-                    src="{% static 'tracker/icon.png' %}"
+                    src="{% static 'tracker/images/pool-logo.png' %}"
                     alt="ISC Pool Tracker"
                     class="brand-logo"
                 >
 
-                <div class="brand-text">
+                <span class="brand-text">
 
-                    <div class="brand-title">
-                        ISC Pool Tracker
-                    </div>
+                    <span class="brand-name">
+                        ISC Pool
+                    </span>
 
-                    <div class="brand-subtitle">
-                        Pool Business Management
-                    </div>
+                    <span class="brand-subtitle">
+                        TRACKER
+                    </span>
 
-                </div>
+                </span>
 
             </a>
 
 
-            <!-- NAVIGATION -->
+            <!-- LINKS -->
 
-            <nav
-                class="main-nav"
-                aria-label="Main navigation"
-            >
+            <nav class="nav-links">
 
                 <a
                     href="{% url 'dashboard' %}"
                     class="nav-link"
-                    data-nav="dashboard"
                 >
                     Dashboard
                 </a>
@@ -813,7 +865,6 @@
                 <a
                     href="{% url 'earnings_list' %}"
                     class="nav-link"
-                    data-nav="earnings"
                 >
                     Earnings
                 </a>
@@ -822,7 +873,6 @@
                 <a
                     href="{% url 'expenses_list' %}"
                     class="nav-link"
-                    data-nav="expenses"
                 >
                     Expenses
                 </a>
@@ -831,22 +881,24 @@
                 <a
                     href="{% url 'reports' %}"
                     class="nav-link"
-                    data-nav="reports"
                 >
                     Reports
                 </a>
 
-
-                <button
-                    type="button"
-                    class="theme-button"
-                    id="themeButton"
-                    aria-label="Toggle dark and light theme"
-                >
-                    🌙
-                </button>
-
             </nav>
+
+
+            <!-- THEME -->
+
+            <button
+                type="button"
+                class="theme-button"
+                id="themeButton"
+                aria-label="Toggle theme"
+            >
+                ☀️
+            </button>
+
 
         </div>
 
@@ -854,19 +906,45 @@
 
 
     <!-- =====================================================
-         PAGE
+         MAIN CONTENT
          ===================================================== -->
 
-    <div class="page-container">
+    <main class="main">
 
-        <main>
+        <div class="main-inner">
 
             {% block content %}
+
             {% endblock %}
 
-        </main>
+        </div>
 
-    </div>
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+    <footer class="footer">
+
+        <div class="footer-inner">
+
+            <div class="footer-title">
+                Isaac Njoroge Build
+            </div>
+
+            <div class="footer-slogan">
+                Another Day, Another Dollar
+            </div>
+
+            <div class="footer-copy">
+                © {% now "Y" %} ISC Pool Tracker. All rights reserved.
+            </div>
+
+        </div>
+
+    </footer>
 
 
 </div>
@@ -876,54 +954,37 @@
 
 (function () {
 
-    "use strict";
+    const root =
+        document.documentElement;
 
-
-    /* =====================================================
-       THEME
-       ===================================================== */
-
-    const themeButton =
-        document.getElementById("themeButton");
-
-
-    function getStoredTheme() {
-
-        return localStorage.getItem(
-            "iscPoolTheme"
+    const button =
+        document.getElementById(
+            "themeButton"
         );
 
-    }
 
+    function getTheme() {
 
-    function getSystemTheme() {
-
-        return window.matchMedia &&
-            window.matchMedia(
-                "(prefers-color-scheme: dark)"
-            ).matches
-                ? "dark"
-                : "light";
-
+        return localStorage.getItem(
+            "iscTheme"
+        ) || "light";
     }
 
 
     function applyTheme(theme) {
 
-        document.documentElement
-            .setAttribute(
-                "data-theme",
-                theme
-            );
+        root.setAttribute(
+            "data-theme",
+            theme
+        );
 
 
-        if (themeButton) {
+        if (button) {
 
-            themeButton.textContent =
+            button.textContent =
                 theme === "dark"
                     ? "☀️"
                     : "🌙";
-
         }
 
 
@@ -932,140 +993,40 @@
                 "iscThemeChanged"
             )
         );
-
     }
 
 
-    const savedTheme =
-        getStoredTheme();
-
-
     applyTheme(
-        savedTheme ||
-        getSystemTheme()
+        getTheme()
     );
 
 
-    if (themeButton) {
+    if (button) {
 
-        themeButton.addEventListener(
+        button.addEventListener(
             "click",
             function () {
 
                 const current =
-                    document.documentElement
-                        .getAttribute(
-                            "data-theme"
-                        ) ||
-                    "light";
-
+                    getTheme();
 
                 const next =
                     current === "dark"
                         ? "light"
                         : "dark";
 
-
                 localStorage.setItem(
-                    "iscPoolTheme",
+                    "iscTheme",
                     next
                 );
 
-
-                applyTheme(next);
+                applyTheme(
+                    next
+                );
 
             }
         );
-
     }
-
-
-    /* =====================================================
-       ACTIVE NAVIGATION
-       ===================================================== */
-
-    const path =
-        window.location.pathname;
-
-
-    const navLinks =
-        document.querySelectorAll(
-            ".nav-link"
-        );
-
-
-    navLinks.forEach(
-        function (link) {
-
-            const nav =
-                link.getAttribute(
-                    "data-nav"
-                );
-
-
-            let active = false;
-
-
-            if (
-                nav === "dashboard" &&
-                (
-                    path === "/" ||
-                    path === ""
-                )
-            ) {
-
-                active = true;
-
-            }
-
-
-            if (
-                nav === "earnings" &&
-                path.startsWith(
-                    "/earnings"
-                )
-            ) {
-
-                active = true;
-
-            }
-
-
-            if (
-                nav === "expenses" &&
-                path.startsWith(
-                    "/expenses"
-                )
-            ) {
-
-                active = true;
-
-            }
-
-
-            if (
-                nav === "reports" &&
-                path.startsWith(
-                    "/reports"
-                )
-            ) {
-
-                active = true;
-
-            }
-
-
-            if (active) {
-
-                link.classList.add(
-                    "active"
-                );
-
-            }
-
-        }
-    );
-
 
 })();
 

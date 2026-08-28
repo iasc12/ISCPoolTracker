@@ -1,0 +1,59 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}
+Edit Expense | ISC Pool Tracker
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>Edit Expense</h1>
+
+    <p>
+        Update this expense record.
+    </p>
+
+</div>
+
+
+<div class="card" style="
+    max-width:650px;
+    margin:0 auto;
+    padding:28px;
+">
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <div style="
+            display:flex;
+            gap:10px;
+            margin-top:20px;
+            flex-wrap:wrap;
+        ">
+
+            <button
+                type="submit"
+                class="button button-primary"
+            >
+                💾 Save Changes
+            </button>
+
+            <a
+                href="{% url 'expenses_list' %}"
+                class="button button-secondary"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

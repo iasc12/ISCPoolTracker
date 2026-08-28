@@ -1,0 +1,748 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}Reports | ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+/* =========================================================
+   REPORTS PAGE
+   ========================================================= */
+
+.reports-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.reports-header {
+    margin-bottom: 28px;
+}
+
+.reports-header h1 {
+    margin: 0;
+    font-size: 32px;
+    line-height: 1.2;
+    color: var(--text);
+}
+
+.reports-header p {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* =========================================================
+   FILTER
+   ========================================================= */
+
+.report-filter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 25px;
+    box-shadow: var(--shadow);
+}
+
+.report-filter h2 {
+    margin: 0 0 18px;
+    color: var(--text);
+    font-size: 20px;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.filter-group {
+    min-width: 0;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--text);
+}
+
+.filter-group input {
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    color: var(--text);
+    outline: none;
+}
+
+.filter-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.filter-actions {
+    margin-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.report-button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    transition:
+        transform 0.18s ease,
+        opacity 0.18s ease;
+}
+
+.report-button:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+.report-button-primary {
+    background: var(--primary);
+    color: white;
+    border: 1px solid var(--primary);
+}
+
+.report-button-secondary {
+    background: var(--surface-soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+/* =========================================================
+   SUMMARY CARDS
+   ========================================================= */
+
+.report-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.report-card {
+    min-width: 0;
+    padding: 22px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.report-card h3 {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.report-card .amount {
+    font-size: 27px;
+    line-height: 1.2;
+    font-weight: 900;
+    color: var(--text);
+    overflow-wrap: anywhere;
+}
+
+.report-card.earnings {
+    border-top: 4px solid var(--success);
+}
+
+.report-card.expenses {
+    border-top: 4px solid var(--danger);
+}
+
+.report-card.profit {
+    border-top: 4px solid var(--primary);
+}
+
+/* =========================================================
+   ANALYTICS
+   ========================================================= */
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.analytics-card {
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    box-shadow: var(--shadow);
+}
+
+.analytics-card h2 {
+    margin: 0 0 12px;
+    color: var(--text);
+    font-size: 20px;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.stat-row span:first-child {
+    color: var(--muted);
+}
+
+.stat-value {
+    flex-shrink: 0;
+    font-weight: 900;
+    color: var(--text);
+    text-align: right;
+}
+
+/* =========================================================
+   EXPENSE BREAKDOWN
+   ========================================================= */
+
+.expense-item {
+    margin-bottom: 18px;
+}
+
+.expense-item:last-child {
+    margin-bottom: 0;
+}
+
+.expense-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 7px;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.expense-item-header span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.expense-item-header strong {
+    flex-shrink: 0;
+}
+
+.expense-bar {
+    width: 100%;
+    height: 10px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.expense-bar-fill {
+    height: 100%;
+    max-width: 100%;
+    background: var(--danger);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+/* =========================================================
+   HIGHLIGHTS
+   ========================================================= */
+
+.highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.highlight {
+    min-width: 0;
+    padding: 20px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.highlight-title {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 7px;
+}
+
+.highlight-value {
+    font-size: 21px;
+    line-height: 1.25;
+    font-weight: 900;
+    color: var(--text);
+    overflow-wrap: anywhere;
+}
+
+.empty-message {
+    color: var(--muted);
+    text-align: center;
+    padding: 15px 5px;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .report-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .reports-page {
+        width: 100%;
+    }
+
+    .reports-header {
+        margin-bottom: 22px;
+    }
+
+    .reports-header h1 {
+        font-size: 26px;
+    }
+
+    .reports-header p {
+        font-size: 13px;
+    }
+
+    .report-filter,
+    .report-card,
+    .analytics-card,
+    .highlight {
+        padding: 18px;
+    }
+
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .report-button {
+        width: 100%;
+    }
+
+    .highlight-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+    .report-filter,
+    .report-card,
+    .analytics-card,
+    .highlight {
+        padding: 16px;
+    }
+
+    .report-card .amount {
+        font-size: 23px;
+    }
+
+    .stat-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .stat-value {
+        text-align: left;
+    }
+
+    .filter-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .expense-item-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+}
+</style>
+
+<div class="reports-page">
+
+<!-- =====================================================
+     HEADER
+     ===================================================== -->
+
+<div class="reports-header">
+
+    <h1>
+        Financial Reports
+    </h1>
+
+    <p>
+        Analyze the financial performance of ISC Pool.
+    </p>
+
+</div>
+
+
+<!-- =====================================================
+     DATE FILTER
+     ===================================================== -->
+
+<form
+    method="get"
+    class="report-filter"
+>
+
+    <h2>
+        Report Period
+    </h2>
+
+    <div class="filter-grid">
+
+        <div class="filter-group">
+
+            <label for="start_date">
+                Start date
+            </label>
+
+            <input
+                type="date"
+                id="start_date"
+                name="start_date"
+                value="{{ start_date|default:'' }}"
+            >
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label for="end_date">
+                End date
+            </label>
+
+            <input
+                type="date"
+                id="end_date"
+                name="end_date"
+                value="{{ end_date|default:'' }}"
+            >
+
+        </div>
+
+    </div>
+
+
+    <div class="filter-actions">
+
+        <button
+            type="submit"
+            class="report-button report-button-primary"
+        >
+            Generate Report
+        </button>
+
+        <a
+            href="{% url 'reports' %}"
+            class="report-button report-button-secondary"
+        >
+            Reset
+        </a>
+
+    </div>
+
+</form>
+
+
+<!-- =====================================================
+     SUMMARY
+     ===================================================== -->
+
+<div class="report-summary">
+
+    <div class="report-card earnings">
+
+        <h3>
+            Total Earnings
+        </h3>
+
+        <div class="amount">
+            KSh {{ total_earnings|floatformat:2 }}
+        </div>
+
+    </div>
+
+
+    <div class="report-card expenses">
+
+        <h3>
+            Total Expenses
+        </h3>
+
+        <div class="amount">
+            KSh {{ total_expenses|floatformat:2 }}
+        </div>
+
+    </div>
+
+
+    <div class="report-card profit">
+
+        <h3>
+            {% if total_profit >= 0 %}
+                Net Profit
+            {% else %}
+                Net Loss
+            {% endif %}
+        </h3>
+
+        <div class="amount">
+            KSh {{ total_profit|floatformat:2 }}
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     ANALYTICS
+     ===================================================== -->
+
+<div class="analytics-grid">
+
+    <!-- PERFORMANCE -->
+
+    <div class="analytics-card">
+
+        <h2>
+            Performance
+        </h2>
+
+        <div class="stat-row">
+
+            <span>
+                Earning days
+            </span>
+
+            <span class="stat-value">
+                {{ earning_days }}
+            </span>
+
+        </div>
+
+
+        <div class="stat-row">
+
+            <span>
+                Average daily earnings
+            </span>
+
+            <span class="stat-value">
+                KSh {{ average_daily_earnings|floatformat:2 }}
+            </span>
+
+        </div>
+
+
+        <div class="stat-row">
+
+            <span>
+                Forecast monthly earnings
+            </span>
+
+            <span class="stat-value">
+                KSh {{ forecast_monthly|floatformat:2 }}
+            </span>
+
+        </div>
+
+
+        <div class="stat-row">
+
+            <span>
+                Profit margin
+            </span>
+
+            <span class="stat-value">
+                {{ profit_margin|floatformat:2 }}%
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- EXPENSE BREAKDOWN -->
+
+    <div class="analytics-card">
+
+        <h2>
+            Expense Breakdown
+        </h2>
+
+        {% if expense_breakdown %}
+
+            {% for item in expense_breakdown %}
+
+                <div class="expense-item">
+
+                    <div class="expense-item-header">
+
+                        <span>
+                            {{ item.type }}
+                        </span>
+
+                        <strong>
+                            KSh {{ item.amount|floatformat:2 }}
+                        </strong>
+
+                    </div>
+
+                    <div class="expense-bar">
+
+                        <div
+                            class="expense-bar-fill"
+                            style="width: {{ item.percentage }}%;"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-message">
+                No expenses recorded for this period.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     HIGHLIGHTS
+     ===================================================== -->
+
+<div class="highlight-grid">
+
+    <!-- BEST EARNING DAY -->
+
+    <div class="highlight">
+
+        <div class="highlight-title">
+            Best Earning Day
+        </div>
+
+        {% if best_day %}
+
+            <div class="highlight-value">
+                KSh {{ best_day.amount_collected|floatformat:2 }}
+            </div>
+
+            <div class="highlight-title">
+                {{ best_day.date|date:"d M Y" }}
+            </div>
+
+        {% else %}
+
+            <div class="highlight-value">
+                No data
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- HIGHEST EXPENSE -->
+
+    <div class="highlight">
+
+        <div class="highlight-title">
+            Highest Expense
+        </div>
+
+        {% if highest_expense %}
+
+            <div class="highlight-value">
+                KSh {{ highest_expense.amount|floatformat:2 }}
+            </div>
+
+            <div class="highlight-title">
+                {{ highest_expense.get_expense_type_display }}
+                — {{ highest_expense.date|date:"d M Y" }}
+            </div>
+
+        {% else %}
+
+            <div class="highlight-value">
+                No data
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}
+sss

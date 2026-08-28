@@ -1,0 +1,76 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}
+Delete Earning | ISC Pool Tracker
+{% endblock %}
+
+{% block content %}
+
+<div class="card" style="
+    max-width:600px;
+    margin:40px auto;
+    padding:32px;
+    text-align:center;
+">
+
+    <div style="font-size:48px;">
+        ⚠️
+    </div>
+
+    <h1>
+        Delete Earning?
+    </h1>
+
+    <p style="color:var(--muted);">
+        You are about to permanently delete the
+        following earning record:
+    </p>
+
+    <div style="
+        margin:20px 0;
+        padding:18px;
+        border-radius:12px;
+        background:var(--surface-secondary);
+        border:1px solid var(--border);
+    ">
+
+        <strong>
+            {{ earning.date|date:"d M Y" }}
+        </strong>
+
+        <br>
+
+        <span style="
+            color:var(--success);
+            font-size:22px;
+            font-weight:800;
+        ">
+            KSh {{ earning.amount_collected|floatformat:2 }}
+        </span>
+
+    </div>
+
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="button button-danger"
+        >
+            🗑 Yes, Delete
+        </button>
+
+        <a
+            href="{% url 'earnings_list' %}"
+            class="button button-secondary"
+        >
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

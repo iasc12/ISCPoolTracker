@@ -1,0 +1,128 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}
+    {% if editing %}
+        Edit Today's Earning
+    {% else %}
+        Add Today's Earning
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="form-page">
+
+    <div class="form-card">
+
+        <div class="form-header">
+
+            <div class="form-icon">
+                {% if editing %}
+                    ✏️
+                {% else %}
+                    💰
+                {% endif %}
+            </div>
+
+            <div>
+                <h1>
+                    {% if editing %}
+                        Edit Today's Earning
+                    {% else %}
+                        Today's Earning
+                    {% endif %}
+                </h1>
+
+                <p>
+                    {{ today|date:"l, d F Y" }}
+                </p>
+            </div>
+
+        </div>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+
+            {% endif %}
+
+
+            <div class="form-group">
+
+                <label>
+                    Amount Collected
+                </label>
+
+                {{ form.amount_collected }}
+
+                {% if form.amount_collected.errors %}
+
+                    <div class="field-error">
+                        {{ form.amount_collected.errors }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Notes
+                </label>
+
+                {{ form.notes }}
+
+                {% if form.notes.errors %}
+
+                    <div class="field-error">
+                        {{ form.notes.errors }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="button secondary"
+                >
+                    Cancel
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="button earning"
+                >
+
+                    {% if editing %}
+                        Save Changes
+                    {% else %}
+                        Save Today's Earning
+                    {% endif %}
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
