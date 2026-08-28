@@ -1,27 +1,12 @@
-
 """
 Django settings for config project.
-
-ISC Pool Tracker
-Production configuration for Render
 """
 
 import os
+import dj_database_url
 from pathlib import Path
 
-import dj_database_url
-
-
-# ============================================================
-# BASE DIRECTORY
-# ============================================================
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# ============================================================
-# SECURITY
-# ============================================================
 
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
@@ -34,10 +19,6 @@ DEBUG = os.getenv(
 ).lower() == "true"
 
 
-# ============================================================
-# ALLOWED HOSTS
-# ============================================================
-
 ALLOWED_HOSTS = [
     "iscpooltracker.onrender.com",
     "isac1213.pythonanywhere.com",
@@ -46,19 +27,11 @@ ALLOWED_HOSTS = [
 ]
 
 
-# ============================================================
-# CSRF TRUSTED ORIGINS
-# ============================================================
-
 CSRF_TRUSTED_ORIGINS = [
     "https://iscpooltracker.onrender.com",
     "https://isac1213.pythonanywhere.com",
 ]
 
-
-# ============================================================
-# APPLICATIONS
-# ============================================================
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -67,21 +40,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    # ISC Pool Tracker
     "tracker",
 ]
 
 
-# ============================================================
-# MIDDLEWARE
-# ============================================================
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 
-    # IMPORTANT:
-    # WhiteNoise serves Django static files in production.
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -98,31 +63,18 @@ MIDDLEWARE = [
 ]
 
 
-# ============================================================
-# URL CONFIGURATION
-# ============================================================
-
 ROOT_URLCONF = "config.urls"
 
-
-# ============================================================
-# TEMPLATES
-# ============================================================
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-
         "DIRS": [],
-
         "APP_DIRS": True,
-
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
-
                 "django.contrib.auth.context_processors.auth",
-
                 "django.contrib.messages.context_processors.messages",
             ],
         },
@@ -130,16 +82,8 @@ TEMPLATES = [
 ]
 
 
-# ============================================================
-# WSGI
-# ============================================================
-
 WSGI_APPLICATION = "config.wsgi.application"
 
-
-# ============================================================
-# DATABASE
-# ============================================================
 
 DATABASES = {
     "default": dj_database_url.config(
@@ -149,40 +93,25 @@ DATABASES = {
 }
 
 
-# ============================================================
-# PASSWORD VALIDATION
-# ============================================================
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME":
-            "django.contrib.auth.password_validation."
-            "UserAttributeSimilarityValidator",
+            "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-
     {
         "NAME":
-            "django.contrib.auth.password_validation."
-            "MinimumLengthValidator",
+            "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
-
     {
         "NAME":
-            "django.contrib.auth.password_validation."
-            "CommonPasswordValidator",
+            "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
-
     {
         "NAME":
-            "django.contrib.auth.password_validation."
-            "NumericPasswordValidator",
+            "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
-
-# ============================================================
-# INTERNATIONALIZATION
-# ============================================================
 
 LANGUAGE_CODE = "en-us"
 
@@ -193,41 +122,16 @@ USE_I18N = True
 USE_TZ = True
 
 
-# ============================================================
-# STATIC FILES
-# ============================================================
-
-# Browser URL for static files
 STATIC_URL = "/static/"
 
-
-# Folder containing collected production static files
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-
-# No additional project-level static directory is required
-# because tracker/static/ is automatically discovered.
 STATICFILES_DIRS = []
 
 
-# ============================================================
-# WHITENOISE
-# ============================================================
-
-# WhiteNoise serves the collected files from STATIC_ROOT.
-#
-# This is what allows Render/Gunicorn to serve:
-#
-# /static/tracker/manifest.json
-# /static/tracker/icon.png
-# /static/tracker/icons/icon-192.png
-# /static/tracker/icons/icon-512.png
-# /static/tracker/sw.js
-
 STORAGES = {
     "default": {
-        "BACKEND":
-            "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
 
     "staticfiles": {
@@ -236,10 +140,6 @@ STORAGES = {
     },
 }
 
-
-# ============================================================
-# EMAIL CONFIGURATION
-# ============================================================
 
 MAILERS = {
     "default": {
@@ -275,10 +175,6 @@ MAILERS = {
 }
 
 
-# ============================================================
-# EMAIL ADDRESSES
-# ============================================================
-
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     "",
@@ -290,9 +186,5 @@ POOL_TRACKER_REMINDER_EMAIL = os.getenv(
     "",
 )
 
-
-# ============================================================
-# DEFAULT PRIMARY KEY
-# ============================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
