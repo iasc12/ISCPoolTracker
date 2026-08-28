@@ -20,7 +20,10 @@ SECRET_KEY = os.getenv(
     "django-insecure-change-this-in-production",
 )
 
-DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
+DEBUG = os.getenv(
+    "DJANGO_DEBUG",
+    "true",
+).lower() == "true"
 
 
 # ============================================================
@@ -66,11 +69,17 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
+
     "django.middleware.common.CommonMiddleware",
+
     "django.middleware.csrf.CsrfViewMiddleware",
+
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
     "django.contrib.messages.middleware.MessageMiddleware",
+
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -89,13 +98,20 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
+
         "DIRS": [],
+
         "APP_DIRS": True,
+
         "OPTIONS": {
             "context_processors": [
+
                 "django.template.context_processors.request",
+
                 "django.contrib.auth.context_processors.auth",
+
                 "django.contrib.messages.context_processors.messages",
+
             ],
         },
     },
@@ -126,30 +142,35 @@ DATABASES = {
 # ============================================================
 
 AUTH_PASSWORD_VALIDATORS = [
+
     {
         "NAME": (
             "django.contrib.auth.password_validation."
             "UserAttributeSimilarityValidator"
         ),
     },
+
     {
         "NAME": (
             "django.contrib.auth.password_validation."
             "MinimumLengthValidator"
         ),
     },
+
     {
         "NAME": (
             "django.contrib.auth.password_validation."
             "CommonPasswordValidator"
         ),
     },
+
     {
         "NAME": (
             "django.contrib.auth.password_validation."
             "NumericPasswordValidator"
         ),
     },
+
 ]
 
 
@@ -170,9 +191,17 @@ USE_TZ = True
 # STATIC FILES
 # ============================================================
 
+# URL used by Django templates.
 STATIC_URL = "/static/"
 
+
+# Directory where collectstatic places production files.
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
+# Tell Django where additional project-level static files
+# are located.
+STATICFILES_DIRS = []
 
 
 # ============================================================
@@ -180,27 +209,36 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # ============================================================
 
 MAILERS = {
+
     "default": {
-        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+
+        "BACKEND":
+            "django.core.mail.backends.smtp.EmailBackend",
+
         "OPTIONS": {
+
             "host": os.getenv(
                 "EMAIL_HOST",
                 "smtp.gmail.com",
             ),
+
             "port": int(
                 os.getenv(
                     "EMAIL_PORT",
                     "587",
                 )
             ),
+
             "username": os.getenv(
                 "EMAIL_HOST_USER",
                 "",
             ),
+
             "password": os.getenv(
                 "EMAIL_HOST_PASSWORD",
                 "",
             ),
+
             "use_tls": True,
         },
     },
@@ -215,6 +253,7 @@ DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     "",
 )
+
 
 POOL_TRACKER_REMINDER_EMAIL = os.getenv(
     "POOL_TRACKER_REMINDER_EMAIL",
