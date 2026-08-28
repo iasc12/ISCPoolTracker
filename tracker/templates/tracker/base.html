@@ -1,55 +1,112 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
 
-    <title>{% block title %}ISC Pool Tracker{% endblock %}</title>
+    <meta
+        name="theme-color"
+        content="#2563eb"
+    >
 
-    <!-- App icon -->
-    <link rel="icon"
-          type="image/png"
-          href="{% static 'tracker/icon.png' %}">
+    <meta
+        name="mobile-web-app-capable"
+        content="yes"
+    >
 
-    <link rel="apple-touch-icon"
-          href="{% static 'tracker/icon.png' %}">
+    <meta
+        name="apple-mobile-web-app-capable"
+        content="yes"
+    >
 
-    <!-- PWA -->
-    <link rel="manifest"
-          href="{% static 'tracker/manifest.json' %}">
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="default"
+    >
 
-    <meta name="theme-color" content="#2563eb">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="ISC Pool">
+    <meta
+        name="apple-mobile-web-app-title"
+        content="ISC Pool"
+    >
+
+    <title>
+        {% block title %}
+            ISC Pool Tracker
+        {% endblock %}
+    </title>
+
+
+    <!-- =====================================================
+         APP ICON
+         ===================================================== -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="{% static 'tracker/icon.png' %}"
+    >
+
+    <link
+        rel="apple-touch-icon"
+        href="{% static 'tracker/icon.png' %}"
+    >
+
+
+    <!-- =====================================================
+         PWA MANIFEST
+         ===================================================== -->
+
+    <link
+        rel="manifest"
+        href="{% static 'tracker/manifest.json' %}"
+    >
+
 
     <style>
 
+        /* =====================================================
+           RESET
+           ===================================================== */
+
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
+
 
         html {
-            margin: 0;
-            padding: 0;
+            width: 100%;
             min-height: 100%;
+            overflow-x: hidden;
+
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+
+            touch-action: manipulation;
         }
 
+
         body {
-            margin: 0;
-            padding: 0;
+            width: 100%;
+            min-width: 0;
             min-height: 100vh;
+
+            overflow-x: hidden;
 
             font-family:
                 -apple-system,
                 BlinkMacSystemFont,
                 "Segoe UI",
                 Roboto,
+                Helvetica,
                 Arial,
                 sans-serif;
 
@@ -61,59 +118,99 @@
                 color 0.2s ease;
         }
 
-        :root {
-            --background: #f8fafc;
-            --surface: #ffffff;
-            --surface-soft: #f1f5f9;
-            --text: #0f172a;
-            --muted: #64748b;
-            --border: #e2e8f0;
 
-            --primary: #2563eb;
-            --success: #16a34a;
-            --danger: #dc2626;
-
-            --radius: 16px;
-
-            --shadow:
-                0 8px 25px rgba(15, 23, 42, 0.08);
+        img {
+            max-width: 100%;
         }
 
-        html[data-theme="dark"] {
-            --background: #0f172a;
-            --surface: #1e293b;
-            --surface-soft: #334155;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --border: #334155;
-
-            --primary: #60a5fa;
-            --success: #4ade80;
-            --danger: #f87171;
-
-            --shadow:
-                0 8px 25px rgba(0, 0, 0, 0.30);
-        }
-
-        a {
-            color: inherit;
-        }
 
         button,
+        a,
         input,
         select,
         textarea {
             font: inherit;
         }
 
+
         /* =====================================================
-           APP HEADER
+           LIGHT THEME
+           ===================================================== */
+
+        :root {
+
+            --background: #f1f5f9;
+
+            --surface: #ffffff;
+
+            --surface-soft: #f8fafc;
+
+            --border: #e2e8f0;
+
+            --text: #0f172a;
+
+            --muted: #64748b;
+
+            --primary: #2563eb;
+
+            --success: #16a34a;
+
+            --danger: #dc2626;
+
+            --radius: 16px;
+
+            --shadow:
+                0 8px 25px rgba(15, 23, 42, 0.07);
+        }
+
+
+        /* =====================================================
+           DARK THEME
+           ===================================================== */
+
+        html[data-theme="dark"] {
+
+            --background: #0f172a;
+
+            --surface: #1e293b;
+
+            --surface-soft: #273449;
+
+            --border: #334155;
+
+            --text: #f8fafc;
+
+            --muted: #94a3b8;
+
+            --primary: #60a5fa;
+
+            --success: #4ade80;
+
+            --danger: #f87171;
+
+            --shadow:
+                0 8px 25px rgba(0, 0, 0, 0.30);
+        }
+
+
+        /* =====================================================
+           MAIN APPLICATION
+           ===================================================== */
+
+        .app {
+
+            width: 100%;
+            min-height: 100vh;
+
+            overflow-x: hidden;
+        }
+
+
+        /* =====================================================
+           TOP HEADER
            ===================================================== */
 
         .app-header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
 
             width: 100%;
 
@@ -122,18 +219,24 @@
             border-bottom:
                 1px solid var(--border);
 
-            box-shadow:
-                0 2px 10px rgba(15, 23, 42, 0.05);
+            position: sticky;
+            top: 0;
+
+            z-index: 1000;
         }
 
-        .app-header-inner {
+
+        .header-inner {
+
             width: 100%;
             max-width: 1400px;
 
             margin: 0 auto;
 
+            min-height: 72px;
+
             padding:
-                12px 24px;
+                10px 24px;
 
             display: flex;
 
@@ -144,34 +247,51 @@
             gap: 20px;
         }
 
-        .app-brand {
+
+        /* =====================================================
+           BRAND
+           ===================================================== */
+
+        .brand {
+
             display: flex;
+
             align-items: center;
 
             gap: 12px;
 
+            min-width: 0;
+
+            flex-shrink: 0;
+
             text-decoration: none;
 
-            min-width: 0;
+            color: var(--text);
         }
 
-        .app-brand img {
-            width: 42px;
-            height: 42px;
+
+        .brand-logo {
+
+            width: 46px;
+            height: 46px;
+
+            border-radius: 12px;
 
             object-fit: contain;
 
-            border-radius: 10px;
-
             flex-shrink: 0;
+
+            box-shadow: var(--shadow);
         }
 
-        .app-brand-text {
+
+        .brand-text {
+
             min-width: 0;
         }
 
-        .app-brand-title {
-            margin: 0;
+
+        .brand-title {
 
             font-size: 17px;
 
@@ -180,68 +300,109 @@
             white-space: nowrap;
         }
 
-        .app-brand-subtitle {
-            margin: 2px 0 0;
+
+        .brand-subtitle {
 
             color: var(--muted);
 
             font-size: 11px;
 
+            margin-top: 2px;
+
             white-space: nowrap;
         }
+
 
         /* =====================================================
            NAVIGATION
            ===================================================== */
 
-        .app-nav {
+        .main-nav {
+
             display: flex;
 
             align-items: center;
 
+            justify-content: flex-end;
+
             gap: 6px;
 
-            flex-wrap: wrap;
+            min-width: 0;
+
+            flex: 1;
         }
 
-        .app-nav a {
+
+        .nav-link {
+
             display: inline-flex;
 
             align-items: center;
 
             justify-content: center;
 
-            min-height: 38px;
+            min-height: 42px;
 
             padding:
-                8px 12px;
+                9px 13px;
 
-            border-radius: 9px;
-
-            text-decoration: none;
+            border-radius: 10px;
 
             color: var(--muted);
+
+            text-decoration: none;
 
             font-size: 13px;
 
             font-weight: 800;
 
+            white-space: nowrap;
+
             transition:
-                background 0.15s ease,
-                color 0.15s ease;
+                background 0.18s ease,
+                color 0.18s ease,
+                transform 0.18s ease;
         }
 
-        .app-nav a:hover {
+
+        .nav-link:hover {
+
             background: var(--surface-soft);
+
             color: var(--text);
+
+            transform: translateY(-1px);
         }
+
+
+        .nav-link.active {
+
+            background: var(--primary);
+
+            color: white;
+        }
+
 
         /* =====================================================
            THEME BUTTON
            ===================================================== */
 
         .theme-button {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            width: 42px;
+            height: 42px;
+
+            padding: 0;
+
             border: 1px solid var(--border);
+
+            border-radius: 10px;
 
             background: var(--surface-soft);
 
@@ -249,119 +410,352 @@
 
             cursor: pointer;
 
-            min-height: 38px;
+            flex-shrink: 0;
 
-            padding:
-                8px 12px;
+            font-size: 18px;
 
-            border-radius: 9px;
-
-            font-size: 13px;
-
-            font-weight: 800;
+            transition:
+                transform 0.18s ease,
+                background 0.18s ease;
         }
 
+
+        .theme-button:hover {
+
+            transform: translateY(-1px);
+
+            background: var(--border);
+        }
+
+
         /* =====================================================
-           MAIN
+           PAGE CONTAINER
            ===================================================== */
 
-        main {
+        .page-container {
+
             width: 100%;
             max-width: 1400px;
 
             margin: 0 auto;
 
             padding:
-                28px 24px 50px;
+                30px 24px 50px;
+
+            min-width: 0;
+
+            overflow-x: hidden;
         }
 
+
         /* =====================================================
-           MOBILE HEADER
+           CONTENT
            ===================================================== */
 
-        @media (max-width: 700px) {
+        main {
 
-            .app-header-inner {
+            width: 100%;
+
+            min-width: 0;
+
+            overflow-x: hidden;
+        }
+
+
+        /* =====================================================
+           TABLE RESPONSIVENESS
+           ===================================================== */
+
+        .table-container {
+
+            width: 100%;
+
+            overflow-x: auto;
+
+            -webkit-overflow-scrolling: touch;
+        }
+
+
+        table {
+
+            max-width: 100%;
+        }
+
+
+        /* =====================================================
+           FORMS
+           ===================================================== */
+
+        input,
+        select,
+        textarea {
+
+            max-width: 100%;
+        }
+
+
+        /* =====================================================
+           MOBILE NAVIGATION
+           ===================================================== */
+
+        @media (max-width: 800px) {
+
+            .app-header {
+
+                position: sticky;
+
+                top: 0;
+            }
+
+
+            .header-inner {
+
+                min-height: auto;
+
                 padding:
                     10px 14px;
+
+                flex-direction: column;
+
+                align-items: stretch;
 
                 gap: 10px;
             }
 
-            .app-brand img {
-                width: 38px;
-                height: 38px;
+
+            .brand {
+
+                width: 100%;
+
+                justify-content: center;
             }
 
-            .app-brand-title {
-                font-size: 15px;
+
+            .brand-logo {
+
+                width: 42px;
+                height: 42px;
             }
 
-            .app-brand-subtitle {
-                display: none;
+
+            .brand-title {
+
+                font-size: 16px;
             }
 
-            .app-nav {
-                gap: 4px;
+
+            .brand-subtitle {
+
+                font-size: 10px;
             }
 
-            .app-nav a {
-                min-height: 34px;
+
+            .main-nav {
+
+                width: 100%;
+
+                display: grid;
+
+                grid-template-columns:
+                    repeat(5, minmax(0, 1fr));
+
+                gap: 5px;
+
+                align-items: stretch;
+
+                justify-content: stretch;
+            }
+
+
+            .nav-link {
+
+                width: 100%;
+
+                min-width: 0;
+
+                min-height: 42px;
 
                 padding:
-                    7px 8px;
+                    8px 4px;
+
+                border-radius: 9px;
 
                 font-size: 11px;
+
+                text-align: center;
+
+                overflow: hidden;
+
+                text-overflow: ellipsis;
             }
+
 
             .theme-button {
-                min-height: 34px;
 
-                padding:
-                    7px 9px;
+                width: 100%;
 
-                font-size: 11px;
+                min-height: 42px;
+
+                height: 42px;
+
+                border-radius: 9px;
+
+                font-size: 16px;
             }
 
-            main {
+
+            .page-container {
+
                 padding:
                     18px 12px 35px;
             }
         }
 
-        @media (max-width: 480px) {
 
-            .app-header-inner {
-                align-items: flex-start;
+        /* =====================================================
+           SMALL PHONES
+           ===================================================== */
+
+        @media (max-width: 430px) {
+
+            .header-inner {
+
+                padding:
+                    8px 8px;
             }
 
-            .app-brand {
-                flex: 1;
+
+            .brand {
+
+                gap: 9px;
             }
 
-            .app-nav {
-                justify-content: flex-end;
+
+            .brand-logo {
+
+                width: 38px;
+                height: 38px;
+
+                border-radius: 10px;
             }
 
-            .app-nav a {
+
+            .brand-title {
+
+                font-size: 14px;
+            }
+
+
+            .brand-subtitle {
+
+                display: none;
+            }
+
+
+            .main-nav {
+
+                gap: 3px;
+            }
+
+
+            .nav-link {
+
+                min-height: 40px;
+
+                padding:
+                    7px 2px;
+
                 font-size: 10px;
-                padding: 6px;
+
+                border-radius: 8px;
             }
+
 
             .theme-button {
-                font-size: 10px;
-                padding: 6px;
+
+                min-height: 40px;
+
+                height: 40px;
+
+                font-size: 15px;
+            }
+
+
+            .page-container {
+
+                padding:
+                    14px 9px 30px;
+            }
+        }
+
+
+        /* =====================================================
+           VERY SMALL PHONES
+           ===================================================== */
+
+        @media (max-width: 360px) {
+
+            .main-nav {
+
+                gap: 2px;
+            }
+
+
+            .nav-link {
+
+                font-size: 9px;
+
+                padding:
+                    7px 1px;
+            }
+
+
+            .theme-button {
+
+                font-size: 14px;
+            }
+        }
+
+
+        /* =====================================================
+           PREVENT DOUBLE-TAP ZOOM
+           ===================================================== */
+
+        a,
+        button {
+
+            touch-action: manipulation;
+        }
+
+
+        /* =====================================================
+           SAFE AREA FOR IPHONE
+           ===================================================== */
+
+        @supports (
+            padding: env(safe-area-inset-bottom)
+        ) {
+
+            .page-container {
+
+                padding-bottom:
+                    calc(
+                        30px +
+                        env(safe-area-inset-bottom)
+                    );
             }
         }
 
     </style>
 
-    {% block extra_css %}
-    {% endblock %}
-
 </head>
 
+
 <body>
+
+
+<div class="app">
+
 
     <!-- =====================================================
          HEADER
@@ -369,23 +763,29 @@
 
     <header class="app-header">
 
-        <div class="app-header-inner">
+        <div class="header-inner">
 
-            <a href="{% url 'dashboard' %}"
-               class="app-brand">
+
+            <!-- BRAND -->
+
+            <a
+                href="{% url 'dashboard' %}"
+                class="brand"
+            >
 
                 <img
                     src="{% static 'tracker/icon.png' %}"
                     alt="ISC Pool Tracker"
+                    class="brand-logo"
                 >
 
-                <div class="app-brand-text">
+                <div class="brand-text">
 
-                    <div class="app-brand-title">
+                    <div class="brand-title">
                         ISC Pool Tracker
                     </div>
 
-                    <div class="app-brand-subtitle">
+                    <div class="brand-subtitle">
                         Pool Business Management
                     </div>
 
@@ -393,31 +793,57 @@
 
             </a>
 
-            <nav class="app-nav">
 
-                <a href="{% url 'dashboard' %}">
+            <!-- NAVIGATION -->
+
+            <nav
+                class="main-nav"
+                aria-label="Main navigation"
+            >
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="nav-link"
+                    data-nav="dashboard"
+                >
                     Dashboard
                 </a>
 
-                <a href="{% url 'earnings_list' %}">
+
+                <a
+                    href="{% url 'earnings_list' %}"
+                    class="nav-link"
+                    data-nav="earnings"
+                >
                     Earnings
                 </a>
 
-                <a href="{% url 'expenses_list' %}">
+
+                <a
+                    href="{% url 'expenses_list' %}"
+                    class="nav-link"
+                    data-nav="expenses"
+                >
                     Expenses
                 </a>
 
-                <a href="{% url 'reports' %}">
+
+                <a
+                    href="{% url 'reports' %}"
+                    class="nav-link"
+                    data-nav="reports"
+                >
                     Reports
                 </a>
+
 
                 <button
                     type="button"
                     class="theme-button"
                     id="themeButton"
-                    onclick="toggleTheme()"
+                    aria-label="Toggle dark and light theme"
                 >
-                    ??
+                    🌙
                 </button>
 
             </nav>
@@ -428,123 +854,224 @@
 
 
     <!-- =====================================================
-         MAIN CONTENT
+         PAGE
          ===================================================== -->
 
-    <main>
+    <div class="page-container">
 
-        {% block content %}
-        {% endblock %}
+        <main>
 
-    </main>
+            {% block content %}
+            {% endblock %}
 
+        </main>
 
-    <!-- =====================================================
-         THEME SYSTEM
-         ===================================================== -->
-
-    <script>
-
-        (function () {
-
-            const savedTheme =
-                localStorage.getItem("iscPoolTheme");
-
-            if (savedTheme === "dark") {
-
-                document.documentElement
-                    .setAttribute(
-                        "data-theme",
-                        "dark"
-                    );
-
-            } else {
-
-                document.documentElement
-                    .setAttribute(
-                        "data-theme",
-                        "light"
-                    );
-
-            }
-
-        })();
+    </div>
 
 
-        function updateThemeButton() {
+</div>
 
-            const button =
-                document.getElementById(
-                    "themeButton"
-                );
 
-            if (!button) {
-                return;
-            }
+<script>
 
-            const isDark =
-                document.documentElement
-                    .getAttribute(
-                        "data-theme"
-                    ) === "dark";
+(function () {
 
-            button.textContent =
-                isDark
-                    ? "??"
-                    : "??";
+    "use strict";
+
+
+    /* =====================================================
+       THEME
+       ===================================================== */
+
+    const themeButton =
+        document.getElementById("themeButton");
+
+
+    function getStoredTheme() {
+
+        return localStorage.getItem(
+            "iscPoolTheme"
+        );
+
+    }
+
+
+    function getSystemTheme() {
+
+        return window.matchMedia &&
+            window.matchMedia(
+                "(prefers-color-scheme: dark)"
+            ).matches
+                ? "dark"
+                : "light";
+
+    }
+
+
+    function applyTheme(theme) {
+
+        document.documentElement
+            .setAttribute(
+                "data-theme",
+                theme
+            );
+
+
+        if (themeButton) {
+
+            themeButton.textContent =
+                theme === "dark"
+                    ? "☀️"
+                    : "🌙";
 
         }
 
 
-        function toggleTheme() {
+        window.dispatchEvent(
+            new CustomEvent(
+                "iscThemeChanged"
+            )
+        );
 
-            const current =
-                document.documentElement
-                    .getAttribute(
-                        "data-theme"
-                    );
-
-            const newTheme =
-                current === "dark"
-                    ? "light"
-                    : "dark";
-
-            document.documentElement
-                .setAttribute(
-                    "data-theme",
-                    newTheme
-                );
-
-            localStorage.setItem(
-                "iscPoolTheme",
-                newTheme
-            );
-
-            updateThemeButton();
-
-            window.dispatchEvent(
-                new Event(
-                    "iscThemeChanged"
-                )
-            );
-
-        }
+    }
 
 
-        document.addEventListener(
-            "DOMContentLoaded",
+    const savedTheme =
+        getStoredTheme();
+
+
+    applyTheme(
+        savedTheme ||
+        getSystemTheme()
+    );
+
+
+    if (themeButton) {
+
+        themeButton.addEventListener(
+            "click",
             function () {
 
-                updateThemeButton();
+                const current =
+                    document.documentElement
+                        .getAttribute(
+                            "data-theme"
+                        ) ||
+                    "light";
+
+
+                const next =
+                    current === "dark"
+                        ? "light"
+                        : "dark";
+
+
+                localStorage.setItem(
+                    "iscPoolTheme",
+                    next
+                );
+
+
+                applyTheme(next);
 
             }
         );
 
-    </script>
+    }
 
 
-    {% block extra_js %}
-    {% endblock %}
+    /* =====================================================
+       ACTIVE NAVIGATION
+       ===================================================== */
+
+    const path =
+        window.location.pathname;
+
+
+    const navLinks =
+        document.querySelectorAll(
+            ".nav-link"
+        );
+
+
+    navLinks.forEach(
+        function (link) {
+
+            const nav =
+                link.getAttribute(
+                    "data-nav"
+                );
+
+
+            let active = false;
+
+
+            if (
+                nav === "dashboard" &&
+                (
+                    path === "/" ||
+                    path === ""
+                )
+            ) {
+
+                active = true;
+
+            }
+
+
+            if (
+                nav === "earnings" &&
+                path.startsWith(
+                    "/earnings"
+                )
+            ) {
+
+                active = true;
+
+            }
+
+
+            if (
+                nav === "expenses" &&
+                path.startsWith(
+                    "/expenses"
+                )
+            ) {
+
+                active = true;
+
+            }
+
+
+            if (
+                nav === "reports" &&
+                path.startsWith(
+                    "/reports"
+                )
+            ) {
+
+                active = true;
+
+            }
+
+
+            if (active) {
+
+                link.classList.add(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+
+})();
+
+</script>
+
 
 </body>
+
 </html>
