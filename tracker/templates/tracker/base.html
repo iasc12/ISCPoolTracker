@@ -1,70 +1,550 @@
-﻿
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>
-        {% block title %}
-            ISC Pool Tracker
-        {% endblock %}
-    </title>
+    <title>{% block title %}ISC Pool Tracker{% endblock %}</title>
 
-    <!-- =====================================================
-         ISC POOL TRACKER APP ICON
-         ===================================================== -->
+    <!-- App icon -->
+    <link rel="icon"
+          type="image/png"
+          href="{% static 'tracker/icon.png' %}">
 
-    <link
-        rel="icon"
-        type="image/png"
-        href="{% static 'tracker/icon.png' %}"
-    >
+    <link rel="apple-touch-icon"
+          href="{% static 'tracker/icon.png' %}">
 
-    <link
-        rel="apple-touch-icon"
-        href="{% static 'tracker/icon.png' %}"
-    >
+    <!-- PWA -->
+    <link rel="manifest"
+          href="{% static 'tracker/manifest.json' %}">
 
-    <!-- =====================================================
-         PROGRESSIVE WEB APP
-         ===================================================== -->
-
-    <link
-        rel="manifest"
-        href="{% static 'tracker/manifest.json' %}"
-    >
-
-    <meta
-        name="theme-color"
-        content="#2563eb"
-    >
-
-    <meta
-        name="mobile-web-app-capable"
-        content="yes"
-    >
-
-    <meta
-        name="apple-mobile-web-app-capable"
-        content="yes"
-    >
-
-    <meta
-        name="apple-mobile-web-app-status-bar-style"
-        content="default"
-    >
-
-    <meta
-        name="apple-mobile-web-app-title"
-        content="ISC Pool"
-    >
+    <meta name="theme-color" content="#2563eb">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ISC Pool">
 
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            background: var(--background);
+            color: var(--text);
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease;
+        }
+
+        :root {
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --surface-soft: #f1f5f9;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+
+            --primary: #2563eb;
+            --success: #16a34a;
+            --danger: #dc2626;
+
+            --radius: 16px;
+
+            --shadow:
+                0 8px 25px rgba(15, 23, 42, 0.08);
+        }
+
+        html[data-theme="dark"] {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-soft: #334155;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: #334155;
+
+            --primary: #60a5fa;
+            --success: #4ade80;
+            --danger: #f87171;
+
+            --shadow:
+                0 8px 25px rgba(0, 0, 0, 0.30);
+        }
+
+        a {
+            color: inherit;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        /* =====================================================
+           APP HEADER
+           ===================================================== */
+
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            width: 100%;
+
+            background: var(--surface);
+
+            border-bottom:
+                1px solid var(--border);
+
+            box-shadow:
+                0 2px 10px rgba(15, 23, 42, 0.05);
+        }
+
+        .app-header-inner {
+            width: 100%;
+            max-width: 1400px;
+
+            margin: 0 auto;
+
+            padding:
+                12px 24px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+        .app-brand {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            text-decoration: none;
+
+            min-width: 0;
+        }
+
+        .app-brand img {
+            width: 42px;
+            height: 42px;
+
+            object-fit: contain;
+
+            border-radius: 10px;
+
+            flex-shrink: 0;
+        }
+
+        .app-brand-text {
+            min-width: 0;
+        }
+
+        .app-brand-title {
+            margin: 0;
+
+            font-size: 17px;
+
+            font-weight: 900;
+
+            white-space: nowrap;
+        }
+
+        .app-brand-subtitle {
+            margin: 2px 0 0;
+
+            color: var(--muted);
+
+            font-size: 11px;
+
+            white-space: nowrap;
+        }
+
+        /* =====================================================
+           NAVIGATION
+           ===================================================== */
+
+        .app-nav {
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            flex-wrap: wrap;
+        }
+
+        .app-nav a {
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-height: 38px;
+
+            padding:
+                8px 12px;
+
+            border-radius: 9px;
+
+            text-decoration: none;
+
+            color: var(--muted);
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            transition:
+                background 0.15s ease,
+                color 0.15s ease;
+        }
+
+        .app-nav a:hover {
+            background: var(--surface-soft);
+            color: var(--text);
+        }
+
+        /* =====================================================
+           THEME BUTTON
+           ===================================================== */
+
+        .theme-button {
+            border: 1px solid var(--border);
+
+            background: var(--surface-soft);
+
+            color: var(--text);
+
+            cursor: pointer;
+
+            min-height: 38px;
+
+            padding:
+                8px 12px;
+
+            border-radius: 9px;
+
+            font-size: 13px;
+
+            font-weight: 800;
+        }
+
+        /* =====================================================
+           MAIN
+           ===================================================== */
+
+        main {
+            width: 100%;
+            max-width: 1400px;
+
+            margin: 0 auto;
+
+            padding:
+                28px 24px 50px;
+        }
+
+        /* =====================================================
+           MOBILE HEADER
+           ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .app-header-inner {
+                padding:
+                    10px 14px;
+
+                gap: 10px;
+            }
+
+            .app-brand img {
+                width: 38px;
+                height: 38px;
+            }
+
+            .app-brand-title {
+                font-size: 15px;
+            }
+
+            .app-brand-subtitle {
+                display: none;
+            }
+
+            .app-nav {
+                gap: 4px;
+            }
+
+            .app-nav a {
+                min-height: 34px;
+
+                padding:
+                    7px 8px;
+
+                font-size: 11px;
+            }
+
+            .theme-button {
+                min-height: 34px;
+
+                padding:
+                    7px 9px;
+
+                font-size: 11px;
+            }
+
+            main {
+                padding:
+                    18px 12px 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .app-header-inner {
+                align-items: flex-start;
+            }
+
+            .app-brand {
+                flex: 1;
+            }
+
+            .app-nav {
+                justify-content: flex-end;
+            }
+
+            .app-nav a {
+                font-size: 10px;
+                padding: 6px;
+            }
+
+            .theme-button {
+                font-size: 10px;
+                padding: 6px;
+            }
+        }
+
+    </style>
+
+    {% block extra_css %}
+    {% endblock %}
+
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="app-header">
+
+        <div class="app-header-inner">
+
+            <a href="{% url 'dashboard' %}"
+               class="app-brand">
+
+                <img
+                    src="{% static 'tracker/icon.png' %}"
+                    alt="ISC Pool Tracker"
+                >
+
+                <div class="app-brand-text">
+
+                    <div class="app-brand-title">
+                        ISC Pool Tracker
+                    </div>
+
+                    <div class="app-brand-subtitle">
+                        Pool Business Management
+                    </div>
+
+                </div>
+
+            </a>
+
+            <nav class="app-nav">
+
+                <a href="{% url 'dashboard' %}">
+                    Dashboard
+                </a>
+
+                <a href="{% url 'earnings_list' %}">
+                    Earnings
+                </a>
+
+                <a href="{% url 'expenses_list' %}">
+                    Expenses
+                </a>
+
+                <a href="{% url 'reports' %}">
+                    Reports
+                </a>
+
+                <button
+                    type="button"
+                    class="theme-button"
+                    id="themeButton"
+                    onclick="toggleTheme()"
+                >
+                    ??
+                </button>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main>
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+
+    <!-- =====================================================
+         THEME SYSTEM
+         ===================================================== -->
+
+    <script>
+
+        (function () {
+
+            const savedTheme =
+                localStorage.getItem("iscPoolTheme");
+
+            if (savedTheme === "dark") {
+
+                document.documentElement
+                    .setAttribute(
+                        "data-theme",
+                        "dark"
+                    );
+
+            } else {
+
+                document.documentElement
+                    .setAttribute(
+                        "data-theme",
+                        "light"
+                    );
+
+            }
+
+        })();
+
+
+        function updateThemeButton() {
+
+            const button =
+                document.getElementById(
+                    "themeButton"
+                );
+
+            if (!button) {
+                return;
+            }
+
+            const isDark =
+                document.documentElement
+                    .getAttribute(
+                        "data-theme"
+                    ) === "dark";
+
+            button.textContent =
+                isDark
+                    ? "??"
+                    : "??";
+
+        }
+
+
+        function toggleTheme() {
+
+            const current =
+                document.documentElement
+                    .getAttribute(
+                        "data-theme"
+                    );
+
+            const newTheme =
+                current === "dark"
+                    ? "light"
+                    : "dark";
+
+            document.documentElement
+                .setAttribute(
+                    "data-theme",
+                    newTheme
+                );
+
+            localStorage.setItem(
+                "iscPoolTheme",
+                newTheme
+            );
+
+            updateThemeButton();
+
+            window.dispatchEvent(
+                new Event(
+                    "iscThemeChanged"
+                )
+            );
+
+        }
+
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                updateThemeButton();
+
+            }
+        );
+
+    </script>
+
+
+    {% block extra_js %}
+    {% endblock %}
+
+</body>
+</html>
