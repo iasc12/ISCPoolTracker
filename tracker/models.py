@@ -37,20 +37,28 @@ class Expense(models.Model):
 
     EXPENSE_TYPE_CHOICES = [
         (
-            "EMPLOYEE",
-            "Employee Payment",
+            "SALARY",
+            "Salary",
+        ),
+        (
+            "ELECTRICITY",
+            "Electricity",
+        ),
+        (
+            "RENT",
+            "Rent",
         ),
         (
             "POLICE",
-            "Police Payment",
+            "Police",
         ),
         (
-            "FUEL",
-            "Fuel",
+            "OTHERS",
+            "Others",
         ),
         (
-            "OTHER",
-            "Other Expense",
+            "MAINTENANCE",
+            "Maintenance",
         ),
     ]
 

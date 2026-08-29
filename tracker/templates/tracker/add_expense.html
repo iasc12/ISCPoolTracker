@@ -1,418 +1,116 @@
 {% extends "tracker/base.html" %}
 
 {% block title %}
-{% if editing %}
-Edit Expense | ISC Pool Tracker
-{% else %}
-Add Expense | ISC Pool Tracker
-{% endif %}
+Add Expense
 {% endblock %}
 
 {% block content %}
 
-<style>
-/* =========================================================
-   EXPENSE FORM PAGE
-   ========================================================= */
+<div class="form-page">
 
-.expense-page {
-    width: 100%;
-    max-width: 720px;
-    margin: 0 auto;
-}
+<div class="form-card">
 
-.expense-header {
-    margin-bottom: 25px;
-}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'dashboard' %}" class="button secondary">
+            ← Back to Dashboard
+        </a>
+    </div>
 
-.expense-header .eyebrow {
-    display: block;
-    margin-bottom: 7px;
-    font-size: 12px;
-    font-weight: 900;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-}
+    <div class="form-header">
 
-.expense-header h1 {
-    margin: 0;
-    color: var(--text);
-    font-size: 30px;
-    line-height: 1.2;
-}
+        <div class="form-icon">
+            💸
+        </div>
 
-.expense-header p {
-    margin: 8px 0 0;
-    color: var(--muted);
-    font-size: 14px;
-}
+        <div>
+            <h1>Add Expense</h1>
 
+            <p>
+                {{ today|date:"l, d F Y" }}
+            </p>
+        </div>
 
-/* =========================================================
-   FORM CARD
-   ========================================================= */
+    </div>
 
-.expense-form-card {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 25px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-}
-
-
-/* =========================================================
-   FORM
-   ========================================================= */
-
-.expense-form {
-    width: 100%;
-}
-
-.form-field {
-    margin-bottom: 20px;
-}
-
-.form-field label {
-    display: block;
-    margin-bottom: 7px;
-    color: var(--text);
-    font-size: 14px;
-    font-weight: 800;
-}
-
-.form-input {
-    width: 100%;
-    min-height: 46px;
-    box-sizing: border-box;
-    padding: 11px 13px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--surface-soft);
-    color: var(--text);
-    font-family: inherit;
-    font-size: 15px;
-    outline: none;
-}
-
-textarea.form-input {
-    min-height: 100px;
-    resize: vertical;
-}
-
-select.form-input {
-    cursor: pointer;
-}
-
-.form-input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-}
-
-
-/* =========================================================
-   HELP TEXT
-   ========================================================= */
-
-.form-help {
-    margin-top: 6px;
-    color: var(--muted);
-    font-size: 12px;
-}
-
-
-/* =========================================================
-   ERRORS
-   ========================================================= */
-
-.form-errors {
-    margin-top: 7px;
-    color: #dc2626;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.non-field-errors {
-    margin-bottom: 20px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    background: rgba(220, 38, 38, 0.08);
-    border: 1px solid rgba(220, 38, 38, 0.2);
-    color: #dc2626;
-}
-
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
-
-.expense-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 25px;
-}
-
-.expense-button {
-    min-height: 45px;
-    padding: 11px 20px;
-    border-radius: 10px;
-    border: none;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 800;
-    text-decoration: none;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-}
-
-.save-expense-button {
-    background: var(--primary);
-    color: white;
-}
-
-.cancel-expense-button {
-    background: var(--surface-soft);
-    color: var(--text);
-    border: 1px solid var(--border);
-}
-
-.expense-button:hover {
-    opacity: 0.92;
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 700px) {
-
-    .expense-page {
-        width: 100%;
-    }
-
-    .expense-header h1 {
-        font-size: 26px;
-    }
-
-    .expense-form-card {
-        padding: 18px;
-    }
-
-    .expense-actions {
-        display: grid;
-        grid-template-columns: 1fr;
-    }
-
-    .expense-button {
-        width: 100%;
-    }
-}
-
-
-/* =========================================================
-   SMALL PHONES
-   ========================================================= */
-
-@media (max-width: 420px) {
-
-    .expense-form-card {
-        padding: 16px;
-    }
-
-    .expense-header h1 {
-        font-size: 24px;
-    }
-
-    .form-input {
-        font-size: 16px;
-    }
-}
-</style>
-
-<div class="expense-page">
-
-<!-- =====================================================
-     HEADER
-     ===================================================== -->
-
-<div class="expense-header">
-
-    <span class="eyebrow">
-        EXPENSE MANAGEMENT
-    </span>
-
-    <h1>
-        {% if editing %}
-            Edit Expense
-        {% else %}
-            Record Expense
-        {% endif %}
-    </h1>
-
-    <p>
-        {% if editing %}
-            Update the details of this expense.
-        {% else %}
-            Record an expense for your pool business.
-        {% endif %}
-    </p>
-
-</div>
-
-
-<!-- =====================================================
-     FORM CARD
-     ===================================================== -->
-
-<div class="expense-form-card">
-
-    <form
-        method="post"
-        class="expense-form"
-    >
+    <form method="post">
 
         {% csrf_token %}
 
-
         {% if form.non_field_errors %}
-
-            <div class="non-field-errors">
-
+            <div class="form-errors">
                 {{ form.non_field_errors }}
-
             </div>
-
         {% endif %}
 
+        <div class="form-group">
 
-        <!-- DATE -->
-
-        <div class="form-field">
-
-            <label for="{{ form.date.id_for_label }}">
-                Date
-            </label>
-
-            {{ form.date }}
-
-            {% if form.date.errors %}
-
-                <div class="form-errors">
-                    {{ form.date.errors }}
-                </div>
-
-            {% endif %}
-
-        </div>
-
-
-        <!-- EXPENSE TYPE -->
-
-        <div class="form-field">
-
-            <label for="{{ form.expense_type.id_for_label }}">
+            <label>
                 Expense Type
             </label>
 
             {{ form.expense_type }}
 
             {% if form.expense_type.errors %}
-
-                <div class="form-errors">
+                <div class="field-error">
                     {{ form.expense_type.errors }}
                 </div>
-
             {% endif %}
-
-            <div class="form-help">
-                Select Fuel, Employee Payment, Police Payment, or Other Expense.
-            </div>
 
         </div>
 
+        <div class="form-group">
 
-        <!-- AMOUNT -->
-
-        <div class="form-field">
-
-            <label for="{{ form.amount.id_for_label }}">
+            <label>
                 Amount
             </label>
 
             {{ form.amount }}
 
             {% if form.amount.errors %}
-
-                <div class="form-errors">
+                <div class="field-error">
                     {{ form.amount.errors }}
                 </div>
-
             {% endif %}
 
         </div>
 
+        <div class="form-group">
 
-        <!-- NOTES -->
-
-        <div class="form-field">
-
-            <label for="{{ form.notes.id_for_label }}">
+            <label>
                 Notes
             </label>
 
             {{ form.notes }}
 
             {% if form.notes.errors %}
-
-                <div class="form-errors">
+                <div class="field-error">
                     {{ form.notes.errors }}
                 </div>
-
             {% endif %}
-
-            <div class="form-help">
-                Optional. Add any useful details about this expense.
-            </div>
 
         </div>
 
-
-        <!-- ACTIONS -->
-
-        <div class="expense-actions">
-
-            <button
-                type="submit"
-                class="expense-button save-expense-button"
-            >
-                {% if editing %}
-                    Save Changes
-                {% else %}
-                    Save Expense
-                {% endif %}
-            </button>
-
+        <div class="form-actions">
 
             <a
                 href="{% url 'dashboard' %}"
-                class="expense-button cancel-expense-button"
+                class="button secondary"
             >
                 Cancel
             </a>
+
+            <button
+                type="submit"
+                class="button expense"
+            >
+                Save Expense
+            </button>
 
         </div>
 
     </form>
 
 </div>
-
 
 </div>
 

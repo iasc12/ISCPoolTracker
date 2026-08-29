@@ -1,25 +1,36 @@
+
 from django.urls import path
 
 from .views import (
     dashboard,
     add_earning,
-    add_expense,
     earnings_list,
     edit_earning,
     delete_earning,
+    add_expense,
     expenses_list,
     edit_expense,
     delete_expense,
     reports,
+    generate_report,
 )
 
+
 urlpatterns = [
+
+    # ========================================================
+    # DASHBOARD
+    # ========================================================
 
     path(
         "",
         dashboard,
         name="dashboard",
     ),
+
+    # ========================================================
+    # EARNINGS
+    # ========================================================
 
     path(
         "earnings/add/",
@@ -45,6 +56,10 @@ urlpatterns = [
         name="delete_earning",
     ),
 
+    # ========================================================
+    # EXPENSES
+    # ========================================================
+
     path(
         "expenses/add/",
         add_expense,
@@ -68,9 +83,20 @@ urlpatterns = [
         delete_expense,
         name="delete_expense",
     ),
+
+    # ========================================================
+    # REPORTS
+    # ========================================================
+
     path(
-    "reports/",
-    reports,
-    name="reports",
-),
+        "reports/",
+        reports,
+        name="reports",
+    ),
+
+    path(
+        "reports/generate/",
+        generate_report,
+        name="generate_report",
+    ),
 ]

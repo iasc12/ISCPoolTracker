@@ -4,26 +4,46 @@
 
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
-
+```
 <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    content="width=device-width, initial-scale=1.0"
 >
 
 <meta name="theme-color" content="#2563eb">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="ISC Pool">
+
+<meta
+    name="mobile-web-app-capable"
+    content="yes"
+>
+
+<meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+>
+
+<meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+>
+
+<meta
+    name="apple-mobile-web-app-title"
+    content="ISC Pool"
+>
 
 <title>
     {% block title %}
         ISC Pool Tracker
     {% endblock %}
 </title>
-<link rel="stylesheet" href="{% static 'tracker/css/style.css' %}">
+
+<link
+    rel="stylesheet"
+    href="{% static 'tracker/css/style.css' %}"
+>
 
 <link
     rel="icon"
@@ -42,14 +62,7 @@
 >
 
 <style>
-
-    /* =====================================================
-       GLOBAL
-       ===================================================== */
-
-    *,
-    *::before,
-    *::after {
+    * {
         box-sizing: border-box;
     }
 
@@ -64,25 +77,13 @@
         margin: 0;
         width: 100%;
         min-height: 100vh;
-
-        font-family:
-            Arial,
-            Helvetica,
-            sans-serif;
-
+        font-family: Arial, Helvetica, sans-serif;
         background: var(--background);
         color: var(--text);
-
         overflow-x: hidden;
-
         transition:
             background 0.25s ease,
             color 0.25s ease;
-    }
-
-    img,
-    canvas {
-        max-width: 100%;
     }
 
     button,
@@ -96,179 +97,114 @@
         color: inherit;
     }
 
-
-    /* =====================================================
-       LIGHT THEME
-       ===================================================== */
+    img {
+        max-width: 100%;
+    }
 
     :root {
         --background: #f1f5f9;
         --surface: #ffffff;
         --surface-soft: #f8fafc;
-
         --text: #0f172a;
         --muted: #64748b;
-
         --border: #e2e8f0;
-
         --primary: #2563eb;
         --success: #16a34a;
         --danger: #dc2626;
-
         --radius: 16px;
-
-        --shadow:
-            0 6px 22px rgba(15, 23, 42, 0.07);
+        --shadow: 0 6px 22px rgba(15, 23, 42, 0.07);
     }
-
-
-    /* =====================================================
-       DARK THEME
-       ===================================================== */
 
     html[data-theme="dark"] {
         --background: #0b1120;
         --surface: #111827;
         --surface-soft: #1f2937;
-
         --text: #f8fafc;
         --muted: #94a3b8;
-
         --border: #334155;
-
         --primary: #60a5fa;
         --success: #4ade80;
         --danger: #f87171;
-
-        --shadow:
-            0 6px 22px rgba(0, 0, 0, 0.28);
+        --shadow: 0 6px 22px rgba(0, 0, 0, 0.28);
     }
-
-
-    /* =====================================================
-       APP SHELL
-       ===================================================== */
 
     .app-shell {
         width: 100%;
         min-height: 100vh;
-
         display: flex;
         flex-direction: column;
     }
 
-
-    /* =====================================================
+    /* =========================
        NAVIGATION
-       ===================================================== */
+       ========================= */
 
     .topbar {
         width: 100%;
-
         background: var(--surface);
-
-        border-bottom:
-            1px solid var(--border);
-
-        box-shadow:
-            var(--shadow);
-
+        border-bottom: 1px solid var(--border);
+        box-shadow: var(--shadow);
         position: sticky;
         top: 0;
-
         z-index: 1000;
     }
 
     .nav-inner {
         width: 100%;
         max-width: 1450px;
-
         min-height: 66px;
-
         margin: 0 auto;
-
-        padding:
-            8px 20px;
+        padding: 8px 20px;
 
         display: flex;
         align-items: center;
-
         gap: 12px;
     }
-
-
-    /* =====================================================
-       BRAND
-       ===================================================== */
 
     .brand {
         display: flex;
         align-items: center;
-
         gap: 9px;
-
         text-decoration: none;
-
         font-weight: 900;
-
         white-space: nowrap;
-
         flex-shrink: 0;
     }
 
     .brand img {
         width: 40px;
         height: 40px;
-
         object-fit: contain;
-
         border-radius: 10px;
-
-        flex-shrink: 0;
     }
 
     .brand-name {
         display: block;
-
         font-size: 14px;
-
         line-height: 1.1;
     }
 
     .brand-subtitle {
         display: block;
-
         margin-top: 3px;
-
         color: var(--muted);
-
         font-size: 8px;
-
         letter-spacing: 1px;
     }
 
-
-    /* =====================================================
-       NAV LINKS
-       ===================================================== */
-
     .nav-links {
         flex: 1;
-
         min-width: 0;
 
         display: flex;
         align-items: center;
         justify-content: center;
-
         gap: 4px;
     }
 
     .nav-link {
         min-height: 40px;
-
-        padding:
-            9px 12px;
+        padding: 9px 12px;
 
         display: inline-flex;
         align-items: center;
@@ -277,12 +213,10 @@
         border-radius: 9px;
 
         text-decoration: none;
-
         color: var(--muted);
 
         font-size: 12px;
         font-weight: 800;
-
         white-space: nowrap;
 
         transition:
@@ -294,29 +228,18 @@
     .nav-link:hover {
         background: var(--surface-soft);
         color: var(--text);
-
-        transform:
-            translateY(-1px);
+        transform: translateY(-1px);
     }
 
     .nav-link.active {
-        background:
-            rgba(37, 99, 235, 0.10);
-
+        background: rgba(37, 99, 235, 0.10);
         color: var(--primary);
     }
-
-
-    /* =====================================================
-       NAV RIGHT
-       ===================================================== */
 
     .nav-right {
         display: flex;
         align-items: center;
-
         gap: 6px;
-
         flex-shrink: 0;
     }
 
@@ -325,14 +248,10 @@
         width: 40px;
         height: 40px;
 
-        border:
-            1px solid var(--border);
-
+        border: 1px solid var(--border);
         border-radius: 9px;
 
-        background:
-            var(--surface-soft);
-
+        background: var(--surface-soft);
         color: var(--text);
 
         cursor: pointer;
@@ -341,197 +260,106 @@
         align-items: center;
         justify-content: center;
 
-        flex-shrink: 0;
-
         font-size: 17px;
-
-        transition:
-            transform 0.15s ease,
-            background 0.15s ease;
     }
 
     .theme-button:hover,
     .menu-button:hover {
-        transform:
-            translateY(-1px);
+        transform: translateY(-1px);
     }
 
     .menu-button {
         display: none;
     }
 
-
-    /* =====================================================
-       MAIN CONTENT
-       ===================================================== */
+    /* =========================
+       MAIN
+       ========================= */
 
     .app-container {
         width: 100%;
         max-width: 1450px;
-
-        margin:
-            0 auto;
-
-        padding:
-            18px 20px 12px;
-
-        flex: 0 0 auto;
+        margin: 0 auto;
+        padding: 18px 20px 12px;
+        flex: 1 0 auto;
     }
 
-
-    /* =====================================================
+    /* =========================
        MESSAGES
-       ===================================================== */
+       ========================= */
 
     .messages-container {
         position: fixed;
-
         top: 78px;
-
         left: 50%;
+        transform: translateX(-50%);
 
-        transform:
-            translateX(-50%);
-
-        width:
-            min(92vw, 500px);
+        width: min(92vw, 500px);
 
         z-index: 2000;
     }
 
     .message {
-        padding:
-            13px 17px;
-
+        padding: 13px 17px;
         margin-bottom: 8px;
 
         border-radius: 11px;
 
-        background:
-            var(--surface);
+        background: var(--surface);
+        border: 1px solid var(--border);
 
-        border:
-            1px solid var(--border);
-
-        box-shadow:
-            var(--shadow);
+        box-shadow: var(--shadow);
 
         font-size: 13px;
-
         font-weight: 800;
-
         text-align: center;
-
-        animation:
-            messageIn
-            0.25s ease;
     }
 
     .message.success {
-        border-color:
-            rgba(22, 163, 74, 0.35);
-
-        color:
-            var(--success);
+        color: var(--success);
+        border-color: rgba(22, 163, 74, 0.35);
     }
 
     .message.error {
-        border-color:
-            rgba(220, 38, 38, 0.35);
-
-        color:
-            var(--danger);
+        color: var(--danger);
+        border-color: rgba(220, 38, 38, 0.35);
     }
 
-    @keyframes messageIn {
-
-        from {
-            opacity: 0;
-
-            transform:
-                translateY(-10px);
-        }
-
-        to {
-            opacity: 1;
-
-            transform:
-                translateY(0);
-        }
-    }
-
-
-    /* =====================================================
+    /* =========================
        FOOTER
-       ===================================================== */
+       ========================= */
 
     .app-footer {
         width: 100%;
-
         margin-top: 10px;
-
-        padding:
-            16px 15px 18px;
+        padding: 16px 15px 18px;
 
         text-align: center;
 
         color: var(--muted);
-
         font-size: 11px;
-
         line-height: 1.45;
     }
 
     .footer-main {
         font-weight: 800;
-
         color: var(--text);
-
         margin-bottom: 2px;
     }
 
-
-    /* =====================================================
-       TABLET
-       ===================================================== */
-
-    @media (max-width: 900px) {
-
-        .nav-inner {
-            padding:
-                8px 14px;
-        }
-
-        .nav-link {
-            padding:
-                9px 9px;
-
-            font-size: 11px;
-        }
-
-        .app-container {
-            padding:
-                15px 14px 10px;
-        }
-    }
-
-
-    /* =====================================================
+    /* =========================
        MOBILE
-       ===================================================== */
+       ========================= */
 
     @media (max-width: 700px) {
 
         .nav-inner {
             min-height: 60px;
-
-            padding:
-                7px 10px;
+            padding: 7px 10px;
         }
 
         .brand {
             flex: 1;
-
             min-width: 0;
         }
 
@@ -548,36 +376,26 @@
             font-size: 7px;
         }
 
-
-        /* Mobile navigation menu */
-
         .nav-links {
             display: none;
 
             position: absolute;
 
             top: 59px;
-
             left: 8px;
             right: 8px;
 
             padding: 8px;
 
-            background:
-                var(--surface);
+            background: var(--surface);
 
-            border:
-                1px solid var(--border);
-
+            border: 1px solid var(--border);
             border-radius: 12px;
 
-            box-shadow:
-                var(--shadow);
+            box-shadow: var(--shadow);
 
             flex-direction: column;
-
             align-items: stretch;
-
             gap: 3px;
         }
 
@@ -587,13 +405,11 @@
 
         .nav-link {
             width: 100%;
-
             min-height: 42px;
 
             justify-content: flex-start;
 
-            padding:
-                10px 13px;
+            padding: 10px 13px;
 
             font-size: 13px;
         }
@@ -602,49 +418,26 @@
             display: inline-flex;
         }
 
-
-        /* Main content */
-
         .app-container {
-            width: 100%;
-
-            padding:
-                12px 10px 8px;
+            padding: 12px 10px 8px;
         }
-
-
-        /* Messages */
 
         .messages-container {
             top: 68px;
-
-            width:
-                min(94vw, 450px);
+            width: min(94vw, 450px);
         }
-
-
-        /* Footer */
 
         .app-footer {
             margin-top: 8px;
-
-            padding:
-                13px 10px 15px;
-
+            padding: 13px 10px 15px;
             font-size: 10px;
         }
     }
 
-
-    /* =====================================================
-       SMALL PHONES
-       ===================================================== */
-
     @media (max-width: 420px) {
 
         .nav-inner {
-            padding:
-                6px 8px;
+            padding: 6px 8px;
         }
 
         .brand img {
@@ -660,24 +453,20 @@
         .menu-button {
             width: 37px;
             height: 37px;
-
             font-size: 16px;
         }
 
         .app-container {
-            padding:
-                10px 8px 6px;
+            padding: 10px 8px 6px;
         }
 
         .app-footer {
             font-size: 9px;
-
-            padding:
-                11px 8px 13px;
+            padding: 11px 8px 13px;
         }
     }
-
 </style>
+```
 
 </head>
 
@@ -685,14 +474,12 @@
 
 <div class="app-shell">
 
-<!-- =====================================================
-     NAVIGATION
-     ===================================================== -->
+```
+<!-- NAVIGATION -->
 
 <header class="topbar">
 
     <div class="nav-inner">
-
 
         <a
             href="{% url 'dashboard' %}"
@@ -718,7 +505,6 @@
 
         </a>
 
-
         <nav
             class="nav-links"
             id="mainNavigation"
@@ -735,14 +521,14 @@
                 href="{% url 'earnings_list' %}"
                 class="nav-link"
             >
-                Earnings
+                Earnings History
             </a>
 
             <a
                 href="{% url 'expenses_list' %}"
                 class="nav-link"
             >
-                Expenses
+                Expenses History
             </a>
 
             <a
@@ -753,7 +539,6 @@
             </a>
 
         </nav>
-
 
         <div class="nav-right">
 
@@ -777,15 +562,12 @@
 
         </div>
 
-
     </div>
 
 </header>
 
 
-<!-- =====================================================
-     MESSAGES
-     ===================================================== -->
+<!-- MESSAGES -->
 
 {% if messages %}
 
@@ -793,12 +575,7 @@
 
         {% for message in messages %}
 
-            <div
-                class="message
-                {% if message.tags %}
-                    {{ message.tags }}
-                {% endif %}"
-            >
+            <div class="message {{ message.tags }}">
                 {{ message }}
             </div>
 
@@ -809,9 +586,7 @@
 {% endif %}
 
 
-<!-- =====================================================
-     MAIN CONTENT
-     ===================================================== -->
+<!-- MAIN CONTENT -->
 
 <main class="app-container">
 
@@ -821,9 +596,7 @@
 </main>
 
 
-<!-- =====================================================
-     FOOTER
-     ===================================================== -->
+<!-- FOOTER -->
 
 <footer class="app-footer">
 
@@ -840,6 +613,7 @@
     </div>
 
 </footer>
+```
 
 </div>
 
@@ -847,28 +621,21 @@
 
 (function () {
 
-    const html =
-        document.documentElement;
+    const html = document.documentElement;
 
     const themeButton =
-        document.getElementById(
-            "themeButton"
-        );
+        document.getElementById("themeButton");
 
     const menuButton =
-        document.getElementById(
-            "menuButton"
-        );
+        document.getElementById("menuButton");
 
     const navigation =
-        document.getElementById(
-            "mainNavigation"
-        );
+        document.getElementById("mainNavigation");
 
 
-    /* =====================================================
+    /* =========================
        THEME
-       ===================================================== */
+       ========================= */
 
     function getSavedTheme() {
 
@@ -883,6 +650,7 @@
             return null;
 
         }
+
     }
 
 
@@ -895,9 +663,8 @@
                 theme
             );
 
-        } catch (error) {
+        } catch (error) {}
 
-        }
     }
 
 
@@ -907,7 +674,6 @@
             "data-theme",
             theme
         );
-
 
         if (themeButton) {
 
@@ -925,11 +691,8 @@
 
         }
 
-
         window.dispatchEvent(
-            new Event(
-                "iscThemeChanged"
-            )
+            new Event("iscThemeChanged")
         );
 
     }
@@ -984,9 +747,9 @@
     }
 
 
-    /* =====================================================
+    /* =========================
        MOBILE MENU
-       ===================================================== */
+       ========================= */
 
     if (
         menuButton &&
@@ -1052,22 +815,19 @@
     }
 
 
-    /* =====================================================
-       AUTO HIDE MESSAGES
-       ===================================================== */
+    /* =========================
+       AUTO-HIDE MESSAGES
+       ========================= */
 
     setTimeout(
         function () {
 
             document
-                .querySelectorAll(
-                    ".message"
-                )
+                .querySelectorAll(".message")
                 .forEach(
                     function (message) {
 
-                        message.style.opacity =
-                            "0";
+                        message.style.opacity = "0";
 
                         message.style.transform =
                             "translateY(-10px)";
@@ -1097,131 +857,3 @@
 
 </body>
 </html>
-
-
-/* =========================================================
-   ISC POOL TRACKER - DASHBOARD ACTION BUTTONS
-   FINAL OVERRIDE
-   ========================================================= */
-
-.isc-action-buttons {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: stretch !important;
-    justify-content: stretch !important;
-    gap: 20px !important;
-    width: 100% !important;
-    margin: 25px 0 35px 0 !important;
-    padding: 0 !important;
-    position: relative !important;
-    z-index: 99999 !important;
-}
-
-.isc-action-buttons .isc-action-button {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    flex: 1 1 0 !important;
-    width: 50% !important;
-    min-height: 80px !important;
-
-    padding: 20px 30px !important;
-
-    border-radius: 16px !important;
-    border: 3px solid transparent !important;
-
-    font-family: Arial, Helvetica, sans-serif !important;
-    font-size: 20px !important;
-    font-weight: 800 !important;
-    line-height: 1.2 !important;
-
-    text-align: center !important;
-    text-decoration: none !important;
-
-    cursor: pointer !important;
-
-    box-sizing: border-box !important;
-
-    position: relative !important;
-    z-index: 100000 !important;
-
-    opacity: 1 !important;
-    visibility: visible !important;
-
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-}
-
-/* GREEN */
-
-.isc-action-buttons .isc-earning-button {
-    background: #16a34a !important;
-    background-color: #16a34a !important;
-
-    color: #ffffff !important;
-
-    border-color: #15803d !important;
-
-    box-shadow: 0 8px 20px rgba(22, 163, 74, 0.35) !important;
-}
-
-.isc-action-buttons .isc-earning-button:hover {
-    background: #15803d !important;
-    background-color: #15803d !important;
-    color: #ffffff !important;
-
-    transform: translateY(-3px) !important;
-
-    box-shadow: 0 12px 25px rgba(22, 163, 74, 0.45) !important;
-}
-
-/* RED */
-
-.isc-action-buttons .isc-expense-button {
-    background: #dc2626 !important;
-    background-color: #dc2626 !important;
-
-    color: #ffffff !important;
-
-    border-color: #b91c1c !important;
-
-    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.35) !important;
-}
-
-.isc-action-buttons .isc-expense-button:hover {
-    background: #b91c1c !important;
-    background-color: #b91c1c !important;
-    color: #ffffff !important;
-
-    transform: translateY(-3px) !important;
-
-    box-shadow: 0 12px 25px rgba(220, 38, 38, 0.45) !important;
-}
-
-/* Prevent global link styles from destroying buttons */
-
-.isc-action-buttons a,
-.isc-action-buttons a:link,
-.isc-action-buttons a:visited,
-.isc-action-buttons a:hover,
-.isc-action-buttons a:active,
-.isc-action-buttons a:focus {
-    text-decoration: none !important;
-    color: #ffffff !important;
-}
-
-/* MOBILE */
-
-@media (max-width: 700px) {
-
-    .isc-action-buttons {
-        flex-direction: column !important;
-        gap: 14px !important;
-    }
-
-    .isc-action-buttons .isc-action-button {
-        width: 100% !important;
-        min-height: 70px !important;
-        flex: none !important;
-    }
-}

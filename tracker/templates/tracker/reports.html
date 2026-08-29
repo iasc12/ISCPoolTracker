@@ -5,14 +5,40 @@
 {% block content %}
 
 <style>
-/* =========================================================
-   REPORTS PAGE
-   ========================================================= */
 
 .reports-page {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+}
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-bottom: 22px;
+    padding: 11px 18px;
+    border-radius: 10px;
+    background: #111827;
+    color: #ffffff !important;
+    border: 1px solid #111827;
+    text-decoration: none !important;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.back-button:hover {
+    background: #000000;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+    opacity: 0.9;
 }
 
 /* =========================================================
@@ -83,10 +109,11 @@
     background: var(--surface-soft);
     color: var(--text);
     outline: none;
+    box-sizing: border-box;
 }
 
 .filter-group input:focus {
-    border-color: var(--primary);
+    border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
@@ -97,6 +124,10 @@
     gap: 10px;
 }
 
+/* =========================================================
+   REPORT BUTTONS
+   ========================================================= */
+
 .report-button {
     min-height: 44px;
     display: inline-flex;
@@ -104,13 +135,12 @@
     justify-content: center;
     padding: 10px 18px;
     border-radius: 10px;
-    text-decoration: none;
+    text-decoration: none !important;
     font-weight: 800;
     font-size: 14px;
     cursor: pointer;
-    transition:
-        transform 0.18s ease,
-        opacity 0.18s ease;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+    box-sizing: border-box;
 }
 
 .report-button:hover {
@@ -118,16 +148,30 @@
     opacity: 0.92;
 }
 
+/* BLUE FILTER / GENERATE BUTTON */
+
 .report-button-primary {
-    background: var(--primary);
-    color: white;
-    border: 1px solid var(--primary);
+    background: #2563eb;
+    color: #ffffff !important;
+    border: 1px solid #2563eb;
 }
 
+.report-button-primary:hover {
+    background: #1d4ed8;
+    color: #ffffff !important;
+}
+
+/* GRAY RESET BUTTON */
+
 .report-button-secondary {
-    background: var(--surface-soft);
-    color: var(--text);
-    border: 1px solid var(--border);
+    background: #64748b;
+    color: #ffffff !important;
+    border: 1px solid #64748b;
+}
+
+.report-button-secondary:hover {
+    background: #475569;
+    color: #ffffff !important;
 }
 
 /* =========================================================
@@ -174,7 +218,7 @@
 }
 
 .report-card.profit {
-    border-top: 4px solid var(--primary);
+    border-top: 4px solid #2563eb;
 }
 
 /* =========================================================
@@ -270,7 +314,7 @@
 .expense-bar-fill {
     height: 100%;
     max-width: 100%;
-    background: var(--danger);
+    background: #ef4444;
     border-radius: 10px;
     transition: width 0.3s ease;
 }
@@ -413,13 +457,22 @@
         gap: 4px;
     }
 }
+
 </style>
 
 <div class="reports-page">
 
-<!-- =====================================================
-     HEADER
-     ===================================================== -->
+<!-- BACK TO DASHBOARD -->
+
+<a
+    href="{% url 'dashboard' %}"
+    class="back-button"
+>
+    ← Back to Dashboard
+</a>
+
+
+<!-- HEADER -->
 
 <div class="reports-header">
 
@@ -434,9 +487,7 @@
 </div>
 
 
-<!-- =====================================================
-     DATE FILTER
-     ===================================================== -->
+<!-- DATE FILTER -->
 
 <form
     method="get"
@@ -489,8 +540,9 @@
             type="submit"
             class="report-button report-button-primary"
         >
-            Generate Report
+            🔎 Filter
         </button>
+
 
         <a
             href="{% url 'reports' %}"
@@ -504,9 +556,7 @@
 </form>
 
 
-<!-- =====================================================
-     SUMMARY
-     ===================================================== -->
+<!-- SUMMARY -->
 
 <div class="report-summary">
 
@@ -539,11 +589,13 @@
     <div class="report-card profit">
 
         <h3>
+
             {% if total_profit >= 0 %}
                 Net Profit
             {% else %}
                 Net Loss
             {% endif %}
+
         </h3>
 
         <div class="amount">
@@ -555,11 +607,10 @@
 </div>
 
 
-<!-- =====================================================
-     ANALYTICS
-     ===================================================== -->
+<!-- ANALYTICS -->
 
 <div class="analytics-grid">
+
 
     <!-- PERFORMANCE -->
 
@@ -568,6 +619,7 @@
         <h2>
             Performance
         </h2>
+
 
         <div class="stat-row">
 
@@ -631,6 +683,7 @@
             Expense Breakdown
         </h2>
 
+
         {% if expense_breakdown %}
 
             {% for item in expense_breakdown %}
@@ -648,6 +701,7 @@
                         </strong>
 
                     </div>
+
 
                     <div class="expense-bar">
 
@@ -675,11 +729,10 @@
 </div>
 
 
-<!-- =====================================================
-     HIGHLIGHTS
-     ===================================================== -->
+<!-- HIGHLIGHTS -->
 
 <div class="highlight-grid">
+
 
     <!-- BEST EARNING DAY -->
 
@@ -689,11 +742,13 @@
             Best Earning Day
         </div>
 
+
         {% if best_day %}
 
             <div class="highlight-value">
                 KSh {{ best_day.amount_collected|floatformat:2 }}
             </div>
+
 
             <div class="highlight-title">
                 {{ best_day.date|date:"d M Y" }}
@@ -718,15 +773,20 @@
             Highest Expense
         </div>
 
+
         {% if highest_expense %}
 
             <div class="highlight-value">
                 KSh {{ highest_expense.amount|floatformat:2 }}
             </div>
 
+
             <div class="highlight-title">
+
                 {{ highest_expense.get_expense_type_display }}
+
                 — {{ highest_expense.date|date:"d M Y" }}
+
             </div>
 
         {% else %}
@@ -745,4 +805,3 @@
 </div>
 
 {% endblock %}
-sss
