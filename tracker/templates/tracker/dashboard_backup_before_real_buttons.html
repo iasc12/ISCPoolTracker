@@ -1,0 +1,358 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}
+Dashboard | ISC Pool Tracker
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .isc-dashboard {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .isc-dashboard-header {
+        margin-bottom: 30px;
+    }
+
+    .isc-dashboard-header h1 {
+        margin: 0 0 8px 0;
+        font-size: 36px;
+        font-weight: 800;
+    }
+
+    .isc-dashboard-header p {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    /* =========================================
+       BIG ACTION BUTTONS
+       ========================================= */
+
+    .isc-action-buttons {
+        display: flex !important;
+        width: 100% !important;
+        gap: 20px !important;
+        margin: 25px 0 35px 0 !important;
+        position: relative !important;
+        z-index: 9999 !important;
+    }
+
+    .isc-action-button {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        width: 50% !important;
+        min-height: 80px !important;
+
+        padding: 20px 30px !important;
+
+        border-radius: 16px !important;
+
+        text-decoration: none !important;
+
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-size: 20px !important;
+        font-weight: 800 !important;
+
+        cursor: pointer !important;
+
+        position: relative !important;
+        z-index: 10000 !important;
+
+        box-sizing: border-box !important;
+
+        transition: all 0.2s ease !important;
+    }
+
+    .isc-earning-button {
+        background: #16a34a !important;
+        background-color: #16a34a !important;
+        color: #ffffff !important;
+
+        border: 3px solid #15803d !important;
+
+        box-shadow:
+            0 8px 20px rgba(22, 163, 74, 0.35) !important;
+    }
+
+    .isc-expense-button {
+        background: #dc2626 !important;
+        background-color: #dc2626 !important;
+        color: #ffffff !important;
+
+        border: 3px solid #b91c1c !important;
+
+        box-shadow:
+            0 8px 20px rgba(220, 38, 38, 0.35) !important;
+    }
+
+    .isc-action-button:hover {
+        transform: translateY(-3px) !important;
+        color: #ffffff !important;
+        text-decoration: none !important;
+    }
+
+    .isc-earning-button:hover {
+        background: #15803d !important;
+        background-color: #15803d !important;
+    }
+
+    .isc-expense-button:hover {
+        background: #b91c1c !important;
+        background-color: #b91c1c !important;
+    }
+
+    .isc-action-button:visited,
+    .isc-action-button:active,
+    .isc-action-button:focus {
+        color: #ffffff !important;
+        text-decoration: none !important;
+    }
+
+    /* =========================================
+       SUMMARY
+       ========================================= */
+
+    .isc-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .isc-card {
+        padding: 25px;
+        border-radius: 16px;
+        background: var(--surface, #ffffff);
+        border: 1px solid var(--border, #dddddd);
+        box-sizing: border-box;
+    }
+
+    .isc-card-title {
+        font-size: 14px;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    .isc-card-date {
+        font-size: 22px;
+        font-weight: 800;
+        margin-bottom: 20px;
+    }
+
+    .isc-money-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 12px 0;
+    }
+
+    .isc-earning {
+        color: #16a34a;
+        font-weight: 800;
+    }
+
+    .isc-expense {
+        color: #dc2626;
+        font-weight: 800;
+    }
+
+    .isc-profit {
+        color: #2563eb;
+        font-weight: 800;
+    }
+
+    @media (max-width: 700px) {
+
+        .isc-action-buttons {
+            flex-direction: column !important;
+        }
+
+        .isc-action-button {
+            width: 100% !important;
+        }
+
+        .isc-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .isc-dashboard-header h1 {
+            font-size: 28px;
+        }
+    }
+
+</style>
+
+
+<div class="isc-dashboard">
+
+    <!-- =========================================
+         HEADER
+         ========================================= -->
+
+    <div class="isc-dashboard-header">
+
+        <div style="
+            font-size:13px;
+            font-weight:800;
+            letter-spacing:1px;
+            margin-bottom:8px;
+        ">
+            FINANCIAL OVERVIEW
+        </div>
+
+        <h1>
+            Dashboard
+        </h1>
+
+        <p>
+            Monitor your pool business performance.
+        </p>
+
+    </div>
+
+
+    <!-- =========================================
+         BIG GREEN / RED BUTTONS
+         ========================================= -->
+
+    <div class="isc-action-buttons">
+
+        <a
+            href="{% url 'add_earning' %}"
+            class="isc-action-button isc-earning-button"
+        >
+            🟢 &nbsp; + Add Earning
+        </a>
+
+        <a
+            href="{% url 'add_expense' %}"
+            class="isc-action-button isc-expense-button"
+        >
+            🔴 &nbsp; + Add Expense
+        </a>
+
+    </div>
+
+
+    <!-- =========================================
+         SUMMARY CARDS
+         ========================================= -->
+
+    <div class="isc-summary-grid">
+
+        <div class="isc-card">
+
+            <div class="isc-card-title">
+                TODAY
+            </div>
+
+            <div class="isc-card-date">
+                {{ today|date:"d M Y" }}
+            </div>
+
+            <div class="isc-money-row">
+                <span>Earnings</span>
+                <span class="isc-earning">
+                    KSh {{ today_earnings|floatformat:2 }}
+                </span>
+            </div>
+
+            <div class="isc-money-row">
+                <span>Expenses</span>
+                <span class="isc-expense">
+                    KSh {{ today_expenses|floatformat:2 }}
+                </span>
+            </div>
+
+            <div class="isc-money-row">
+                <span>Profit</span>
+                <span class="isc-profit">
+                    KSh {{ today_profit|floatformat:2 }}
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="isc-card">
+
+            <div class="isc-card-title">
+                THIS WEEK
+            </div>
+
+            <div class="isc-card-date">
+                {{ week_start|date:"d M" }}
+                –
+                {{ week_end|date:"d M Y" }}
+            </div>
+
+            <div class="isc-money-row">
+                <span>Earnings</span>
+                <span class="isc-earning">
+                    KSh {{ weekly_earnings|floatformat:2 }}
+                </span>
+            </div>
+
+            <div class="isc-money-row">
+                <span>Expenses</span>
+                <span class="isc-expense">
+                    KSh {{ weekly_expenses|floatformat:2 }}
+                </span>
+            </div>
+
+            <div class="isc-money-row">
+                <span>Profit</span>
+                <span class="isc-profit">
+                    KSh {{ weekly_profit|floatformat:2 }}
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="isc-card">
+
+            <div class="isc-card-title">
+                THIS MONTH
+            </div>
+
+            <div class="isc-card-date">
+                {{ month_start|date:"d M Y" }}
+                –
+                {{ month_end|date:"d M Y" }}
+            </div>
+
+            <div class="isc-money-row">
+                <span>Earnings</span>
+                <span class="isc-earning">
+                    KSh {{ monthly_earnings|floatformat:2 }}
+                </span>
+            </div>
+
+            <div class="isc-money-row">
+                <span>Expenses</span>
+                <span class="isc-expense">
+                    KSh {{ monthly_expenses|floatformat:2 }}
+                </span>
+            </div>
+
+            <div class="isc-money-row">
+                <span>Profit</span>
+                <span class="isc-profit">
+                    KSh {{ monthly_profit|floatformat:2 }}
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

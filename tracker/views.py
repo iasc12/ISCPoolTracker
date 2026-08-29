@@ -10,6 +10,10 @@ from .forms import DailyEarningForm, ExpenseForm
 from .models import DailyEarning, Expense
 
 
+# ============================================================
+# DASHBOARD
+# ============================================================
+
 def dashboard(request):
     today = timezone.localdate()
 
@@ -52,7 +56,7 @@ def dashboard(request):
                 start_date, end_date = end_date, start_date
 
             period_label = (
-                f"{start_date.strftime('%d %b %Y')} - "
+                f"{start_date.strftime('%d %b %Y')} – "
                 f"{end_date.strftime('%d %b %Y')}"
             )
 
@@ -94,6 +98,10 @@ def dashboard(request):
         end_date = next_month - timedelta(days=1)
         period_label = "This Month"
 
+    # ========================================================
+    # FILTERED DATA
+    # ========================================================
+
     filtered_earnings = DailyEarning.objects.filter(
         date__range=(start_date, end_date)
     )
@@ -101,6 +109,10 @@ def dashboard(request):
     filtered_expenses = Expense.objects.filter(
         date__range=(start_date, end_date)
     )
+
+    # ========================================================
+    # PERIOD TOTALS
+    # ========================================================
 
     period_earnings = (
         filtered_earnings.aggregate(
@@ -117,6 +129,10 @@ def dashboard(request):
     )
 
     period_profit = period_earnings - period_expenses
+
+    # ========================================================
+    # TODAY
+    # ========================================================
 
     today_earnings = (
         DailyEarning.objects.filter(
@@ -137,6 +153,10 @@ def dashboard(request):
     )
 
     today_profit = today_earnings - today_expenses
+
+    # ========================================================
+    # WEEK
+    # ========================================================
 
     week_start = today - timedelta(days=today.weekday())
     week_end = week_start + timedelta(days=6)
@@ -160,6 +180,10 @@ def dashboard(request):
     )
 
     weekly_profit = weekly_earnings - weekly_expenses
+
+    # ========================================================
+    # MONTH
+    # ========================================================
 
     month_start = today.replace(day=1)
 
@@ -197,6 +221,10 @@ def dashboard(request):
 
     monthly_profit = monthly_earnings - monthly_expenses
 
+    # ========================================================
+    # AVERAGE / FORECAST
+    # ========================================================
+
     earning_days = filtered_earnings.count()
 
     if earning_days:
@@ -206,14 +234,9 @@ def dashboard(request):
     else:
         average_daily_earnings = Decimal("0.00")
 
-    period_days = (end_date - start_date).days + 1
-
-    if period_days > 0:
-        forecast_monthly = (
-            average_daily_earnings * Decimal("30")
-        )
-    else:
-        forecast_monthly = Decimal("0.00")
+    forecast_monthly = (
+        average_daily_earnings * Decimal("30")
+    )
 
     if period_earnings > 0:
         profit_margin = (
@@ -221,6 +244,10 @@ def dashboard(request):
         ) * Decimal("100")
     else:
         profit_margin = Decimal("0.00")
+
+    # ========================================================
+    # RECENT ACTIVITY
+    # ========================================================
 
     recent_earnings = DailyEarning.objects.order_by(
         "-date",
@@ -232,17 +259,27 @@ def dashboard(request):
         "-created_at",
     )[:5]
 
+    # ========================================================
+    # CHART
+    # ========================================================
+
     chart_labels = []
     chart_values = []
 
-    chart_start = today - timedelta(days=6)
+    chart_start = max(
+        start_date,
+        end_date - timedelta(days=6),
+    )
 
     current_date = chart_start
 
-    while current_date <= today:
-        earning = DailyEarning.objects.filter(
-            date=current_date
-        ).first()
+    while current_date <= end_date:
+
+        earning = (
+            DailyEarning.objects.filter(
+                date=current_date
+            ).first()
+        )
 
         chart_labels.append(
             current_date.strftime("%d %b")
@@ -257,9 +294,14 @@ def dashboard(request):
 
         current_date += timedelta(days=1)
 
+    # ========================================================
+    # EXPENSE BREAKDOWN
+    # ========================================================
+
     expense_breakdown = []
 
     for value, label in Expense.EXPENSE_TYPE_CHOICES:
+
         amount = (
             filtered_expenses.filter(
                 expense_type=value
@@ -269,43 +311,53 @@ def dashboard(request):
             or Decimal("0.00")
         )
 
-        expense_breakdown.append(
-            {
-                "type": label,
-                "amount": amount,
-            }
-        )
+        expense_breakdown.append({
+            "type": label,
+            "amount": amount,
+        })
+
+    # ========================================================
+    # CONTEXT
+    # ========================================================
 
     context = {
         "period": period,
         "period_label": period_label,
         "start_date": start_date,
         "end_date": end_date,
+
         "period_earnings": period_earnings,
         "period_expenses": period_expenses,
         "period_profit": period_profit,
+
         "average_daily_earnings": average_daily_earnings,
         "forecast_monthly": forecast_monthly,
         "expected_monthly_earnings": forecast_monthly,
         "profit_margin": profit_margin,
+
         "today": today,
         "today_earnings": today_earnings,
         "today_expenses": today_expenses,
         "today_profit": today_profit,
+
         "week_start": week_start,
         "week_end": week_end,
         "weekly_earnings": weekly_earnings,
         "weekly_expenses": weekly_expenses,
         "weekly_profit": weekly_profit,
+
         "month_start": month_start,
         "month_end": month_end,
         "monthly_earnings": monthly_earnings,
         "monthly_expenses": monthly_expenses,
         "monthly_profit": monthly_profit,
+
         "recent_earnings": recent_earnings,
         "recent_expenses": recent_expenses,
+
         "chart_labels": chart_labels,
         "chart_values": chart_values,
+
         "expense_breakdown": expense_breakdown,
     }
 
@@ -316,88 +368,50 @@ def dashboard(request):
     )
 
 
+# ============================================================
+# ADD EARNING
+# ============================================================
+
 def add_earning(request):
+
     if request.method == "POST":
         form = DailyEarningForm(request.POST)
 
         if form.is_valid():
             form.save()
+
             messages.success(
                 request,
-                "Earning added successfully.",
+                "Earning added successfully."
             )
+
             return redirect("earnings_list")
+
     else:
         form = DailyEarningForm()
 
     return render(
         request,
-        "tracker/add_earning.html",
-        {"form": form},
-    )
-
-
-def edit_earning(request, earning_id):
-    earning = get_object_or_404(
-        DailyEarning,
-        id=earning_id,
-    )
-
-    if request.method == "POST":
-        form = DailyEarningForm(
-            request.POST,
-            instance=earning,
-        )
-
-        if form.is_valid():
-            form.save()
-            messages.success(
-                request,
-                "Earning updated successfully.",
-            )
-            return redirect("earnings_list")
-    else:
-        form = DailyEarningForm(
-            instance=earning,
-        )
-
-    return render(
-        request,
-        "tracker/edit_earning.html",
+        "tracker/earning_form.html",
         {
             "form": form,
-            "earning": earning,
+            "title": "Add Earning",
         },
     )
 
 
-def delete_earning(request, earning_id):
-    earning = get_object_or_404(
-        DailyEarning,
-        id=earning_id,
-    )
-
-    if request.method == "POST":
-        earning.delete()
-        messages.success(
-            request,
-            "Earning deleted successfully.",
-        )
-        return redirect("earnings_list")
-
-    return render(
-        request,
-        "tracker/delete_earning.html",
-        {
-            "earning": earning,
-        },
-    )
-
+# ============================================================
+# EARNINGS LIST
+# ============================================================
 
 def earnings_list(request):
-    earnings = DailyEarning.objects.all()
 
-    total_earnings = (
+    earnings = DailyEarning.objects.order_by(
+        "-date",
+        "-created_at",
+    )
+
+    total = (
         earnings.aggregate(
             total=Sum("amount_collected")
         ).get("total")
@@ -409,39 +423,160 @@ def earnings_list(request):
         "tracker/earnings_list.html",
         {
             "earnings": earnings,
-            "total_earnings": total_earnings,
+            "total": total,
         },
     )
 
 
+# ============================================================
+# EDIT EARNING
+# ============================================================
+
+def edit_earning(request, earning_id):
+
+    earning = get_object_or_404(
+        DailyEarning,
+        id=earning_id,
+    )
+
+    if request.method == "POST":
+
+        form = DailyEarningForm(
+            request.POST,
+            instance=earning,
+        )
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "Earning updated successfully."
+            )
+
+            return redirect("earnings_list")
+
+    else:
+
+        form = DailyEarningForm(
+            instance=earning
+        )
+
+    return render(
+        request,
+        "tracker/earning_form.html",
+        {
+            "form": form,
+            "title": "Edit Earning",
+        },
+    )
+
+
+# ============================================================
+# DELETE EARNING
+# ============================================================
+
+def delete_earning(request, earning_id):
+
+    earning = get_object_or_404(
+        DailyEarning,
+        id=earning_id,
+    )
+
+    if request.method == "POST":
+
+        earning.delete()
+
+        messages.success(
+            request,
+            "Earning deleted successfully."
+        )
+
+        return redirect("earnings_list")
+
+    return render(
+        request,
+        "tracker/confirm_delete.html",
+        {
+            "object": earning,
+            "type": "earning",
+        },
+    )
+
+
+# ============================================================
+# ADD EXPENSE
+# ============================================================
+
 def add_expense(request):
+
     if request.method == "POST":
         form = ExpenseForm(request.POST)
 
         if form.is_valid():
             form.save()
+
             messages.success(
                 request,
-                "Expense added successfully.",
+                "Expense added successfully."
             )
+
             return redirect("expenses_list")
+
     else:
         form = ExpenseForm()
 
     return render(
         request,
-        "tracker/add_expense.html",
-        {"form": form},
+        "tracker/expense_form.html",
+        {
+            "form": form,
+            "title": "Add Expense",
+        },
     )
 
 
+# ============================================================
+# EXPENSES LIST
+# ============================================================
+
+def expenses_list(request):
+
+    expenses = Expense.objects.order_by(
+        "-date",
+        "-created_at",
+    )
+
+    total = (
+        expenses.aggregate(
+            total=Sum("amount")
+        ).get("total")
+        or Decimal("0.00")
+    )
+
+    return render(
+        request,
+        "tracker/expenses_list.html",
+        {
+            "expenses": expenses,
+            "total": total,
+        },
+    )
+
+
+# ============================================================
+# EDIT EXPENSE
+# ============================================================
+
 def edit_expense(request, expense_id):
+
     expense = get_object_or_404(
         Expense,
         id=expense_id,
     )
 
     if request.method == "POST":
+
         form = ExpenseForm(
             request.POST,
             instance=expense,
@@ -449,190 +584,90 @@ def edit_expense(request, expense_id):
 
         if form.is_valid():
             form.save()
+
             messages.success(
                 request,
-                "Expense updated successfully.",
+                "Expense updated successfully."
             )
+
             return redirect("expenses_list")
+
     else:
+
         form = ExpenseForm(
-            instance=expense,
+            instance=expense
         )
 
     return render(
         request,
-        "tracker/edit_expense.html",
+        "tracker/expense_form.html",
         {
             "form": form,
-            "expense": expense,
+            "title": "Edit Expense",
         },
     )
 
 
+# ============================================================
+# DELETE EXPENSE
+# ============================================================
+
 def delete_expense(request, expense_id):
+
     expense = get_object_or_404(
         Expense,
         id=expense_id,
     )
 
     if request.method == "POST":
+
         expense.delete()
+
         messages.success(
             request,
-            "Expense deleted successfully.",
+            "Expense deleted successfully."
         )
+
         return redirect("expenses_list")
 
     return render(
         request,
-        "tracker/delete_expense.html",
+        "tracker/confirm_delete.html",
         {
-            "expense": expense,
+            "object": expense,
+            "type": "expense",
         },
     )
 
 
-def expenses_list(request):
-    expenses = Expense.objects.all()
-
-    total_expenses = (
-        expenses.aggregate(
-            total=Sum("amount")
-        ).get("total")
-        or Decimal("0.00")
-    )
-
-    expense_breakdown = []
-
-    for value, label in Expense.EXPENSE_TYPE_CHOICES:
-        amount = (
-            expenses.filter(
-                expense_type=value
-            ).aggregate(
-                total=Sum("amount")
-            ).get("total")
-            or Decimal("0.00")
-        )
-
-        expense_breakdown.append(
-            {
-                "type": label,
-                "amount": amount,
-            }
-        )
-
-    return render(
-        request,
-        "tracker/expenses_list.html",
-        {
-            "expenses": expenses,
-            "total_expenses": total_expenses,
-            "expense_breakdown": expense_breakdown,
-        },
-    )
-
+# ============================================================
+# REPORTS
+# ============================================================
 
 def reports(request):
-    today = timezone.localdate()
 
-    month_start = today.replace(day=1)
-
-    if today.month == 12:
-        next_month = today.replace(
-            year=today.year + 1,
-            month=1,
-            day=1,
-        )
-    else:
-        next_month = today.replace(
-            month=today.month + 1,
-            day=1,
-        )
-
-    month_end = next_month - timedelta(days=1)
-
-    monthly_earnings = (
-        DailyEarning.objects.filter(
-            date__range=(month_start, month_end)
-        ).aggregate(
-            total=Sum("amount_collected")
-        ).get("total")
-        or Decimal("0.00")
-    )
-
-    monthly_expenses = (
-        Expense.objects.filter(
-            date__range=(month_start, month_end)
-        ).aggregate(
-            total=Sum("amount")
-        ).get("total")
-        or Decimal("0.00")
-    )
-
-    monthly_profit = (
-        monthly_earnings - monthly_expenses
-    )
-
-    all_time_earnings = (
+    earnings_total = (
         DailyEarning.objects.aggregate(
             total=Sum("amount_collected")
         ).get("total")
         or Decimal("0.00")
     )
 
-    all_time_expenses = (
+    expenses_total = (
         Expense.objects.aggregate(
             total=Sum("amount")
         ).get("total")
         or Decimal("0.00")
     )
 
-    all_time_profit = (
-        all_time_earnings - all_time_expenses
-    )
-
-    if all_time_earnings > 0:
-        profit_margin = (
-            all_time_profit / all_time_earnings
-        ) * Decimal("100")
-    else:
-        profit_margin = Decimal("0.00")
-
-    expense_breakdown = []
-
-    for value, label in Expense.EXPENSE_TYPE_CHOICES:
-        amount = (
-            Expense.objects.filter(
-                expense_type=value
-            ).aggregate(
-                total=Sum("amount")
-            ).get("total")
-            or Decimal("0.00")
-        )
-
-        expense_breakdown.append(
-            {
-                "type": label,
-                "amount": amount,
-            }
-        )
-
-    context = {
-        "today": today,
-        "month_start": month_start,
-        "month_end": month_end,
-        "monthly_earnings": monthly_earnings,
-        "monthly_expenses": monthly_expenses,
-        "monthly_profit": monthly_profit,
-        "all_time_earnings": all_time_earnings,
-        "all_time_expenses": all_time_expenses,
-        "all_time_profit": all_time_profit,
-        "profit_margin": profit_margin,
-        "expense_breakdown": expense_breakdown,
-    }
+    profit = earnings_total - expenses_total
 
     return render(
         request,
         "tracker/reports.html",
-        context,
+        {
+            "earnings_total": earnings_total,
+            "expenses_total": expenses_total,
+            "profit": profit,
+        },
     )

@@ -1,0 +1,97 @@
+﻿{% extends "tracker/base.html" %}
+
+{% block title %}Dashboard | ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<div style="width:100%; padding:30px;">
+
+    <h1 style="font-size:32px; margin-bottom:10px;">
+        Dashboard
+    </h1>
+
+    <p style="margin-bottom:25px;">
+        Monitor your pool business performance.
+    </p>
+
+    <div style="
+        display:flex;
+        flex-wrap:wrap;
+        gap:20px;
+        width:100%;
+        margin-bottom:30px;
+    ">
+
+        <a
+            href="{% url 'add_earning' %}"
+            style="
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                width:220px;
+                height:80px;
+                background:#16a34a;
+                color:#ffffff;
+                border:4px solid #15803d;
+                border-radius:16px;
+                text-decoration:none;
+                font-size:18px;
+                font-weight:900;
+                box-shadow:0 8px 20px rgba(0,0,0,0.20);
+            "
+        >
+            + ADD EARNING
+        </a>
+
+        <a
+            href="{% url 'add_expense' %}"
+            style="
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                width:220px;
+                height:80px;
+                background:#dc2626;
+                color:#ffffff;
+                border:4px solid #b91c1c;
+                border-radius:16px;
+                text-decoration:none;
+                font-size:18px;
+                font-weight:900;
+                box-shadow:0 8px 20px rgba(0,0,0,0.20);
+            "
+        >
+            + ADD EXPENSE
+        </a>
+
+    </div>
+
+    <div style="
+        background:var(--surface);
+        border:1px solid var(--border);
+        border-radius:16px;
+        padding:25px;
+    ">
+
+        <h2>Today</h2>
+
+        <p>
+            Earnings:
+            <strong>KSh {{ today_earnings|floatformat:2 }}</strong>
+        </p>
+
+        <p>
+            Expenses:
+            <strong>KSh {{ today_expenses|floatformat:2 }}</strong>
+        </p>
+
+        <p>
+            Profit:
+            <strong>KSh {{ today_profit|floatformat:2 }}</strong>
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
