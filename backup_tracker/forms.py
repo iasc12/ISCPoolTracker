@@ -1,4 +1,5 @@
-﻿from django import forms
+from django import forms
+
 from .models import DailyEarning, Expense
 
 
@@ -6,12 +7,20 @@ class DailyEarningForm(forms.ModelForm):
 
     class Meta:
         model = DailyEarning
-        fields = ["date", "amount_collected", "notes"]
+
+        fields = [
+            "date",
+            "amount_collected",
+            "notes",
+        ]
 
         widgets = {
             "date": forms.DateInput(
-                attrs={"type": "date"}
+                attrs={
+                    "type": "date",
+                }
             ),
+
             "amount_collected": forms.NumberInput(
                 attrs={
                     "step": "0.01",
@@ -19,6 +28,7 @@ class DailyEarningForm(forms.ModelForm):
                     "placeholder": "Enter amount collected",
                 }
             ),
+
             "notes": forms.Textarea(
                 attrs={
                     "rows": 3,
@@ -32,13 +42,23 @@ class ExpenseForm(forms.ModelForm):
 
     class Meta:
         model = Expense
-        fields = ["date", "expense_type", "amount", "notes"]
+
+        fields = [
+            "date",
+            "expense_type",
+            "amount",
+            "notes",
+        ]
 
         widgets = {
             "date": forms.DateInput(
-                attrs={"type": "date"}
+                attrs={
+                    "type": "date",
+                }
             ),
+
             "expense_type": forms.Select(),
+
             "amount": forms.NumberInput(
                 attrs={
                     "step": "0.01",
@@ -46,6 +66,7 @@ class ExpenseForm(forms.ModelForm):
                     "placeholder": "Enter expense amount",
                 }
             ),
+
             "notes": forms.Textarea(
                 attrs={
                     "rows": 3,

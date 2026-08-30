@@ -1,20 +1,15 @@
-{% extends "tracker/base.html" %}
+﻿{% extends "tracker/base.html" %}
 
 {% block title %}Reports | ISC Pool Tracker{% endblock %}
 
 {% block content %}
 
 <style>
-
 .reports-page {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
 }
-
-/* =========================================================
-   BACK BUTTON
-   ========================================================= */
 
 .back-button {
     display: inline-flex;
@@ -30,20 +25,13 @@
     text-decoration: none !important;
     font-weight: 800;
     font-size: 14px;
-    cursor: pointer;
-    transition: transform 0.18s ease, opacity 0.18s ease;
+    transition: 0.18s ease;
 }
 
 .back-button:hover {
-    background: #000000;
-    color: #ffffff !important;
     transform: translateY(-1px);
     opacity: 0.9;
 }
-
-/* =========================================================
-   HEADER
-   ========================================================= */
 
 .reports-header {
     margin-bottom: 28px;
@@ -52,7 +40,6 @@
 .reports-header h1 {
     margin: 0;
     font-size: 32px;
-    line-height: 1.2;
     color: var(--text);
 }
 
@@ -62,9 +49,7 @@
     font-size: 14px;
 }
 
-/* =========================================================
-   FILTER
-   ========================================================= */
+/* FILTER */
 
 .report-filter {
     background: var(--surface);
@@ -87,10 +72,6 @@
     gap: 15px;
 }
 
-.filter-group {
-    min-width: 0;
-}
-
 .filter-group label {
     display: block;
     margin-bottom: 7px;
@@ -101,7 +82,6 @@
 
 .filter-group input {
     width: 100%;
-    min-width: 0;
     height: 46px;
     padding: 10px 12px;
     border-radius: 10px;
@@ -114,8 +94,9 @@
 
 .filter-group input:focus {
     border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
+
+/* BUTTONS */
 
 .filter-actions {
     margin-top: 18px;
@@ -123,10 +104,6 @@
     flex-wrap: wrap;
     gap: 10px;
 }
-
-/* =========================================================
-   REPORT BUTTONS
-   ========================================================= */
 
 .report-button {
     min-height: 44px;
@@ -139,7 +116,8 @@
     font-weight: 800;
     font-size: 14px;
     cursor: pointer;
-    transition: transform 0.18s ease, opacity 0.18s ease;
+    border: 1px solid transparent;
+    transition: 0.18s ease;
     box-sizing: border-box;
 }
 
@@ -148,35 +126,43 @@
     opacity: 0.92;
 }
 
-/* BLUE FILTER / GENERATE BUTTON */
-
 .report-button-primary {
     background: #2563eb;
     color: #ffffff !important;
-    border: 1px solid #2563eb;
+    border-color: #2563eb;
 }
 
 .report-button-primary:hover {
     background: #1d4ed8;
-    color: #ffffff !important;
 }
-
-/* GRAY RESET BUTTON */
 
 .report-button-secondary {
     background: #64748b;
     color: #ffffff !important;
-    border: 1px solid #64748b;
+    border-color: #64748b;
 }
 
 .report-button-secondary:hover {
     background: #475569;
-    color: #ffffff !important;
 }
 
-/* =========================================================
-   SUMMARY CARDS
-   ========================================================= */
+/* GENERATE REPORT */
+
+.generate-button {
+    background: #16a34a;
+    color: #ffffff !important;
+    border-color: #16a34a;
+}
+
+.generate-button:hover {
+    background: #15803d;
+}
+
+.generate-icon {
+    margin-right: 7px;
+}
+
+/* SUMMARY */
 
 .report-summary {
     display: grid;
@@ -198,12 +184,10 @@
     margin: 0 0 12px;
     color: var(--muted);
     font-size: 14px;
-    font-weight: 800;
 }
 
 .report-card .amount {
     font-size: 27px;
-    line-height: 1.2;
     font-weight: 900;
     color: var(--text);
     overflow-wrap: anywhere;
@@ -221,9 +205,7 @@
     border-top: 4px solid #2563eb;
 }
 
-/* =========================================================
-   ANALYTICS
-   ========================================================= */
+/* ANALYTICS */
 
 .analytics-grid {
     display: grid;
@@ -272,9 +254,7 @@
     text-align: right;
 }
 
-/* =========================================================
-   EXPENSE BREAKDOWN
-   ========================================================= */
+/* EXPENSE BREAKDOWN */
 
 .expense-item {
     margin-bottom: 18px;
@@ -286,21 +266,11 @@
 
 .expense-item-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     gap: 12px;
     margin-bottom: 7px;
     color: var(--text);
     font-size: 14px;
-}
-
-.expense-item-header span {
-    min-width: 0;
-    overflow-wrap: anywhere;
-}
-
-.expense-item-header strong {
-    flex-shrink: 0;
 }
 
 .expense-bar {
@@ -316,12 +286,15 @@
     max-width: 100%;
     background: #ef4444;
     border-radius: 10px;
-    transition: width 0.3s ease;
 }
 
-/* =========================================================
-   HIGHLIGHTS
-   ========================================================= */
+.empty-message {
+    color: var(--muted);
+    text-align: center;
+    padding: 15px 5px;
+}
+
+/* HIGHLIGHTS */
 
 .highlight-grid {
     display: grid;
@@ -346,21 +319,12 @@
 
 .highlight-value {
     font-size: 21px;
-    line-height: 1.25;
     font-weight: 900;
     color: var(--text);
     overflow-wrap: anywhere;
 }
 
-.empty-message {
-    color: var(--muted);
-    text-align: center;
-    padding: 15px 5px;
-}
-
-/* =========================================================
-   TABLET
-   ========================================================= */
+/* MOBILE */
 
 @media (max-width: 900px) {
 
@@ -373,33 +337,10 @@
     }
 }
 
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
 @media (max-width: 700px) {
-
-    .reports-page {
-        width: 100%;
-    }
-
-    .reports-header {
-        margin-bottom: 22px;
-    }
 
     .reports-header h1 {
         font-size: 26px;
-    }
-
-    .reports-header p {
-        font-size: 13px;
-    }
-
-    .report-filter,
-    .report-card,
-    .analytics-card,
-    .highlight {
-        padding: 18px;
     }
 
     .filter-grid {
@@ -420,54 +361,29 @@
     }
 }
 
-/* =========================================================
-   SMALL PHONES
-   ========================================================= */
-
 @media (max-width: 420px) {
-
-    .report-filter,
-    .report-card,
-    .analytics-card,
-    .highlight {
-        padding: 16px;
-    }
-
-    .report-card .amount {
-        font-size: 23px;
-    }
-
-    .stat-row {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .stat-value {
-        text-align: left;
-    }
 
     .filter-actions {
         grid-template-columns: 1fr;
     }
 
-    .expense-item-header {
-        align-items: flex-start;
+    .stat-row {
         flex-direction: column;
-        gap: 4px;
+        align-items: flex-start;
+    }
+
+    .stat-value {
+        text-align: left;
     }
 }
-
 </style>
 
 <div class="reports-page">
 
-<!-- BACK TO DASHBOARD -->
 
-<a
-    href="{% url 'dashboard' %}"
-    class="back-button"
->
+<!-- BACK -->
+
+<a href="{% url 'dashboard' %}" class="back-button">
     ← Back to Dashboard
 </a>
 
@@ -487,12 +403,9 @@
 </div>
 
 
-<!-- DATE FILTER -->
+<!-- REPORT PERIOD -->
 
-<form
-    method="get"
-    class="report-filter"
->
+<form method="get" class="report-filter">
 
     <h2>
         Report Period
@@ -534,7 +447,11 @@
     </div>
 
 
+    <!-- REPORT BUTTONS -->
+
     <div class="filter-actions">
+
+        <!-- FILTER -->
 
         <button
             type="submit"
@@ -544,12 +461,27 @@
         </button>
 
 
+        <!-- RESET -->
+
         <a
             href="{% url 'reports' %}"
             class="report-button report-button-secondary"
         >
             Reset
         </a>
+
+
+        <!-- GENERATE REPORT -->
+
+        <button
+            type="submit"
+            formaction="{% url 'generate_report' %}"
+            formmethod="get"
+            class="report-button generate-button"
+        >
+            <span class="generate-icon">📄</span>
+            Generate Report
+        </button>
 
     </div>
 
@@ -589,13 +521,11 @@
     <div class="report-card profit">
 
         <h3>
-
             {% if total_profit >= 0 %}
                 Net Profit
             {% else %}
                 Net Loss
             {% endif %}
-
         </h3>
 
         <div class="amount">
@@ -611,15 +541,11 @@
 
 <div class="analytics-grid">
 
-
-    <!-- PERFORMANCE -->
-
     <div class="analytics-card">
 
         <h2>
             Performance
         </h2>
-
 
         <div class="stat-row">
 
@@ -683,7 +609,6 @@
             Expense Breakdown
         </h2>
 
-
         {% if expense_breakdown %}
 
             {% for item in expense_breakdown %}
@@ -733,8 +658,7 @@
 
 <div class="highlight-grid">
 
-
-    <!-- BEST EARNING DAY -->
+    <!-- BEST DAY -->
 
     <div class="highlight">
 
@@ -742,13 +666,11 @@
             Best Earning Day
         </div>
 
-
         {% if best_day %}
 
             <div class="highlight-value">
                 KSh {{ best_day.amount_collected|floatformat:2 }}
             </div>
-
 
             <div class="highlight-title">
                 {{ best_day.date|date:"d M Y" }}
@@ -773,13 +695,11 @@
             Highest Expense
         </div>
 
-
         {% if highest_expense %}
 
             <div class="highlight-value">
                 KSh {{ highest_expense.amount|floatformat:2 }}
             </div>
-
 
             <div class="highlight-title">
 

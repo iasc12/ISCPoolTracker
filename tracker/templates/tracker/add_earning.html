@@ -1,125 +1,67 @@
-{% extends "tracker/base.html" %}
+﻿{% extends "tracker/base.html" %}
 
-{% block title %}
-{% if editing %}
-Edit Today's Earning
-{% else %}
-Add Today's Earning
-{% endif %}
-{% endblock %}
+{% block title %}Add Earning - ISC Pool Tracker{% endblock %}
 
 {% block content %}
 
 <div class="form-page">
 
-<div class="form-card">
+    <div class="card">
 
-    <!-- BACK BUTTON -->
-    <div style="margin-bottom: 20px;">
-        <a
-            href="{% url 'dashboard' %}"
-            class="button secondary"
-            style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"
-        >
-            ← Back to Dashboard
-        </a>
-    </div>
-
-    <!-- HEADER -->
-    <div class="form-header">
-
-        <div class="form-icon">
+        <h1>
             {% if editing %}
-                ✏️
+                Edit Earning
             {% else %}
-                💰
+                Add Earning
             {% endif %}
-        </div>
+        </h1>
 
-        <div>
-            <h1>
-                {% if editing %}
-                    Edit Today's Earning
-                {% else %}
-                    Today's Earning
-                {% endif %}
-            </h1>
+        <p>
+            Record pool income.
+        </p>
 
-            <p>
-                {{ today|date:"l, d F Y" }}
-            </p>
-        </div>
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+
+                    {{ field.label_tag }}
+
+                    {{ field }}
+
+                    {% if field.errors %}
+                        {{ field.errors }}
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+                {{ form.non_field_errors }}
+            {% endif %}
+
+            <div class="buttons">
+
+                <button
+                    type="submit"
+                    class="button success"
+                >
+                    Save Earning
+                </button>
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="button secondary"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
 
     </div>
-
-    <!-- FORM -->
-    <form method="post">
-
-        {% csrf_token %}
-
-        {% if form.non_field_errors %}
-            <div class="form-errors">
-                {{ form.non_field_errors }}
-            </div>
-        {% endif %}
-
-        <div class="form-group">
-
-            <label>
-                Amount Collected
-            </label>
-
-            {{ form.amount_collected }}
-
-            {% if form.amount_collected.errors %}
-                <div class="field-error">
-                    {{ form.amount_collected.errors }}
-                </div>
-            {% endif %}
-
-        </div>
-
-        <div class="form-group">
-
-            <label>
-                Notes
-            </label>
-
-            {{ form.notes }}
-
-            {% if form.notes.errors %}
-                <div class="field-error">
-                    {{ form.notes.errors }}
-                </div>
-            {% endif %}
-
-        </div>
-
-        <div class="form-actions">
-
-            <a
-                href="{% url 'dashboard' %}"
-                class="button secondary"
-            >
-                Cancel
-            </a>
-
-            <button
-                type="submit"
-                class="button earning"
-            >
-                {% if editing %}
-                    Save Changes
-                {% else %}
-                    Save Today's Earning
-                {% endif %}
-            </button>
-
-        </div>
-
-    </form>
-
-</div>
 
 </div>
 

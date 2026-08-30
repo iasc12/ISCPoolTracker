@@ -1,0 +1,117 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}
+Add Expense
+{% endblock %}
+
+{% block content %}
+
+<div class="form-page">
+
+<div class="form-card">
+
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'dashboard' %}" class="button secondary">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <div class="form-header">
+
+        <div class="form-icon">
+            💸
+        </div>
+
+        <div>
+            <h1>Add Expense</h1>
+
+            <p>
+                {{ today|date:"l, d F Y" }}
+            </p>
+        </div>
+
+    </div>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+
+            <label>
+                Expense Type
+            </label>
+
+            {{ form.expense_type }}
+
+            {% if form.expense_type.errors %}
+                <div class="field-error">
+                    {{ form.expense_type.errors }}
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                Amount
+            </label>
+
+            {{ form.amount }}
+
+            {% if form.amount.errors %}
+                <div class="field-error">
+                    {{ form.amount.errors }}
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                Notes
+            </label>
+
+            {{ form.notes }}
+
+            {% if form.notes.errors %}
+                <div class="field-error">
+                    {{ form.notes.errors }}
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="form-actions">
+
+            <a
+                href="{% url 'dashboard' %}"
+                class="button secondary"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="button expense"
+            >
+                Save Expense
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+</div>
+
+{% endblock %}

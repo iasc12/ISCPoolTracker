@@ -1,116 +1,67 @@
-{% extends "tracker/base.html" %}
+﻿{% extends "tracker/base.html" %}
 
-{% block title %}
-Add Expense
-{% endblock %}
+{% block title %}Add Expense - ISC Pool Tracker{% endblock %}
 
 {% block content %}
 
 <div class="form-page">
 
-<div class="form-card">
+    <div class="card">
 
-    <div style="margin-bottom: 20px;">
-        <a href="{% url 'dashboard' %}" class="button secondary">
-            ← Back to Dashboard
-        </a>
-    </div>
+        <h1>
+            {% if editing %}
+                Edit Expense
+            {% else %}
+                Add Expense
+            {% endif %}
+        </h1>
 
-    <div class="form-header">
+        <p>
+            Record a business expense.
+        </p>
 
-        <div class="form-icon">
-            💸
-        </div>
+        <form method="post">
+            {% csrf_token %}
 
-        <div>
-            <h1>Add Expense</h1>
+            {% for field in form %}
+                <div class="form-group">
 
-            <p>
-                {{ today|date:"l, d F Y" }}
-            </p>
-        </div>
+                    {{ field.label_tag }}
 
-    </div>
+                    {{ field }}
 
-    <form method="post">
+                    {% if field.errors %}
+                        {{ field.errors }}
+                    {% endif %}
 
-        {% csrf_token %}
+                </div>
+            {% endfor %}
 
-        {% if form.non_field_errors %}
-            <div class="form-errors">
+            {% if form.non_field_errors %}
                 {{ form.non_field_errors }}
+            {% endif %}
+
+            <div class="buttons">
+
+                <button
+                    type="submit"
+                    class="button danger"
+                >
+                    Save Expense
+                </button>
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="button secondary"
+                >
+                    Cancel
+                </a>
+
             </div>
-        {% endif %}
 
-        <div class="form-group">
+        </form>
 
-            <label>
-                Expense Type
-            </label>
-
-            {{ form.expense_type }}
-
-            {% if form.expense_type.errors %}
-                <div class="field-error">
-                    {{ form.expense_type.errors }}
-                </div>
-            {% endif %}
-
-        </div>
-
-        <div class="form-group">
-
-            <label>
-                Amount
-            </label>
-
-            {{ form.amount }}
-
-            {% if form.amount.errors %}
-                <div class="field-error">
-                    {{ form.amount.errors }}
-                </div>
-            {% endif %}
-
-        </div>
-
-        <div class="form-group">
-
-            <label>
-                Notes
-            </label>
-
-            {{ form.notes }}
-
-            {% if form.notes.errors %}
-                <div class="field-error">
-                    {{ form.notes.errors }}
-                </div>
-            {% endif %}
-
-        </div>
-
-        <div class="form-actions">
-
-            <a
-                href="{% url 'dashboard' %}"
-                class="button secondary"
-            >
-                Cancel
-            </a>
-
-            <button
-                type="submit"
-                class="button expense"
-            >
-                Save Expense
-            </button>
-
-        </div>
-
-    </form>
-
-</div>
+    </div>
 
 </div>
 

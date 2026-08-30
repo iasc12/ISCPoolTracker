@@ -1,0 +1,44 @@
+﻿{% extends "tracker/base.html" %}
+
+{% block title %}Confirm Delete - ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<div class="form-page">
+
+    <div class="card">
+
+        <h1>Confirm Delete</h1>
+
+        <p>
+            Are you sure you want to delete this {{ object_type }}?
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="buttons">
+
+                <button
+                    type="submit"
+                    class="button danger"
+                >
+                    Yes, Delete
+                </button>
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="button secondary"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

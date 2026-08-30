@@ -1,0 +1,1165 @@
+{% extends "tracker/base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+.dashboard {
+    max-width: 1250px;
+    margin: 0 auto;
+}
+
+/* HEADER */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 34px;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.dashboard-header p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* ACTION BUTTONS */
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.action-button {
+    min-height: 100px;
+    border-radius: 18px;
+    padding: 20px 25px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    text-decoration: none !important;
+    color: white !important;
+    font-weight: 900;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 32px rgba(0, 0, 0, 0.22);
+}
+
+.earning-action {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+}
+
+.expense-action {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.action-icon {
+    width: 55px;
+    height: 55px;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    flex-shrink: 0;
+}
+
+.action-text strong {
+    display: block;
+    font-size: 21px;
+}
+
+.action-text span {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.85;
+    font-weight: 600;
+}
+
+/* SECTION TITLE */
+.section-title {
+    margin: 30px 0 14px;
+    font-size: 21px;
+    font-weight: 900;
+    color: var(--text);
+}
+
+/* PERIOD CARDS */
+.period-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.period-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+    min-width: 0;
+}
+
+.period-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    gap: 10px;
+}
+
+.period-title {
+    font-size: 19px;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.period-date {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    text-align: right;
+}
+
+.period-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.period-row:last-child {
+    border-bottom: none;
+}
+
+.period-label {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.period-amount {
+    font-size: 17px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.earnings-color {
+    color: var(--success);
+}
+
+.expenses-color {
+    color: var(--danger);
+}
+
+.profit-positive {
+    color: var(--success);
+}
+
+.profit-negative {
+    color: var(--danger);
+}
+
+/* CHART */
+.chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+    margin-top: 10px;
+}
+
+.chart-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.chart-subtitle {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 330px;
+    margin-top: 20px;
+}
+
+.chart-wrapper canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.chart-empty {
+    display: none;
+    height: 330px;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* RECENT ACTIVITY */
+.transactions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.transaction-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.transaction-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.transaction-list {
+    padding: 8px 18px;
+}
+
+.transaction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 2px;
+    border-bottom: 1px solid var(--border);
+}
+
+.transaction:last-child {
+    border-bottom: none;
+}
+
+.transaction-date {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.transaction-note {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.transaction-amount {
+    white-space: nowrap;
+    font-weight: 900;
+}
+
+.empty {
+    padding: 25px 5px;
+    color: var(--muted);
+    text-align: center;
+    font-size: 13px;
+}
+
+/* HISTORY */
+.history-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.history-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: var(--shadow);
+    transition: 0.2s ease;
+}
+
+.history-button:hover {
+    transform: translateY(-2px);
+    background: var(--surface-soft);
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+    .period-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .transactions {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .dashboard-header {
+        display: block;
+    }
+
+    .dashboard-header h1 {
+        font-size: 29px;
+    }
+
+    .action-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-wrapper,
+    .chart-empty {
+        height: 280px;
+    }
+}
+
+@media (max-width: 450px) {
+    .action-button {
+        min-height: 82px;
+        padding: 16px;
+    }
+
+    .action-icon {
+        width: 46px;
+        height: 46px;
+        font-size: 27px;
+    }
+
+    .action-text strong {
+        font-size: 18px;
+    }
+
+    .period-card {
+        padding: 18px;
+    }
+
+    .chart-card {
+        padding: 15px;
+    }
+
+    .chart-wrapper,
+    .chart-empty {
+        height: 250px;
+    }
+
+    .history-actions {
+        flex-direction: column;
+    }
+
+    .history-button {
+        width: 100%;
+    }
+}
+</style>
+
+<div class="dashboard">
+
+```
+<!-- HEADER -->
+
+<div class="dashboard-header">
+
+    <div>
+        <h1>Dashboard</h1>
+
+        <p>
+            Welcome to your ISC Pool financial overview.
+        </p>
+    </div>
+
+</div>
+
+
+<!-- ACTION BUTTONS -->
+
+<div class="action-grid">
+
+    <a
+        href="{% url 'add_earning' %}"
+        class="action-button earning-action"
+    >
+
+        <div class="action-icon">
+            +
+        </div>
+
+        <div class="action-text">
+
+            <strong>
+                Add Earning
+            </strong>
+
+            <span>
+                Record today's pool income
+            </span>
+
+        </div>
+
+    </a>
+
+
+    <a
+        href="{% url 'add_expense' %}"
+        class="action-button expense-action"
+    >
+
+        <div class="action-icon">
+            −
+        </div>
+
+        <div class="action-text">
+
+            <strong>
+                Add Expense
+            </strong>
+
+            <span>
+                Record a business expense
+            </span>
+
+        </div>
+
+    </a>
+
+</div>
+
+
+<!-- FINANCIAL OVERVIEW -->
+
+<div class="section-title">
+    Financial Overview
+</div>
+
+
+<div class="period-grid">
+
+    <!-- TODAY -->
+
+    <div class="period-card">
+
+        <div class="period-card-header">
+
+            <div class="period-title">
+                Today
+            </div>
+
+            <div class="period-date">
+                {{ today|date:"d M Y" }}
+            </div>
+
+        </div>
+
+
+        <div class="period-row">
+
+            <div class="period-label">
+                Earnings
+            </div>
+
+            <div class="period-amount earnings-color">
+                KSh {{ today_earnings|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="period-row">
+
+            <div class="period-label">
+                Expenses
+            </div>
+
+            <div class="period-amount expenses-color">
+                KSh {{ today_expenses|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="period-row">
+
+            <div class="period-label">
+                Profit / Loss
+            </div>
+
+            <div class="period-amount {% if today_profit < 0 %}profit-negative{% else %}profit-positive{% endif %}">
+
+                {% if today_profit < 0 %}
+                    − KSh {{ today_profit|stringformat:"s"|slice:"1:" }}
+                {% else %}
+                    + KSh {{ today_profit|floatformat:2 }}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- THIS WEEK -->
+
+    <div class="period-card">
+
+        <div class="period-card-header">
+
+            <div class="period-title">
+                This Week
+            </div>
+
+            <div class="period-date">
+                {{ week_start|date:"d M" }}
+                -
+                {{ week_end|date:"d M" }}
+            </div>
+
+        </div>
+
+
+        <div class="period-row">
+
+            <div class="period-label">
+                Earnings
+            </div>
+
+            <div class="period-amount earnings-color">
+                KSh {{ weekly_earnings|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="period-row">
+
+            <div class="period-label">
+                Expenses
+            </div>
+
+            <div class="period-amount expenses-color">
+                KSh {{ weekly_expenses|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="period-row">
+
+            <div class="period-label">
+                Profit / Loss
+            </div>
+
+            <div class="period-amount {% if weekly_profit < 0 %}profit-negative{% else %}profit-positive{% endif %}">
+
+                {% if weekly_profit < 0 %}
+                    − KSh {{ weekly_profit|stringformat:"s"|slice:"1:" }}
+                {% else %}
+                    + KSh {{ weekly_profit|floatformat:2 }}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- THIS MONTH -->
+
+    <div class="period-card">
+
+        <div class="period-card-header">
+
+            <div class="period-title">
+                This Month
+            </div>
+
+            <div class="period-date">
+                {{ month_start|date:"d M" }}
+                -
+                {{ month_end|date:"d M" }}
+            </div>
+
+        </div>
+
+
+        <div class="period-row">
+
+            <div class="period-label">
+                Earnings
+            </div>
+
+            <div class="period-amount earnings-color">
+                KSh {{ monthly_earnings|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="period-row">
+
+            <div class="period-label">
+                Expenses
+            </div>
+
+            <div class="period-amount expenses-color">
+                KSh {{ monthly_expenses|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="period-row">
+
+            <div class="period-label">
+                Profit / Loss
+            </div>
+
+            <div class="period-amount {% if monthly_profit < 0 %}profit-negative{% else %}profit-positive{% endif %}">
+
+                {% if monthly_profit < 0 %}
+                    − KSh {{ monthly_profit|stringformat:"s"|slice:"1:" }}
+                {% else %}
+                    + KSh {{ monthly_profit|floatformat:2 }}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- 7 DAY BAR CHART -->
+
+<div class="section-title">
+    Earnings — Last 7 Days
+</div>
+
+
+<div class="chart-card">
+
+    <div class="chart-title">
+        Daily Earnings
+    </div>
+
+    <div class="chart-subtitle">
+        Earnings collected during the last seven days
+    </div>
+
+
+    <div class="chart-wrapper">
+
+        <canvas id="earningsBarChart"></canvas>
+
+        <div
+            id="chartEmpty"
+            class="chart-empty"
+        >
+            No earnings recorded during the last 7 days.
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- RECENT ACTIVITY -->
+
+<div class="section-title">
+    Recent Activity
+</div>
+
+
+<div class="transactions">
+
+    <!-- RECENT EARNINGS -->
+
+    <div class="transaction-box">
+
+        <div class="transaction-header">
+            Recent Earnings
+        </div>
+
+
+        <div class="transaction-list">
+
+            {% for earning in recent_earnings %}
+
+                <div class="transaction">
+
+                    <div>
+
+                        <div class="transaction-date">
+                            {{ earning.date|date:"d M Y" }}
+                        </div>
+
+                        {% if earning.notes %}
+
+                            <div class="transaction-note">
+                                {{ earning.notes }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="transaction-note">
+                                Pool income
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="transaction-amount earnings-color">
+
+                        +
+                        KSh
+                        {{ earning.amount_collected|floatformat:2 }}
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty">
+                    No recent earnings.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- RECENT EXPENSES -->
+
+    <div class="transaction-box">
+
+        <div class="transaction-header">
+            Recent Expenses
+        </div>
+
+
+        <div class="transaction-list">
+
+            {% for expense in recent_expenses %}
+
+                <div class="transaction">
+
+                    <div>
+
+                        <div class="transaction-date">
+                            {{ expense.date|date:"d M Y" }}
+                        </div>
+
+                        <div class="transaction-note">
+
+                            {{ expense.get_expense_type_display }}
+
+                            {% if expense.notes %}
+                                — {{ expense.notes }}
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="transaction-amount expenses-color">
+
+                        −
+                        KSh
+                        {{ expense.amount|floatformat:2 }}
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty">
+                    No recent expenses.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- HISTORY / REPORT BUTTONS -->
+
+<div class="history-actions">
+
+    <a
+        href="{% url 'earnings_list' %}"
+        class="history-button"
+    >
+        Earnings History
+    </a>
+
+
+    <a
+        href="{% url 'expenses_list' %}"
+        class="history-button"
+    >
+        Expenses History
+    </a>
+
+
+    <a
+        href="{% url 'reports' %}"
+        class="history-button"
+    >
+        Reports
+    </a>
+
+</div>
+```
+
+</div>
+
+<!-- DJANGO CHART DATA -->
+
+{{ chart_labels|json_script:"chart-labels" }}
+{{ chart_values|json_script:"chart-values" }}
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+(function () {
+
+    "use strict";
+
+    const canvas =
+        document.getElementById("earningsBarChart");
+
+    const emptyMessage =
+        document.getElementById("chartEmpty");
+
+    if (!canvas) {
+        console.error(
+            "ISC Pool Tracker: chart canvas not found."
+        );
+        return;
+    }
+
+
+    const labelsElement =
+        document.getElementById("chart-labels");
+
+    const valuesElement =
+        document.getElementById("chart-values");
+
+
+    if (!labelsElement || !valuesElement) {
+
+        console.error(
+            "ISC Pool Tracker: chart data not found."
+        );
+
+        return;
+    }
+
+
+    let labels = [];
+    let values = [];
+
+
+    try {
+
+        labels =
+            JSON.parse(
+                labelsElement.textContent
+            );
+
+        values =
+            JSON.parse(
+                valuesElement.textContent
+            );
+
+    } catch (error) {
+
+        console.error(
+            "ISC Pool Tracker: Could not parse chart data.",
+            error
+        );
+
+        return;
+    }
+
+
+    console.log(
+        "ISC Pool Tracker labels:",
+        labels
+    );
+
+    console.log(
+        "ISC Pool Tracker values:",
+        values
+    );
+
+
+    const hasEarnings =
+        values.some(function (value) {
+
+            return Number(value) > 0;
+
+        });
+
+
+    if (!hasEarnings) {
+
+        canvas.style.display = "none";
+
+        if (emptyMessage) {
+
+            emptyMessage.style.display = "flex";
+
+        }
+
+        return;
+
+    }
+
+
+    if (typeof Chart === "undefined") {
+
+        console.error(
+            "ISC Pool Tracker: Chart.js failed to load."
+        );
+
+        if (emptyMessage) {
+
+            emptyMessage.style.display = "flex";
+
+            emptyMessage.textContent =
+                "Chart could not load. Check your internet connection.";
+
+        }
+
+        return;
+
+    }
+
+
+    const rootStyles =
+        getComputedStyle(
+            document.documentElement
+        );
+
+
+    const textColor =
+        rootStyles
+            .getPropertyValue("--text")
+            .trim() ||
+        "#111827";
+
+
+    const mutedColor =
+        rootStyles
+            .getPropertyValue("--muted")
+            .trim() ||
+        "#64748b";
+
+
+    const borderColor =
+        rootStyles
+            .getPropertyValue("--border")
+            .trim() ||
+        "#e5e7eb";
+
+
+    const successColor =
+        rootStyles
+            .getPropertyValue("--success")
+            .trim() ||
+        "#16a34a";
+
+
+    new Chart(
+        canvas,
+        {
+            type: "bar",
+
+            data: {
+
+                labels: labels,
+
+                datasets: [
+                    {
+                        label: "Daily Earnings",
+
+                        data: values,
+
+                        backgroundColor:
+                            successColor,
+
+                        borderColor:
+                            successColor,
+
+                        borderWidth: 1,
+
+                        borderRadius: 8,
+
+                        borderSkipped: false,
+
+                        maxBarThickness: 65
+                    }
+                ]
+
+            },
+
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                animation: {
+                    duration: 700
+                },
+
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    },
+
+
+                    tooltip: {
+
+                        displayColors: false,
+
+                        callbacks: {
+
+                            label: function (context) {
+
+                                return (
+                                    "KSh " +
+                                    Number(
+                                        context.raw
+                                    ).toLocaleString(
+                                        "en-KE",
+                                        {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        }
+                                    )
+                                );
+
+                            }
+
+                        }
+
+                    }
+
+                },
+
+
+                scales: {
+
+                    x: {
+
+                        ticks: {
+
+                            color: textColor,
+
+                            font: {
+                                weight: "700"
+                            }
+
+                        },
+
+                        grid: {
+                            color: borderColor
+                        }
+
+                    },
+
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            color: mutedColor,
+
+                            callback: function (value) {
+
+                                return (
+                                    "KSh " +
+                                    Number(
+                                        value
+                                    ).toLocaleString("en-KE")
+                                );
+
+                            }
+
+                        },
+
+                        grid: {
+                            color: borderColor
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+})();
+</script>
+
+{% endblock %}

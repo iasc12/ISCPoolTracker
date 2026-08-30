@@ -1,0 +1,120 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}
+Add Earning | ISC Pool Tracker
+{% endblock %}
+
+{% block content %}
+
+<div class="form-page">
+
+    <div class="form-card">
+
+        <div class="form-header">
+
+            <h1>
+                {% if editing %}
+                    Edit Earning
+                {% else %}
+                    Add Earning
+                {% endif %}
+            </h1>
+
+            <p>
+                Record money collected from the pool.
+            </p>
+
+        </div>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+
+            <div class="form-group">
+
+                <label for="{{ form.date.id_for_label }}">
+                    Date
+                </label>
+
+                {{ form.date }}
+
+                {% if form.date.errors %}
+                    <div class="field-error">
+                        {{ form.date.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.amount_collected.id_for_label }}">
+                    Amount Collected (KSh)
+                </label>
+
+                {{ form.amount_collected }}
+
+                {% if form.amount_collected.errors %}
+                    <div class="field-error">
+                        {{ form.amount_collected.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.notes.id_for_label }}">
+                    Notes
+                </label>
+
+                {{ form.notes }}
+
+                {% if form.notes.errors %}
+                    <div class="field-error">
+                        {{ form.notes.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="button secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="button earning"
+                >
+                    {% if editing %}
+                        Update Earning
+                    {% else %}
+                        Save Earning
+                    {% endif %}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

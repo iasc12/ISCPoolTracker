@@ -1,0 +1,509 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}
+Expenses History | ISC Pool Tracker
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-bottom: 22px;
+    padding: 11px 18px;
+    border-radius: 10px;
+    background: #111827;
+    color: #ffffff !important;
+    border: 1px solid #111827;
+    text-decoration: none !important;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.back-button:hover {
+    background: #000000;
+    color: #ffffff !important;
+}
+
+.history-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.history-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 9px 15px;
+    border-radius: 9px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 14px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.filter-button {
+    background: #2563eb;
+    color: #ffffff !important;
+    border-color: #2563eb;
+}
+
+.filter-button:hover {
+    background: #1d4ed8;
+}
+
+.reset-button {
+    background: #64748b;
+    color: #ffffff !important;
+    border-color: #64748b;
+}
+
+.reset-button:hover {
+    background: #475569;
+}
+
+.edit-button {
+    background: var(--surface-secondary);
+    color: var(--text) !important;
+    border-color: var(--border);
+}
+
+.delete-button {
+    background: #dc2626;
+    color: #ffffff !important;
+    border-color: #dc2626;
+}
+
+.delete-button:hover {
+    background: #b91c1c;
+}
+
+.history-input,
+.history-date,
+.history-select {
+    width: 100%;
+    height: 44px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    color: var(--text);
+    outline: none;
+}
+
+.history-input:focus,
+.history-date:focus,
+.history-select:focus {
+    border-color: #2563eb;
+}
+
+@media (max-width: 700px) {
+
+    .filter-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .history-button {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+<a href="{% url 'dashboard' %}" class="back-button">
+    ← Back to Dashboard
+</a>
+
+<div class="page-header">
+
+
+<h1>
+    Expenses History
+</h1>
+
+<p>
+    Track and manage every business expense.
+</p>
+
+
+</div>
+
+<div class="history-card" style="padding:22px; margin-bottom:22px;">
+
+
+<form method="get">
+
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+        gap:14px;
+        align-items:end;
+    ">
+
+        <div>
+
+            <label>
+                From
+            </label>
+
+            <input
+                type="date"
+                name="date_from"
+                value="{{ date_from }}"
+                class="history-date"
+            >
+
+        </div>
+
+
+        <div>
+
+            <label>
+                To
+            </label>
+
+            <input
+                type="date"
+                name="date_to"
+                value="{{ date_to }}"
+                class="history-date"
+            >
+
+        </div>
+
+
+        <div>
+
+            <label>
+                Category
+            </label>
+
+            <select
+                name="expense_type"
+                class="history-select"
+            >
+
+                <option value="">
+                    All Categories
+                </option>
+
+                {% for value,label in expense_choices %}
+
+                <option
+                    value="{{ value }}"
+                    {% if expense_type == value %}
+                        selected
+                    {% endif %}
+                >
+
+                    {{ label }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <div>
+
+            <label>
+                Search
+            </label>
+
+            <input
+                type="text"
+                name="search"
+                value="{{ search }}"
+                placeholder="Amount or notes"
+                class="history-input"
+            >
+
+        </div>
+
+
+        <div class="filter-actions">
+
+            <button
+                type="submit"
+                class="history-button filter-button"
+            >
+                🔎 Filter
+            </button>
+
+            <a
+                href="{% url 'expenses_list' %}"
+                class="history-button reset-button"
+            >
+                Reset
+            </a>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+</div>
+
+<div class="history-card" style="padding:22px; margin-bottom:22px;">
+
+
+<div>
+
+    <div style="
+        color:var(--muted);
+        font-size:13px;
+        font-weight:700;
+    ">
+        FILTERED EXPENSES
+    </div>
+
+    <div style="
+        font-size:27px;
+        font-weight:850;
+        color:var(--danger);
+        margin-top:4px;
+    ">
+        KSh {{ filtered_total|floatformat:2 }}
+    </div>
+
+</div>
+
+
+</div>
+
+<div class="history-card" style="
+    padding:0;
+    overflow:hidden;
+">
+
+
+{% if page_obj %}
+
+<div style="overflow-x:auto;">
+
+    <table style="
+        width:100%;
+        border-collapse:collapse;
+    ">
+
+        <thead>
+
+            <tr style="
+                background:var(--surface-secondary);
+                border-bottom:1px solid var(--border);
+            ">
+
+                <th style="padding:15px;text-align:left;">
+                    Date
+                </th>
+
+                <th style="padding:15px;text-align:left;">
+                    Category
+                </th>
+
+                <th style="padding:15px;text-align:right;">
+                    Amount
+                </th>
+
+                <th style="padding:15px;text-align:left;">
+                    Notes
+                </th>
+
+                <th style="padding:15px;text-align:center;">
+                    Actions
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for expense in page_obj %}
+
+            <tr style="
+                border-bottom:1px solid var(--border);
+            ">
+
+                <td style="padding:15px;">
+
+                    <strong>
+                        {{ expense.date|date:"d M Y" }}
+                    </strong>
+
+                </td>
+
+
+                <td style="padding:15px;">
+
+                    <span style="
+                        display:inline-block;
+                        padding:6px 10px;
+                        border-radius:20px;
+                        background:var(--surface-secondary);
+                        border:1px solid var(--border);
+                        font-size:12px;
+                        font-weight:750;
+                    ">
+
+                        {{ expense.get_expense_type_display }}
+
+                    </span>
+
+                </td>
+
+
+                <td style="
+                    padding:15px;
+                    text-align:right;
+                    color:var(--danger);
+                    font-weight:800;
+                ">
+
+                    KSh {{ expense.amount|floatformat:2 }}
+
+                </td>
+
+
+                <td style="
+                    padding:15px;
+                    color:var(--muted);
+                ">
+
+                    {% if expense.notes %}
+                        {{ expense.notes }}
+                    {% else %}
+                        —
+                    {% endif %}
+
+                </td>
+
+
+                <td style="
+                    padding:15px;
+                    text-align:center;
+                ">
+
+                    <a
+                        href="{% url 'edit_expense' expense.id %}"
+                        class="history-button edit-button"
+                    >
+                        ✏️ Edit
+                    </a>
+
+                    <a
+                        href="{% url 'delete_expense' expense.id %}"
+                        class="history-button delete-button"
+                    >
+                        🗑 Delete
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+{% else %}
+
+<div style="
+    padding:50px;
+    text-align:center;
+    color:var(--muted);
+">
+
+    <div style="font-size:40px;">
+        💸
+    </div>
+
+    <h3>
+        No expenses found
+    </h3>
+
+    <p>
+        Try changing your filters.
+    </p>
+
+</div>
+
+{% endif %}
+
+
+</div>
+
+{% if page_obj.has_other_pages %}
+
+<div style="
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-top:22px;
+    flex-wrap:wrap;
+">
+
+
+{% if page_obj.has_previous %}
+
+<a
+    class="history-button reset-button"
+    href="?page={{ page_obj.previous_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}&expense_type={{ expense_type }}&search={{ search }}"
+>
+    ← Previous
+</a>
+
+{% endif %}
+
+
+<span style="
+    padding:10px 14px;
+    color:var(--muted);
+    font-weight:700;
+">
+
+    Page {{ page_obj.number }}
+    of {{ page_obj.paginator.num_pages }}
+
+</span>
+
+
+{% if page_obj.has_next %}
+
+<a
+    class="history-button reset-button"
+    href="?page={{ page_obj.next_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}&expense_type={{ expense_type }}&search={{ search }}"
+>
+    Next →
+</a>
+
+{% endif %}
+
+
+</div>
+
+{% endif %}
+
+{% endblock %}

@@ -22,7 +22,7 @@ SECRET_KEY = os.getenv(
 
 DEBUG = os.getenv(
     "DJANGO_DEBUG",
-    "true",
+    "false",
 ).lower() == "true"
 
 

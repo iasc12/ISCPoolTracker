@@ -1,859 +1,1083 @@
-﻿{% load static %}
+﻿
+{% load static %}
 
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
 
-```
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<meta name="theme-color" content="#2563eb">
+    <title>
+        {% block title %}ISC Pool Tracker{% endblock %}
+    </title>
 
-<meta
-    name="mobile-web-app-capable"
-    content="yes"
->
+    <style>
 
-<meta
-    name="apple-mobile-web-app-capable"
-    content="yes"
->
+        /* =====================================================
+           GLOBAL THEME
+           ===================================================== */
 
-<meta
-    name="apple-mobile-web-app-status-bar-style"
-    content="default"
->
+        :root {
+            --bg: #f4f7fb;
+            --surface: #ffffff;
+            --surface-soft: #eef2f7;
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #dbe2ea;
 
-<meta
-    name="apple-mobile-web-app-title"
-    content="ISC Pool"
->
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
 
-<title>
-    {% block title %}
-        ISC Pool Tracker
-    {% endblock %}
-</title>
+            --success: #16a34a;
+            --danger: #dc2626;
 
-<link
-    rel="stylesheet"
-    href="{% static 'tracker/css/style.css' %}"
->
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 
-<link
-    rel="icon"
-    type="image/png"
-    href="{% static 'tracker/icon.png' %}"
->
-
-<link
-    rel="apple-touch-icon"
-    href="{% static 'tracker/icon.png' %}"
->
-
-<link
-    rel="manifest"
-    href="{% static 'tracker/manifest.json' %}"
->
-
-<style>
-    * {
-        box-sizing: border-box;
-    }
-
-    html {
-        width: 100%;
-        min-height: 100%;
-        overflow-x: hidden;
-        -webkit-text-size-adjust: 100%;
-    }
-
-    body {
-        margin: 0;
-        width: 100%;
-        min-height: 100vh;
-        font-family: Arial, Helvetica, sans-serif;
-        background: var(--background);
-        color: var(--text);
-        overflow-x: hidden;
-        transition:
-            background 0.25s ease,
-            color 0.25s ease;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-        font: inherit;
-    }
-
-    a {
-        color: inherit;
-    }
-
-    img {
-        max-width: 100%;
-    }
-
-    :root {
-        --background: #f1f5f9;
-        --surface: #ffffff;
-        --surface-soft: #f8fafc;
-        --text: #0f172a;
-        --muted: #64748b;
-        --border: #e2e8f0;
-        --primary: #2563eb;
-        --success: #16a34a;
-        --danger: #dc2626;
-        --radius: 16px;
-        --shadow: 0 6px 22px rgba(15, 23, 42, 0.07);
-    }
-
-    html[data-theme="dark"] {
-        --background: #0b1120;
-        --surface: #111827;
-        --surface-soft: #1f2937;
-        --text: #f8fafc;
-        --muted: #94a3b8;
-        --border: #334155;
-        --primary: #60a5fa;
-        --success: #4ade80;
-        --danger: #f87171;
-        --shadow: 0 6px 22px rgba(0, 0, 0, 0.28);
-    }
-
-    .app-shell {
-        width: 100%;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* =========================
-       NAVIGATION
-       ========================= */
-
-    .topbar {
-        width: 100%;
-        background: var(--surface);
-        border-bottom: 1px solid var(--border);
-        box-shadow: var(--shadow);
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-    }
-
-    .nav-inner {
-        width: 100%;
-        max-width: 1450px;
-        min-height: 66px;
-        margin: 0 auto;
-        padding: 8px 20px;
-
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .brand {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        text-decoration: none;
-        font-weight: 900;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-
-    .brand img {
-        width: 40px;
-        height: 40px;
-        object-fit: contain;
-        border-radius: 10px;
-    }
-
-    .brand-name {
-        display: block;
-        font-size: 14px;
-        line-height: 1.1;
-    }
-
-    .brand-subtitle {
-        display: block;
-        margin-top: 3px;
-        color: var(--muted);
-        font-size: 8px;
-        letter-spacing: 1px;
-    }
-
-    .nav-links {
-        flex: 1;
-        min-width: 0;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-    }
-
-    .nav-link {
-        min-height: 40px;
-        padding: 9px 12px;
-
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 9px;
-
-        text-decoration: none;
-        color: var(--muted);
-
-        font-size: 12px;
-        font-weight: 800;
-        white-space: nowrap;
-
-        transition:
-            background 0.18s ease,
-            color 0.18s ease,
-            transform 0.18s ease;
-    }
-
-    .nav-link:hover {
-        background: var(--surface-soft);
-        color: var(--text);
-        transform: translateY(-1px);
-    }
-
-    .nav-link.active {
-        background: rgba(37, 99, 235, 0.10);
-        color: var(--primary);
-    }
-
-    .nav-right {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex-shrink: 0;
-    }
-
-    .theme-button,
-    .menu-button {
-        width: 40px;
-        height: 40px;
-
-        border: 1px solid var(--border);
-        border-radius: 9px;
-
-        background: var(--surface-soft);
-        color: var(--text);
-
-        cursor: pointer;
-
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        font-size: 17px;
-    }
-
-    .theme-button:hover,
-    .menu-button:hover {
-        transform: translateY(-1px);
-    }
-
-    .menu-button {
-        display: none;
-    }
-
-    /* =========================
-       MAIN
-       ========================= */
-
-    .app-container {
-        width: 100%;
-        max-width: 1450px;
-        margin: 0 auto;
-        padding: 18px 20px 12px;
-        flex: 1 0 auto;
-    }
-
-    /* =========================
-       MESSAGES
-       ========================= */
-
-    .messages-container {
-        position: fixed;
-        top: 78px;
-        left: 50%;
-        transform: translateX(-50%);
-
-        width: min(92vw, 500px);
-
-        z-index: 2000;
-    }
-
-    .message {
-        padding: 13px 17px;
-        margin-bottom: 8px;
-
-        border-radius: 11px;
-
-        background: var(--surface);
-        border: 1px solid var(--border);
-
-        box-shadow: var(--shadow);
-
-        font-size: 13px;
-        font-weight: 800;
-        text-align: center;
-    }
-
-    .message.success {
-        color: var(--success);
-        border-color: rgba(22, 163, 74, 0.35);
-    }
-
-    .message.error {
-        color: var(--danger);
-        border-color: rgba(220, 38, 38, 0.35);
-    }
-
-    /* =========================
-       FOOTER
-       ========================= */
-
-    .app-footer {
-        width: 100%;
-        margin-top: 10px;
-        padding: 16px 15px 18px;
-
-        text-align: center;
-
-        color: var(--muted);
-        font-size: 11px;
-        line-height: 1.45;
-    }
-
-    .footer-main {
-        font-weight: 800;
-        color: var(--text);
-        margin-bottom: 2px;
-    }
-
-    /* =========================
-       MOBILE
-       ========================= */
-
-    @media (max-width: 700px) {
-
-        .nav-inner {
-            min-height: 60px;
-            padding: 7px 10px;
+            --radius: 18px;
         }
 
-        .brand {
-            flex: 1;
-            min-width: 0;
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-soft: #334155;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: #475569;
+
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+
+            --success: #22c55e;
+            --danger: #ef4444;
+
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.30);
         }
 
-        .brand img {
-            width: 36px;
-            height: 36px;
+
+        /* =====================================================
+           RESET
+           ===================================================== */
+
+        * {
+            box-sizing: border-box;
         }
 
-        .brand-name {
-            font-size: 12px;
+
+        html {
+            min-height: 100%;
         }
 
-        .brand-subtitle {
-            font-size: 7px;
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: var(--bg);
+            color: var(--text);
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease;
+
+            display: flex;
+            flex-direction: column;
         }
 
-        .nav-links {
-            display: none;
 
-            position: absolute;
+        a {
+            color: inherit;
+        }
 
-            top: 59px;
-            left: 8px;
-            right: 8px;
 
-            padding: 8px;
+        button,
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+        }
 
+
+        /* =====================================================
+           NAVBAR
+           ===================================================== */
+
+        .navbar {
             background: var(--surface);
 
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            border-bottom:
+                1px solid var(--border);
 
             box-shadow: var(--shadow);
 
-            flex-direction: column;
-            align-items: stretch;
-            gap: 3px;
+            padding: 14px 25px;
+
+            position: sticky;
+            top: 0;
+
+            z-index: 1000;
         }
 
-        .nav-links.open {
-            display: flex;
-        }
 
-        .nav-link {
+        .navbar-inner {
             width: 100%;
-            min-height: 42px;
+            max-width: 1250px;
 
-            justify-content: flex-start;
+            margin: auto;
 
-            padding: 10px 13px;
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+
+        .brand {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            text-decoration: none;
+
+            color: var(--text);
+
+            font-weight: 900;
+
+            font-size: 20px;
+        }
+
+
+        .brand img {
+            width: 44px;
+            height: 44px;
+
+            object-fit: contain;
+
+            border-radius: 10px;
+        }
+
+
+        .nav-actions {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .nav-button {
+            border:
+                1px solid var(--border);
+
+            background: var(--surface);
+
+            color: var(--text);
+
+            padding: 9px 13px;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .nav-button:hover {
+            background: var(--surface-soft);
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =====================================================
+           MAIN CONTENT
+           ===================================================== */
+
+        main {
+            width: 100%;
+            max-width: 1250px;
+
+            margin: 0 auto;
+
+            padding: 30px 20px 50px;
+
+            flex: 1;
+        }
+
+
+        /* =====================================================
+           MESSAGES
+           ===================================================== */
+
+        .messages-container {
+            width: 100%;
+            max-width: 1250px;
+
+            margin: 20px auto 0;
+
+            padding: 0 20px;
+        }
+
+
+        .message {
+            position: relative;
+
+            padding:
+                15px
+                45px
+                15px
+                18px;
+
+            margin-bottom: 12px;
+
+            border-radius: 12px;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            border: 1px solid;
+
+            box-shadow: var(--shadow);
+
+            animation:
+                messageSlide 0.3s ease;
+        }
+
+
+        .message.success {
+            background:
+                rgba(22, 163, 74, 0.12);
+
+            color: var(--success);
+
+            border-color:
+                rgba(22, 163, 74, 0.35);
+        }
+
+
+        .message.error {
+            background:
+                rgba(220, 38, 38, 0.12);
+
+            color: var(--danger);
+
+            border-color:
+                rgba(220, 38, 38, 0.35);
+        }
+
+
+        .message.warning {
+            background:
+                rgba(245, 158, 11, 0.12);
+
+            color: #d97706;
+
+            border-color:
+                rgba(245, 158, 11, 0.35);
+        }
+
+
+        .message.info {
+            background:
+                rgba(37, 99, 235, 0.12);
+
+            color: var(--primary);
+
+            border-color:
+                rgba(37, 99, 235, 0.35);
+        }
+
+
+        .message-close {
+            position: absolute;
+
+            right: 12px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            border: none;
+
+            background: transparent;
+
+            color: inherit;
+
+            font-size: 20px;
+
+            cursor: pointer;
+
+            font-weight: 900;
+        }
+
+
+        @keyframes messageSlide {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        /* =====================================================
+           FORM PAGES
+           ===================================================== */
+
+        .form-page {
+            width: 100%;
+            max-width: 700px;
+
+            margin: 0 auto;
+        }
+
+
+        .form-card {
+            background: var(--surface);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            box-shadow: var(--shadow);
+        }
+
+
+        .form-header {
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .form-icon {
+            width: 60px;
+            height: 60px;
+
+            border-radius: 16px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 30px;
+
+            background:
+                var(--surface-soft);
+
+            flex-shrink: 0;
+        }
+
+
+        .form-header h1 {
+            margin: 0;
+
+            font-size: 28px;
+
+            font-weight: 900;
+        }
+
+
+        .form-header p {
+            margin: 5px 0 0;
+
+            color: var(--muted);
 
             font-size: 13px;
         }
 
-        .menu-button {
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-size: 14px;
+
+            font-weight: 800;
+        }
+
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 10px;
+
+            background: var(--surface);
+
+            color: var(--text);
+
+            font-size: 15px;
+
+            outline: none;
+
+            font-family: inherit;
+        }
+
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(37, 99, 235, 0.12);
+        }
+
+
+        .field-error,
+        .form-errors {
+            margin-top: 7px;
+
+            color: var(--danger);
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+
+        .form-actions {
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 12px;
+
+            margin-top: 25px;
+        }
+
+
+        /* =====================================================
+           BUTTONS
+           ===================================================== */
+
+        .button {
             display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-height: 44px;
+
+            padding: 10px 18px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            text-decoration: none;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+            transition:
+                transform 0.2s ease,
+                opacity 0.2s ease,
+                background 0.2s ease;
         }
 
-        .app-container {
-            padding: 12px 10px 8px;
+
+        .button:hover {
+            transform:
+                translateY(-2px);
+
+            opacity: 0.92;
         }
 
-        .messages-container {
-            top: 68px;
-            width: min(94vw, 450px);
+
+        .button.secondary {
+            background:
+                var(--surface-soft);
+
+            color: var(--text);
+
+            border:
+                1px solid var(--border);
         }
 
-        .app-footer {
+
+        .button.earning {
+            background:
+                var(--success);
+
+            color: #ffffff;
+        }
+
+
+        .button.expense {
+            background:
+                var(--danger);
+
+            color: #ffffff;
+        }
+
+
+        .button.primary {
+            background:
+                var(--primary);
+
+            color: #ffffff;
+        }
+
+
+        /* =====================================================
+           TABLES
+           ===================================================== */
+
+        .table-card {
+            width: 100%;
+
+            background: var(--surface);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 18px;
+
+            overflow-x: auto;
+
+            box-shadow: var(--shadow);
+        }
+
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 600px;
+        }
+
+
+        th,
+        td {
+            padding: 14px 16px;
+
+            border-bottom:
+                1px solid var(--border);
+
+            text-align: left;
+        }
+
+
+        th {
+            font-size: 12px;
+
+            text-transform: uppercase;
+
+            color: var(--muted);
+        }
+
+
+        td {
+            font-size: 14px;
+
+            color: var(--text);
+        }
+
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+
+        /* =====================================================
+           GLOBAL FOOTER
+           ===================================================== */
+
+        footer {
+            width: 100%;
+
+            text-align: center;
+
+            padding: 30px 20px;
+
+            margin-top: auto;
+
+            color: var(--muted);
+
+            font-size: 13px;
+
+            border-top:
+                1px solid var(--border);
+
+            background:
+                var(--surface);
+        }
+
+
+        .footer-brand {
+            color: var(--text);
+
+            font-size: 15px;
+
+            font-weight: 900;
+        }
+
+
+        .footer-tagline {
+            margin-top: 5px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+
+        .footer-year {
             margin-top: 8px;
-            padding: 13px 10px 15px;
-            font-size: 10px;
-        }
-    }
 
-    @media (max-width: 420px) {
-
-        .nav-inner {
-            padding: 6px 8px;
-        }
-
-        .brand img {
-            width: 34px;
-            height: 34px;
-        }
-
-        .brand-name {
             font-size: 11px;
+
+            opacity: 0.8;
         }
 
-        .theme-button,
-        .menu-button {
-            width: 37px;
-            height: 37px;
-            font-size: 16px;
+
+        /* =====================================================
+           MOBILE
+           ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 12px 15px;
+            }
+
+
+            .navbar-inner {
+                flex-wrap: wrap;
+            }
+
+
+            .brand {
+                font-size: 17px;
+            }
+
+
+            .brand img {
+                width: 40px;
+                height: 40px;
+            }
+
+
+            .nav-actions {
+                width: 100%;
+
+                justify-content: flex-end;
+            }
+
+
+            main {
+                padding:
+                    20px
+                    14px
+                    40px;
+            }
+
+
+            .messages-container {
+                padding:
+                    0 14px;
+            }
+
+
+            .form-card {
+                padding: 20px;
+            }
+
+
+            .form-header h1 {
+                font-size: 23px;
+            }
+
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+
+            .form-actions .button {
+                width: 100%;
+            }
+
+
+            footer {
+                padding:
+                    25px
+                    15px;
+            }
         }
 
-        .app-container {
-            padding: 10px 8px 6px;
+
+        /* =====================================================
+           SMALL PHONES
+           ===================================================== */
+
+        @media (max-width: 450px) {
+
+            .nav-button {
+                padding:
+                    8px 10px;
+
+                font-size: 12px;
+            }
+
+
+            .form-card {
+                padding: 16px;
+            }
+
+
+            .form-icon {
+                width: 52px;
+                height: 52px;
+
+                font-size: 26px;
+            }
+
+
+            .footer-brand {
+                font-size: 14px;
+            }
         }
 
-        .app-footer {
-            font-size: 9px;
-            padding: 11px 8px 13px;
-        }
-    }
-</style>
-```
+    </style>
+
+
+    {% block extra_css %}{% endblock %}
 
 </head>
 
+
 <body>
 
-<div class="app-shell">
 
-```
-<!-- NAVIGATION -->
+    <!-- =====================================================
+         NAVBAR
+         ===================================================== -->
 
-<header class="topbar">
+    <nav class="navbar">
 
-    <div class="nav-inner">
-
-        <a
-            href="{% url 'dashboard' %}"
-            class="brand"
-        >
-
-            <img
-                src="{% static 'tracker/icon.png' %}"
-                alt="ISC Pool Tracker"
-            >
-
-            <span>
-
-                <span class="brand-name">
-                    ISC Pool Tracker
-                </span>
-
-                <span class="brand-subtitle">
-                    FINANCIAL MANAGEMENT
-                </span>
-
-            </span>
-
-        </a>
-
-        <nav
-            class="nav-links"
-            id="mainNavigation"
-        >
+        <div class="navbar-inner">
 
             <a
                 href="{% url 'dashboard' %}"
-                class="nav-link"
+                class="brand"
             >
-                Dashboard
+
+                <img
+                    src="{% static 'tracker/images/pool-logo.png' %}"
+                    alt="ISC Pool Tracker"
+                    onerror="this.style.display='none';"
+                >
+
+                <span>
+                    ISC Pool Tracker
+                </span>
+
             </a>
 
-            <a
-                href="{% url 'earnings_list' %}"
-                class="nav-link"
-            >
-                Earnings History
-            </a>
 
-            <a
-                href="{% url 'expenses_list' %}"
-                class="nav-link"
-            >
-                Expenses History
-            </a>
+            <div class="nav-actions">
 
-            <a
-                href="{% url 'reports' %}"
-                class="nav-link"
-            >
-                Reports
-            </a>
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="nav-button"
+                >
+                    Dashboard
+                </a>
 
-        </nav>
 
-        <div class="nav-right">
+                <button
+                    type="button"
+                    class="nav-button"
+                    id="themeToggle"
+                >
+                    Dark
+                </button>
 
-            <button
-                type="button"
-                class="theme-button"
-                id="themeButton"
-                aria-label="Toggle dark and light theme"
-            >
-                🌙
-            </button>
-
-            <button
-                type="button"
-                class="menu-button"
-                id="menuButton"
-                aria-label="Open navigation"
-            >
-                ☰
-            </button>
+            </div>
 
         </div>
 
-    </div>
+    </nav>
 
-</header>
 
+    <!-- =====================================================
+         DJANGO MESSAGES
+         ===================================================== -->
 
-<!-- MESSAGES -->
+    {% if messages %}
 
-{% if messages %}
+        <div class="messages-container">
 
-    <div class="messages-container">
+            {% for message in messages %}
 
-        {% for message in messages %}
+                <div
+                    class="message
+                    {% if message.tags %}
+                        {{ message.tags }}
+                    {% else %}
+                        info
+                    {% endif %}"
+                >
 
-            <div class="message {{ message.tags }}">
-                {{ message }}
-            </div>
+                    {{ message }}
 
-        {% endfor %}
+                    <button
+                        type="button"
+                        class="message-close"
+                        onclick="this.parentElement.remove();"
+                        aria-label="Close"
+                    >
+                        &times;
+                    </button>
 
-    </div>
+                </div>
 
-{% endif %}
+            {% endfor %}
 
+        </div>
 
-<!-- MAIN CONTENT -->
+    {% endif %}
 
-<main class="app-container">
 
-    {% block content %}
-    {% endblock %}
+    <!-- =====================================================
+         PAGE CONTENT
+         ===================================================== -->
 
-</main>
+    <main>
 
+        {% block content %}
+        {% endblock %}
 
-<!-- FOOTER -->
+    </main>
 
-<footer class="app-footer">
 
-    <div class="footer-main">
-        Isaac Njoroge — Built with dedication.
-    </div>
+    <!-- =====================================================
+         GLOBAL FOOTER
+         ===================================================== -->
 
-    <div>
-        Another Day, Another Dollar 💰
-    </div>
+    <footer>
 
-    <div>
-        © {% now "Y" %} ISC Pool Tracker
-    </div>
+        <div class="footer-brand">
+            Isaac Njoroge build.
+        </div>
 
-</footer>
-```
+        <div class="footer-tagline">
+            Another day another dollar.
+        </div>
 
-</div>
+        <div class="footer-year">
+            &copy; {% now "Y" %} ISC Pool Tracker
+        </div>
 
-<script>
+    </footer>
 
-(function () {
 
-    const html = document.documentElement;
+    <!-- =====================================================
+         THEME JAVASCRIPT
+         ===================================================== -->
 
-    const themeButton =
-        document.getElementById("themeButton");
+    <script>
 
-    const menuButton =
-        document.getElementById("menuButton");
+        (function () {
 
-    const navigation =
-        document.getElementById("mainNavigation");
+            "use strict";
 
 
-    /* =========================
-       THEME
-       ========================= */
+            const html =
+                document.documentElement;
 
-    function getSavedTheme() {
-
-        try {
-
-            return localStorage.getItem(
-                "isc_pool_theme"
-            );
-
-        } catch (error) {
-
-            return null;
-
-        }
-
-    }
-
-
-    function saveTheme(theme) {
-
-        try {
-
-            localStorage.setItem(
-                "isc_pool_theme",
-                theme
-            );
-
-        } catch (error) {}
-
-    }
-
-
-    function applyTheme(theme) {
-
-        html.setAttribute(
-            "data-theme",
-            theme
-        );
-
-        if (themeButton) {
-
-            themeButton.textContent =
-                theme === "dark"
-                    ? "☀️"
-                    : "🌙";
-
-            themeButton.setAttribute(
-                "aria-label",
-                theme === "dark"
-                    ? "Switch to light theme"
-                    : "Switch to dark theme"
-            );
-
-        }
-
-        window.dispatchEvent(
-            new Event("iscThemeChanged")
-        );
-
-    }
-
-
-    let savedTheme =
-        getSavedTheme();
-
-
-    if (
-        savedTheme !== "dark" &&
-        savedTheme !== "light"
-    ) {
-
-        savedTheme =
-            window.matchMedia &&
-            window.matchMedia(
-                "(prefers-color-scheme: dark)"
-            ).matches
-                ? "dark"
-                : "light";
-
-    }
-
-
-    applyTheme(savedTheme);
-
-
-    if (themeButton) {
-
-        themeButton.addEventListener(
-            "click",
-            function () {
-
-                const current =
-                    html.getAttribute(
-                        "data-theme"
-                    );
-
-                const next =
-                    current === "dark"
-                        ? "light"
-                        : "dark";
-
-                applyTheme(next);
-
-                saveTheme(next);
-
-            }
-        );
-
-    }
-
-
-    /* =========================
-       MOBILE MENU
-       ========================= */
-
-    if (
-        menuButton &&
-        navigation
-    ) {
-
-        menuButton.addEventListener(
-            "click",
-            function (event) {
-
-                event.stopPropagation();
-
-                navigation.classList.toggle(
-                    "open"
+            const button =
+                document.getElementById(
+                    "themeToggle"
                 );
 
+
+            function applyTheme(theme) {
+
+                html.setAttribute(
+                    "data-theme",
+                    theme
+                );
+
+
+                if (button) {
+
+                    if (theme === "dark") {
+
+                        button.textContent =
+                            "Light";
+
+                    } else {
+
+                        button.textContent =
+                            "Dark";
+                    }
+                }
+
+
+                window.dispatchEvent(
+                    new Event(
+                        "iscThemeChanged"
+                    )
+                );
             }
-        );
 
 
-        navigation
-            .querySelectorAll("a")
-            .forEach(
-                function (link) {
+            let savedTheme =
+                localStorage.getItem(
+                    "isc-theme"
+                );
 
-                    link.addEventListener(
-                        "click",
-                        function () {
 
-                            navigation.classList.remove(
-                                "open"
+            if (
+                savedTheme !== "dark" &&
+                savedTheme !== "light"
+            ) {
+
+                savedTheme = "light";
+            }
+
+
+            applyTheme(savedTheme);
+
+
+            if (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const current =
+                            html.getAttribute(
+                                "data-theme"
+                            );
+
+
+                        const newTheme =
+                            current === "dark"
+                                ? "light"
+                                : "dark";
+
+
+                        localStorage.setItem(
+                            "isc-theme",
+                            newTheme
+                        );
+
+
+                        applyTheme(newTheme);
+
+                    }
+                );
+            }
+
+        })();
+
+
+        /* =====================================================
+           AUTO-HIDE MESSAGES
+           ===================================================== */
+
+        setTimeout(
+            function () {
+
+                document
+                    .querySelectorAll(
+                        ".message"
+                    )
+                    .forEach(
+                        function (message) {
+
+                            message.style.opacity =
+                                "0";
+
+
+                            setTimeout(
+                                function () {
+
+                                    message.remove();
+
+                                },
+                                300
                             );
 
                         }
                     );
 
-                }
-            );
-
-
-        document.addEventListener(
-            "click",
-            function (event) {
-
-                if (
-                    !navigation.contains(
-                        event.target
-                    ) &&
-                    !menuButton.contains(
-                        event.target
-                    )
-                ) {
-
-                    navigation.classList.remove(
-                        "open"
-                    );
-
-                }
-
-            }
+            },
+            5000
         );
 
-    }
+    </script>
 
 
-    /* =========================
-       AUTO-HIDE MESSAGES
-       ========================= */
+    {% block extra_js %}{% endblock %}
 
-    setTimeout(
-        function () {
-
-            document
-                .querySelectorAll(".message")
-                .forEach(
-                    function (message) {
-
-                        message.style.opacity = "0";
-
-                        message.style.transform =
-                            "translateY(-10px)";
-
-                        message.style.transition =
-                            "all 0.3s ease";
-
-                        setTimeout(
-                            function () {
-
-                                message.remove();
-
-                            },
-                            300
-                        );
-
-                    }
-                );
-
-        },
-        3500
-    );
-
-})();
-
-</script>
 
 </body>
 </html>
+
