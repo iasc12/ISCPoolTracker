@@ -82,6 +82,41 @@ def dashboard(request):
         chart_labels.append(chart_date.strftime("%d %b"))
         chart_values.append(float(total))
 
+    # Expected earnings based on average earnings
+    # across the days where earnings have been recorded.
+    earning_days = (
+        DailyEarning.objects
+        .values("date")
+        .distinct()
+        .count()
+    )
+
+    if earning_days > 0:
+
+        total_earnings = money(
+            DailyEarning.objects.aggregate(
+                total=Sum("amount_collected")
+            )["total"]
+        )
+
+        average_daily_earnings = (
+            total_earnings / Decimal(earning_days)
+        )
+
+        expected_weekly_earnings = (
+            average_daily_earnings * Decimal("7")
+        )
+
+        expected_monthly_earnings = (
+            average_daily_earnings * Decimal("30")
+        )
+
+    else:
+
+        expected_weekly_earnings = Decimal("0.00")
+        expected_monthly_earnings = Decimal("0.00")
+
+
     context = {
         "today": today,
 
@@ -102,6 +137,9 @@ def dashboard(request):
         "monthly_earnings": monthly_earnings,
         "monthly_expenses": monthly_expenses,
         "monthly_profit": monthly_earnings - monthly_expenses,
+
+        "expected_weekly_earnings": expected_weekly_earnings,
+        "expected_monthly_earnings": expected_monthly_earnings,
 
         "recent_earnings": DailyEarning.objects.all()[:5],
         "recent_expenses": Expense.objects.all()[:5],

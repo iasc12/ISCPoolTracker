@@ -11,6 +11,13 @@
     margin: auto;
 }
 
+.brand-encouragement {
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--primary);
+}
+
 .header {
     margin-bottom: 25px;
 }
@@ -62,31 +69,160 @@
     font-size: 30px;
 }
 
+
+/* FINANCIAL CARDS */
+
 .cards {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 22px;
+    width: 100%;
+    margin-top: 20px;
 }
 
-.card h2 {
+.financial-card {
+    flex: 1;
+    max-width: 350px;
+    padding: 25px;
+    border-radius: 20px;
+    color: #111827;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.10);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.financial-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+}
+
+.financial-card h2 {
     margin-top: 0;
+    margin-bottom: 22px;
+    font-size: 24px;
 }
 
-.amount {
-    font-size: 24px;
+
+/* DIFFERENT BACKGROUNDS */
+
+.today-card {
+    background: #dbeafe;
+}
+
+.week-card {
+    background: #dcfce7;
+}
+
+.month-card {
+    background: #ede9fe;
+}
+
+
+/* FINANCIAL ITEMS */
+
+.financial-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+}
+
+.financial-item:last-child {
+    border-bottom: none;
+}
+
+.financial-item span {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.financial-item strong {
+    font-size: 18px;
     font-weight: 900;
 }
 
-.green {
-    color: var(--success);
+.profit {
+    color: #15803d;
 }
 
-.red {
-    color: var(--danger);
+.loss {
+    color: #dc2626;
 }
 
-.blue {
-    color: var(--primary);
+
+/* CHART */
+
+.expected-section {
+    margin-top: 30px;
+}
+
+.expected-section h2 {
+    margin-bottom: 18px;
+}
+
+.expected-cards {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 22px;
+    width: 100%;
+}
+
+.expected-card {
+    flex: 1;
+    max-width: 500px;
+    min-height: 135px;
+    padding: 25px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.10);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.expected-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.expected-week {
+    background: #fef3c7;
+}
+
+.expected-month {
+    background: #fce7f3;
+}
+
+.expected-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.70);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+}
+
+.expected-label {
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.expected-amount {
+    font-size: 26px;
+    font-weight: 900;
+}
+
+.expected-note {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--muted);
 }
 
 .chart {
@@ -98,6 +234,9 @@
     position: relative;
 }
 
+
+/* HISTORY */
+
 .history {
     display: flex;
     gap: 10px;
@@ -106,10 +245,25 @@
     flex-wrap: wrap;
 }
 
-@media(max-width:800px) {
 
-    .actions,
+/* MOBILE */
+
+@media (max-width: 900px) {
+
     .cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .financial-card {
+        width: 100%;
+        max-width: 600px;
+    }
+}
+
+@media (max-width: 800px) {
+
+    .actions {
         grid-template-columns: 1fr;
     }
 
@@ -118,9 +272,60 @@
     }
 }
 
+@media (max-width: 800px) {
+
+    /* expected-mobile-fix */
+
+    .expected-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .expected-card {
+        width: 100%;
+        max-width: 600px;
+    }
+
+}
+
+
+<style>
+/* Plain chart presentation */
+.chart {
+    margin-top: 30px;
+}
+
+.chart > .card {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.chart-box {
+    height: 350px;
+    position: relative;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.chart h2 {
+    margin-bottom: 5px;
+}
+
+.chart p {
+    margin-top: 0;
+}
 </style>
 
+</style>
+
+
 <div class="dashboard">
+
+
+    <!-- HEADER -->
 
     <div class="header">
 
@@ -130,21 +335,25 @@
             ISC Pool financial overview.
         </p>
 
+        <div class="brand-encouragement">
+            Keep pushing. Every game counts. Every shilling matters. 💪
+        </div>
+
     </div>
 
 
+    <!-- ACTION BUTTONS -->
+
     <div class="actions">
 
-        <a
-            href="{% url 'add_earning' %}"
-            class="action earning"
-        >
+        <a href="{% url 'add_earning' %}" class="action earning">
 
             <div class="action-icon">
                 +
             </div>
 
             <div>
+
                 <div style="font-size:21px;">
                     Add Earning
                 </div>
@@ -152,21 +361,20 @@
                 <div style="font-size:13px;">
                     Record pool income
                 </div>
+
             </div>
 
         </a>
 
 
-        <a
-            href="{% url 'add_expense' %}"
-            class="action expense"
-        >
+        <a href="{% url 'add_expense' %}" class="action expense">
 
             <div class="action-icon">
                 -
             </div>
 
             <div>
+
                 <div style="font-size:21px;">
                     Add Expense
                 </div>
@@ -174,6 +382,7 @@
                 <div style="font-size:13px;">
                     Record business expense
                 </div>
+
             </div>
 
         </a>
@@ -181,99 +390,209 @@
     </div>
 
 
+    <!-- FINANCIAL OVERVIEW -->
+
     <h2>Financial Overview</h2>
 
 
     <div class="cards">
 
-        <div class="card">
+
+        <!-- TODAY -->
+
+        <div class="financial-card today-card">
 
             <h2>Today</h2>
 
-            <p>
-                Earnings
-            </p>
+            <div class="financial-item">
 
-            <div class="amount green">
-                KSh {{ today_earnings|floatformat:2 }}
+                <span>
+                    Earnings
+                </span>
+
+                <strong>
+                    KSh {{ today_earnings|floatformat:2 }}
+                </strong>
+
             </div>
 
-            <p>
-                Expenses
-            </p>
 
-            <div class="amount red">
-                KSh {{ today_expenses|floatformat:2 }}
+            <div class="financial-item">
+
+                <span>
+                    Expenses
+                </span>
+
+                <strong>
+                    KSh {{ today_expenses|floatformat:2 }}
+                </strong>
+
             </div>
 
-            <p>
-                Profit / Loss
-            </p>
 
-            <div class="amount {% if today_profit < 0 %}red{% else %}green{% endif %}">
-                KSh {{ today_profit|floatformat:2 }}
+            <div class="financial-item">
+
+                <span>
+                    Profit / Loss
+                </span>
+
+                <strong class="{% if today_profit < 0 %}loss{% else %}profit{% endif %}">
+                    KSh {{ today_profit|floatformat:2 }}
+                </strong>
+
             </div>
 
         </div>
 
 
-        <div class="card">
+        <!-- THIS WEEK -->
+
+        <div class="financial-card week-card">
 
             <h2>This Week</h2>
 
-            <p>
-                Earnings
-            </p>
+            <div class="financial-item">
 
-            <div class="amount green">
-                KSh {{ weekly_earnings|floatformat:2 }}
+                <span>
+                    Earnings
+                </span>
+
+                <strong>
+                    KSh {{ weekly_earnings|floatformat:2 }}
+                </strong>
+
             </div>
 
-            <p>
-                Expenses
-            </p>
 
-            <div class="amount red">
-                KSh {{ weekly_expenses|floatformat:2 }}
+            <div class="financial-item">
+
+                <span>
+                    Expenses
+                </span>
+
+                <strong>
+                    KSh {{ weekly_expenses|floatformat:2 }}
+                </strong>
+
             </div>
 
-            <p>
-                Profit / Loss
-            </p>
 
-            <div class="amount {% if weekly_profit < 0 %}red{% else %}green{% endif %}">
-                KSh {{ weekly_profit|floatformat:2 }}
+            <div class="financial-item">
+
+                <span>
+                    Profit / Loss
+                </span>
+
+                <strong class="{% if weekly_profit < 0 %}loss{% else %}profit{% endif %}">
+                    KSh {{ weekly_profit|floatformat:2 }}
+                </strong>
+
             </div>
 
         </div>
 
 
-        <div class="card">
+        <!-- THIS MONTH -->
+
+        <div class="financial-card month-card">
 
             <h2>This Month</h2>
 
-            <p>
-                Earnings
-            </p>
+            <div class="financial-item">
 
-            <div class="amount green">
-                KSh {{ monthly_earnings|floatformat:2 }}
+                <span>
+                    Earnings
+                </span>
+
+                <strong>
+                    KSh {{ monthly_earnings|floatformat:2 }}
+                </strong>
+
             </div>
 
-            <p>
-                Expenses
-            </p>
 
-            <div class="amount red">
-                KSh {{ monthly_expenses|floatformat:2 }}
+            <div class="financial-item">
+
+                <span>
+                    Expenses
+                </span>
+
+                <strong>
+                    KSh {{ monthly_expenses|floatformat:2 }}
+                </strong>
+
             </div>
 
-            <p>
-                Profit / Loss
-            </p>
 
-            <div class="amount {% if monthly_profit < 0 %}red{% else %}green{% endif %}">
-                KSh {{ monthly_profit|floatformat:2 }}
+            <div class="financial-item">
+
+                <span>
+                    Profit / Loss
+                </span>
+
+                <strong class="{% if monthly_profit < 0 %}loss{% else %}profit{% endif %}">
+                    KSh {{ monthly_profit|floatformat:2 }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- EARNINGS CHART -->
+
+    <div class="expected-section">
+
+        <h2>Expected Earnings</h2>
+
+        <div class="expected-cards">
+
+            <div class="expected-card expected-week">
+
+                <div class="expected-icon">
+                    📅
+                </div>
+
+                <div>
+                    <div class="expected-label">
+                        Expected Weekly Earnings
+                    </div>
+
+                    <div class="expected-amount">
+                        KSh {{ expected_weekly_earnings|floatformat:2 }}
+                    </div>
+
+                    <div class="expected-note">
+                        Based on your current average daily earnings
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="expected-card expected-month">
+
+                <div class="expected-icon">
+                    📈
+                </div>
+
+                <div>
+                    <div class="expected-label">
+                        Expected Monthly Earnings
+                    </div>
+
+                    <div class="expected-amount">
+                        KSh {{ expected_monthly_earnings|floatformat:2 }}
+                    </div>
+
+                    <div class="expected-note">
+                        Based on your current average daily earnings
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -289,7 +608,7 @@
                 Earnings - Last 7 Days
             </h2>
 
-            <p style="color:var(--muted);">
+            <p style="color: var(--muted);">
                 Daily pool earnings.
             </p>
 
@@ -304,83 +623,99 @@
     </div>
 
 
+    <!-- HISTORY BUTTONS -->
+
     <div class="history">
 
-        <a
-            href="{% url 'earnings_list' %}"
-            class="button secondary"
-        >
+        <a href="{% url 'earnings_list' %}" class="button secondary">
             Earnings History
         </a>
 
-        <a
-            href="{% url 'expenses_list' %}"
-            class="button secondary"
-        >
+        <a href="{% url 'expenses_list' %}" class="button secondary">
             Expenses History
         </a>
 
-        <a
-            href="{% url 'reports' %}"
-            class="button primary"
-        >
+        <a href="{% url 'reports' %}" class="button primary">
             Reports
         </a>
 
     </div>
 
+
 </div>
 
+
 {{ chart_labels|json_script:"chart-labels" }}
+
 {{ chart_values|json_script:"chart-values" }}
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
 <script>
 
-const labels =
-    JSON.parse(
-        document.getElementById("chart-labels").textContent
-    );
+const labels = JSON.parse(
+    document.getElementById("chart-labels").textContent
+);
 
-const values =
-    JSON.parse(
-        document.getElementById("chart-values").textContent
-    );
+const values = JSON.parse(
+    document.getElementById("chart-values").textContent
+);
+
 
 new Chart(
     document.getElementById("earningsChart"),
     {
+
         type: "bar",
 
         data: {
+
             labels: labels,
 
             datasets: [
+
                 {
+
                     label: "Daily Earnings",
+
                     data: values,
+
                     backgroundColor: "#16a34a",
+
                     borderRadius: 8
+
                 }
+
             ]
+
         },
 
+
         options: {
+
             responsive: true,
+
             maintainAspectRatio: false,
 
             scales: {
 
                 y: {
+
                     beginAtZero: true,
 
                     ticks: {
+
                         callback: function(value) {
+
                             return "KSh " +
                                 Number(value).toLocaleString();
+
                         }
+
                     }
+
                 }
 
             },
@@ -394,14 +729,14 @@ new Chart(
                         label: function(context) {
 
                             return "KSh " +
-                                Number(context.raw)
-                                .toLocaleString(
+                                Number(context.raw).toLocaleString(
                                     "en-KE",
                                     {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2
                                     }
                                 );
+
                         }
 
                     }
@@ -416,5 +751,6 @@ new Chart(
 );
 
 </script>
+
 
 {% endblock %}
