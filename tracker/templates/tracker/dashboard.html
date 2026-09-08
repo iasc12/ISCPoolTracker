@@ -158,8 +158,9 @@
 
 .analytics-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 18px;
+    width: 100%;
 }
 
 .analytics-card {
@@ -172,23 +173,23 @@
 
 
 .analytics-earnings {
-    background: #e8f5e9;
-    border-left: 5px solid #2e7d32;
+    background: #dcfce7 !important;
+    border-left: 6px solid #22c55e !important;
 }
 
 .analytics-profit {
-    background: #e3f2fd;
-    border-left: 5px solid #1976d2;
+    background: #dbeafe !important;
+    border-left: 6px solid #3b82f6 !important;
 }
 
 .analytics-best {
-    background: #fff8e1;
-    border-left: 5px solid #f9a825;
+    background: #fef3c7 !important;
+    border-left: 6px solid #f59e0b !important;
 }
 
 .analytics-lowest {
-    background: #ffebee;
-    border-left: 5px solid #c62828;
+    background: #fee2e2 !important;
+    border-left: 6px solid #ef4444 !important;
 }
 .analytics-label {
     color: var(--muted);
@@ -421,8 +422,11 @@
 @media (max-width: 1000px) {
 
     .analytics-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+}
 
 }
 
@@ -441,6 +445,20 @@
 }
 
 @media (max-width: 800px) {
+    .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+}
+
+    .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+}
+
 
     .actions {
         grid-template-columns: 1fr;
@@ -469,8 +487,11 @@
 @media (max-width: 600px) {
 
     .analytics-grid {
-        grid-template-columns: 1fr;
-    }
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+}
 
     .target-header,
     .target-details {
@@ -637,100 +658,98 @@
 
     <!-- ANALYTICS -->
 
-    <div class="analytics-section">
+<div class="analytics-section">
 
-        <h2>Performance Analytics</h2>
+    <h2>Performance Analytics</h2>
 
-        <div class="analytics-grid">
+    <div class="analytics-grid">
 
-            <div class="analytics-card">
+        <div class="analytics-card analytics-earnings">
 
-                <div class="analytics-label">
-                    Average Daily Earnings
-                </div>
+            <div class="analytics-label">
+                Average Daily Earnings
+            </div>
 
-                <div class="analytics-value">
-                    KSh {{ average_daily_earnings|floatformat:2 }}
-                </div>
+            <div class="analytics-value">
+                KSh {{ average_daily_earnings|floatformat:2 }}
+            </div>
 
-                <div class="analytics-small">
-                    Based on {{ earning_days }} earning day{{ earning_days|pluralize }}
-                </div>
+            <div class="analytics-small">
+                Based on {{ earning_days }} earning day{{ earning_days|pluralize }}
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card analytics-profit">
+
+            <div class="analytics-label">
+                Average Daily Profit
+            </div>
+
+            <div class="analytics-value {% if average_daily_profit < 0 %}loss{% else %}profit{% endif %}">
+                KSh {{ average_daily_profit|floatformat:2 }}
+            </div>
+
+            <div class="analytics-small">
+                Earnings minus expenses
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card analytics-best">
+
+            <div class="analytics-label">
+                Best Earning Day
+            </div>
+
+            <div class="analytics-value">
+
+                {% if best_day %}
+                    KSh {{ best_day.amount_collected|floatformat:2 }}
+                {% else %}
+                    KSh 0.00
+                {% endif %}
 
             </div>
 
+            <div class="analytics-small">
 
-            <div class="analytics-card">
-
-                <div class="analytics-label">
-                    Average Daily Profit
-                </div>
-
-                <div class="analytics-value {% if average_daily_profit < 0 %}loss{% else %}profit{% endif %}">
-                    KSh {{ average_daily_profit|floatformat:2 }}
-                </div>
-
-                <div class="analytics-small">
-                    Earnings minus expenses
-                </div>
+                {% if best_day %}
+                    {{ best_day.date|date:"d M Y" }}
+                {% else %}
+                    No records yet
+                {% endif %}
 
             </div>
 
+        </div>
 
-            <div class="analytics-card">
 
-                <div class="analytics-label">
-                    Best Earning Day
-                </div>
+        <div class="analytics-card analytics-lowest">
 
-                <div class="analytics-value">
+            <div class="analytics-label">
+                Lowest Earning Day
+            </div>
 
-                    {% if best_day %}
-                        KSh {{ best_day.amount_collected|floatformat:2 }}
-                    {% else %}
-                        KSh 0.00
-                    {% endif %}
+            <div class="analytics-value">
 
-                </div>
-
-                <div class="analytics-small">
-
-                    {% if best_day %}
-                        {{ best_day.date|date:"d M Y" }}
-                    {% else %}
-                        No records yet
-                    {% endif %}
-
-                </div>
+                {% if lowest_day %}
+                    KSh {{ lowest_day.amount_collected|floatformat:2 }}
+                {% else %}
+                    KSh 0.00
+                {% endif %}
 
             </div>
 
+            <div class="analytics-small">
 
-            <div class="analytics-card">
-
-                <div class="analytics-label">
-                    Lowest Earning Day
-                </div>
-
-                <div class="analytics-value">
-
-                    {% if lowest_day %}
-                        KSh {{ lowest_day.amount_collected|floatformat:2 }}
-                    {% else %}
-                        KSh 0.00
-                    {% endif %}
-
-                </div>
-
-                <div class="analytics-small">
-
-                    {% if lowest_day %}
-                        {{ lowest_day.date|date:"d M Y" }}
-                    {% else %}
-                        No records yet
-                    {% endif %}
-
-                </div>
+                {% if lowest_day %}
+                    {{ lowest_day.date|date:"d M Y" }}
+                {% else %}
+                    No records yet
+                {% endif %}
 
             </div>
 
@@ -738,165 +757,9 @@
 
     </div>
 
+</div>
 
-    <!-- PROFIT MARGINS -->
-
-    <div class="margin-section">
-
-        <h2>Profit Margins</h2>
-
-        <div class="margin-grid">
-
-            <div class="margin-card">
-
-                <div class="margin-title">
-                    Today
-                </div>
-
-                <div class="margin-value">
-                    {{ today_profit_margin|floatformat:1 }}%
-                </div>
-
-            </div>
-
-
-            <div class="margin-card">
-
-                <div class="margin-title">
-                    This Week
-                </div>
-
-                <div class="margin-value">
-                    {{ weekly_profit_margin|floatformat:1 }}%
-                </div>
-
-            </div>
-
-
-            <div class="margin-card">
-
-                <div class="margin-title">
-                    This Month
-                </div>
-
-                <div class="margin-value">
-                    {{ monthly_profit_margin|floatformat:1 }}%
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- EXPECTED EARNINGS -->
-
-    <div class="expected-section">
-
-        <h2>Expected Earnings</h2>
-
-        <div class="expected-cards">
-
-            <div class="expected-card expected-week">
-
-                <div class="expected-icon"></div>
-
-                <div>
-
-                    <div class="expected-label">
-                        Expected Weekly Earnings
-                    </div>
-
-                    <div class="expected-amount">
-                        KSh {{ expected_weekly_earnings|floatformat:2 }}
-                    </div>
-
-                    <div class="expected-note">
-                        Based on your current average daily earnings
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="expected-card expected-month">
-
-                <div class="expected-icon"></div>
-
-                <div>
-
-                    <div class="expected-label">
-                        Expected Monthly Earnings
-                    </div>
-
-                    <div class="expected-amount">
-                        KSh {{ expected_monthly_earnings|floatformat:2 }}
-                    </div>
-
-                    <div class="expected-note">
-                        Based on your current average daily earnings
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- TARGET -->
-
-    <div class="target-section">
-
-        <h2>Monthly Target</h2>
-
-        <div class="target-card">
-
-            <div class="target-header">
-
-                <div class="target-title">
-                    Current Month Earnings
-                </div>
-
-                <div class="target-percent">
-                    {{ target_progress|floatformat:1 }}%
-                </div>
-
-            </div>
-
-
-            <div class="progress-bar">
-
-                <div
-                    class="progress-fill"
-                    style="width: {{ target_progress }}%;"
-                ></div>
-
-            </div>
-
-
-            <div class="target-details">
-
-                <span>
-                    Actual: KSh {{ monthly_earnings|floatformat:2 }}
-                </span>
-
-                <span>
-                    Target: KSh {{ target_monthly|floatformat:2 }}
-                </span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- CHARTS -->
+<!-- CHARTS -->
 
     <div class="charts-section">
 
