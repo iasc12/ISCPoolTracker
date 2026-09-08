@@ -1,4 +1,4 @@
-﻿{% extends "tracker/base.html" %}
+{% extends "tracker/base.html" %}
 
 {% block title %}Dashboard - ISC Pool Tracker{% endblock %}
 
@@ -2057,11 +2057,11 @@
 
     <div class="history">
 
-        <a href="{% url 'earnings_list' %}" class="button secondary">
+        <a href="{% url 'earnings_list' %}" class="button earning">
             Earnings History
         </a>
 
-        <a href="{% url 'expenses_list' %}" class="button secondary">
+        <a href="{% url 'expenses_list' %}" class="button expense">
             Expenses History
         </a>
 
@@ -2816,6 +2816,7 @@
     outline: none !important;
 }
 </style>
+
 
 
 
