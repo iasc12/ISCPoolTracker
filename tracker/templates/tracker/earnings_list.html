@@ -1,4 +1,4 @@
-﻿{% extends "tracker/base.html" %}
+{% extends "tracker/base.html" %}
 
 {% block title %}Earnings History - ISC Pool Tracker{% endblock %}
 
@@ -80,6 +80,50 @@
 
     </div>
 
+    {% if earnings.has_other_pages %}
+
+        <div style="
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            gap:10px;
+            margin-top:25px;
+            flex-wrap:wrap;
+        ">
+
+            {% if earnings.has_previous %}
+                <a
+                    href="?page={{ earnings.previous_page_number }}"
+                    class="button"
+                >
+                    &larr; Previous
+                </a>
+            {% endif %}
+
+            <span style="font-weight:600;">
+                Page {{ earnings.number }} of {{ earnings.paginator.num_pages }}
+            </span>
+
+            {% if earnings.has_next %}
+                <a
+                    href="?page={{ earnings.next_page_number }}"
+                    class="button primary"
+                >
+                    Next &rarr;
+                </a>
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+    <div style="margin-top:25px;">
+        <a href="{% url 'dashboard' %}" class="button" style="background:#000000;color:#ffffff;">&larr; Back to Dashboard</a>
+    </div>
+
 </div>
 
 {% endblock %}
+
+
+

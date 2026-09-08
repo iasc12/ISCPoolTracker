@@ -1,0 +1,420 @@
+﻿{% extends "tracker/base.html" %}
+
+{% block title %}Dashboard - ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+
+.dashboard {
+    max-width: 1250px;
+    margin: auto;
+}
+
+.header {
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 34px;
+}
+
+.header p {
+    color: var(--muted);
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.action {
+    min-height: 100px;
+    padding: 20px;
+    border-radius: 18px;
+    color: white;
+    text-decoration: none;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.earning {
+    background: #16a34a;
+}
+
+.expense {
+    background: #dc2626;
+}
+
+.action-icon {
+    width: 55px;
+    height: 55px;
+    border: 3px solid white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 18px;
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+.amount {
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.green {
+    color: var(--success);
+}
+
+.red {
+    color: var(--danger);
+}
+
+.blue {
+    color: var(--primary);
+}
+
+.chart {
+    margin-top: 25px;
+}
+
+.chart-box {
+    height: 350px;
+    position: relative;
+}
+
+.history {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+@media(max-width:800px) {
+
+    .actions,
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-box {
+        height: 280px;
+    }
+}
+
+</style>
+
+<div class="dashboard">
+
+    <div class="header">
+
+        <h1>Dashboard</h1>
+
+        <p>
+            ISC Pool financial overview.
+        </p>
+
+    </div>
+
+
+    <div class="actions">
+
+        <a
+            href="{% url 'add_earning' %}"
+            class="action earning"
+        >
+
+            <div class="action-icon">
+                +
+            </div>
+
+            <div>
+                <div style="font-size:21px;">
+                    Add Earning
+                </div>
+
+                <div style="font-size:13px;">
+                    Record pool income
+                </div>
+            </div>
+
+        </a>
+
+
+        <a
+            href="{% url 'add_expense' %}"
+            class="action expense"
+        >
+
+            <div class="action-icon">
+                -
+            </div>
+
+            <div>
+                <div style="font-size:21px;">
+                    Add Expense
+                </div>
+
+                <div style="font-size:13px;">
+                    Record business expense
+                </div>
+            </div>
+
+        </a>
+
+    </div>
+
+
+    <h2>Financial Overview</h2>
+
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h2>Today</h2>
+
+            <p>
+                Earnings
+            </p>
+
+            <div class="amount green">
+                KSh {{ today_earnings|floatformat:2 }}
+            </div>
+
+            <p>
+                Expenses
+            </p>
+
+            <div class="amount red">
+                KSh {{ today_expenses|floatformat:2 }}
+            </div>
+
+            <p>
+                Profit / Loss
+            </p>
+
+            <div class="amount {% if today_profit < 0 %}red{% else %}green{% endif %}">
+                KSh {{ today_profit|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>This Week</h2>
+
+            <p>
+                Earnings
+            </p>
+
+            <div class="amount green">
+                KSh {{ weekly_earnings|floatformat:2 }}
+            </div>
+
+            <p>
+                Expenses
+            </p>
+
+            <div class="amount red">
+                KSh {{ weekly_expenses|floatformat:2 }}
+            </div>
+
+            <p>
+                Profit / Loss
+            </p>
+
+            <div class="amount {% if weekly_profit < 0 %}red{% else %}green{% endif %}">
+                KSh {{ weekly_profit|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>This Month</h2>
+
+            <p>
+                Earnings
+            </p>
+
+            <div class="amount green">
+                KSh {{ monthly_earnings|floatformat:2 }}
+            </div>
+
+            <p>
+                Expenses
+            </p>
+
+            <div class="amount red">
+                KSh {{ monthly_expenses|floatformat:2 }}
+            </div>
+
+            <p>
+                Profit / Loss
+            </p>
+
+            <div class="amount {% if monthly_profit < 0 %}red{% else %}green{% endif %}">
+                KSh {{ monthly_profit|floatformat:2 }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="chart">
+
+        <div class="card">
+
+            <h2>
+                Earnings - Last 7 Days
+            </h2>
+
+            <p style="color:var(--muted);">
+                Daily pool earnings.
+            </p>
+
+            <div class="chart-box">
+
+                <canvas id="earningsChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="history">
+
+        <a
+            href="{% url 'earnings_list' %}"
+            class="button secondary"
+        >
+            Earnings History
+        </a>
+
+        <a
+            href="{% url 'expenses_list' %}"
+            class="button secondary"
+        >
+            Expenses History
+        </a>
+
+        <a
+            href="{% url 'reports' %}"
+            class="button primary"
+        >
+            Reports
+        </a>
+
+    </div>
+
+</div>
+
+{{ chart_labels|json_script:"chart-labels" }}
+{{ chart_values|json_script:"chart-values" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const labels =
+    JSON.parse(
+        document.getElementById("chart-labels").textContent
+    );
+
+const values =
+    JSON.parse(
+        document.getElementById("chart-values").textContent
+    );
+
+new Chart(
+    document.getElementById("earningsChart"),
+    {
+        type: "bar",
+
+        data: {
+            labels: labels,
+
+            datasets: [
+                {
+                    label: "Daily Earnings",
+                    data: values,
+                    backgroundColor: "#16a34a",
+                    borderRadius: 8
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+                    beginAtZero: true,
+
+                    ticks: {
+                        callback: function(value) {
+                            return "KSh " +
+                                Number(value).toLocaleString();
+                        }
+                    }
+                }
+
+            },
+
+            plugins: {
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return "KSh " +
+                                Number(context.raw)
+                                .toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

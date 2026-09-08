@@ -1,4 +1,5 @@
-﻿from datetime import date, timedelta
+from django.core.paginator import Paginator
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.contrib import messages
@@ -184,7 +185,7 @@ def add_earning(request):
 
 def earnings_list(request):
 
-    earnings = DailyEarning.objects.all()
+    earnings = DailyEarning.objects.all().order_by("-date", "-id")
 
     total = money(
         earnings.aggregate(
@@ -192,15 +193,18 @@ def earnings_list(request):
         )["total"]
     )
 
+    paginator = Paginator(earnings, 7)
+    page_number = request.GET.get("page")
+    earnings_page = paginator.get_page(page_number)
+
     return render(
         request,
         "tracker/earnings_list.html",
         {
-            "earnings": earnings,
+            "earnings": earnings_page,
             "total": total,
         }
     )
-
 
 def edit_earning(request, earning_id):
 
@@ -297,7 +301,7 @@ def add_expense(request):
 
 def expenses_list(request):
 
-    expenses = Expense.objects.all()
+    expenses = Expense.objects.all().order_by("-date", "-id")
 
     total = money(
         expenses.aggregate(
@@ -305,15 +309,18 @@ def expenses_list(request):
         )["total"]
     )
 
+    paginator = Paginator(expenses, 7)
+    page_number = request.GET.get("page")
+    expenses_page = paginator.get_page(page_number)
+
     return render(
         request,
         "tracker/expenses_list.html",
         {
-            "expenses": expenses,
+            "expenses": expenses_page,
             "total": total,
         }
     )
-
 
 def edit_expense(request, expense_id):
 
@@ -517,3 +524,8 @@ def reports(request):
 def generate_report(request):
 
     return redirect("reports")
+
+
+
+
+
