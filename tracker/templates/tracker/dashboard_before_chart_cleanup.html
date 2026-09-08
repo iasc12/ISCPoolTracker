@@ -2082,90 +2082,71 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
 <script>
-(function () {
 
-    const labels = JSON.parse(
-        document.getElementById("chart-labels").textContent
-    );
+const labels = JSON.parse(
+    document.getElementById("chart-labels").textContent
+);
 
-    const earningsValues = JSON.parse(
-        document.getElementById("earnings-values").textContent
-    );
+const earningsValues = JSON.parse(
+    document.getElementById("earnings-values").textContent
+);
 
-    const canvas = document.getElementById("earningsChart");
 
-    const ctx = canvas.getContext("2d");
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, 420);
 
-    gradient.addColorStop(0, "#4ade80");
-    gradient.addColorStop(0.5, "#22c55e");
-    gradient.addColorStop(1, "#15803d");
+/* ---------------------------------------------------------
+   DAILY EARNINGS
+--------------------------------------------------------- */
 
-    if (!canvas) {
-        return;
-    }
-
-    new Chart(canvas, {
-
+new Chart(
+    document.getElementById("earningsChart"),
+    {
         type: "bar",
 
         data: {
             labels: labels,
 
-            datasets: [{
-                label: "Daily Earnings",
-                data: earningsValues,
+            datasets: [
+                {
+                    label: "Daily Earnings",
+                    data: earningsValues,
 
-                backgroundColor: gradient,
+                    backgroundColor: "#16a34a",
 
-                hoverBackgroundColor: "#16a34a",
+                    borderRadius: 12,
 
-                borderRadius: 14,
+                    borderSkipped: false,
 
-                borderSkipped: false,
+                    barPercentage: 0.65,
 
-                barPercentage: 0.58,
-
-                categoryPercentage: 0.72
-            }]
+                    categoryPercentage: 0.75
+                }
+            ]
         },
 
         options: {
-
             responsive: true,
 
             maintainAspectRatio: false,
 
             plugins: {
-
                 legend: {
                     display: false
                 },
 
                 tooltip: {
-
                     backgroundColor: "#111827",
-
                     titleColor: "#ffffff",
-
                     bodyColor: "#ffffff",
-
-                    padding: 14,
-
-                    cornerRadius: 12,
+                    padding: 12,
+                    cornerRadius: 10,
 
                     displayColors: false,
 
                     callbacks: {
-
-                        title: function(context) {
-                            return context[0].label;
-                        },
-
                         label: function(context) {
-
                             return "KSh " +
                                 Number(context.raw).toLocaleString(
                                     "en-KE",
@@ -2182,9 +2163,9 @@
             scales: {
 
                 x: {
-
                     grid: {
-                        display: false
+                        display: false,
+                        drawBorder: false
                     },
 
                     border: {
@@ -2192,11 +2173,7 @@
                     },
 
                     ticks: {
-
                         color: "#6b7280",
-
-                        padding: 8,
-
                         font: {
                             size: 12,
                             weight: "700"
@@ -2205,11 +2182,11 @@
                 },
 
                 y: {
-
                     beginAtZero: true,
 
                     grid: {
-                        display: false
+                        display: false,
+                        drawBorder: false
                     },
 
                     border: {
@@ -2217,10 +2194,9 @@
                     },
 
                     ticks: {
+                        display: true,
 
                         color: "#6b7280",
-
-                        padding: 8,
 
                         font: {
                             size: 11,
@@ -2228,7 +2204,6 @@
                         },
 
                         callback: function(value) {
-
                             return "KSh " +
                                 Number(value).toLocaleString();
                         }
@@ -2237,22 +2212,592 @@
             },
 
             animation: {
-
-                duration: 1000,
-
+                duration: 900,
                 easing: "easeOutQuart"
             },
 
             interaction: {
-
                 intersect: false,
-
                 mode: "index"
             }
         }
-    });
+    }
+);
 
-})();
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+</script>
+
+
+<script>
+
+const labels = JSON.parse(
+    document.getElementById("chart-labels").textContent
+);
+
+const earningsValues = JSON.parse(
+    document.getElementById("earnings-values").textContent
+);
+
+const profitValues = JSON.parse(
+    document.getElementById("profit-values").textContent
+);
+
+
+/* ---------------------------------------------------------
+   DAILY EARNINGS
+--------------------------------------------------------- */
+
+new Chart(
+    document.getElementById("earningsChart"),
+    {
+        type: "bar",
+
+        data: {
+            labels: labels,
+
+            datasets: [
+                {
+                    label: "Daily Earnings",
+                    data: earningsValues,
+
+                    backgroundColor: "#16a34a",
+
+                    borderRadius: 12,
+
+                    borderSkipped: false,
+
+                    barPercentage: 0.65,
+
+                    categoryPercentage: 0.75
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+                    backgroundColor: "#111827",
+                    titleColor: "#ffffff",
+                    bodyColor: "#ffffff",
+                    padding: 12,
+                    cornerRadius: 10,
+
+                    displayColors: false,
+
+                    callbacks: {
+                        label: function(context) {
+                            return "KSh " +
+                                Number(context.raw).toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+                        }
+                    }
+                }
+            },
+
+            scales: {
+
+                x: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    },
+
+                    border: {
+                        display: false
+                    },
+
+                    ticks: {
+                        color: "#6b7280",
+                        font: {
+                            size: 12,
+                            weight: "700"
+                        }
+                    }
+                },
+
+                y: {
+                    beginAtZero: true,
+
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    },
+
+                    border: {
+                        display: false
+                    },
+
+                    ticks: {
+                        display: true,
+
+                        color: "#6b7280",
+
+                        font: {
+                            size: 11,
+                            weight: "600"
+                        },
+
+                        callback: function(value) {
+                            return "KSh " +
+                                Number(value).toLocaleString();
+                        }
+                    }
+                }
+            },
+
+            animation: {
+                duration: 900,
+                easing: "easeOutQuart"
+            },
+
+            interaction: {
+                intersect: false,
+                mode: "index"
+            }
+        }
+    }
+);
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ---------------------------------------------------------
+   DAILY PROFIT
+--------------------------------------------------------- */
+
+new Chart(
+    document.getElementById("profitChart"),
+    {
+
+        type: "line",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+
+                    label: "Daily Profit",
+
+                    data: profitValues,
+
+                    borderWidth: 3,
+
+                    tension: 0.3,
+
+                    fill: false,
+
+                    pointRadius: 5
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: false,
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return "KSh " +
+                                Number(value).toLocaleString();
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            plugins: {
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return "Profit: KSh " +
+                                Number(context.raw).toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+</script>
+
+
+<script>
+
+const labels = JSON.parse(
+    document.getElementById("chart-labels").textContent
+);
+
+const earningsValues = JSON.parse(
+    document.getElementById("earnings-values").textContent
+);
+
+const expenseValues = JSON.parse(
+    document.getElementById("expense-values").textContent
+);
+
+const profitValues = JSON.parse(
+    document.getElementById("profit-values").textContent
+);
+
+const monthlyEarnings = JSON.parse(
+    document.getElementById("monthly-earnings").textContent
+);
+
+const targetMonthly = JSON.parse(
+    document.getElementById("target-monthly").textContent
+);
+
+
+/* ---------------------------------------------------------
+   EARNINGS VS EXPENSES
+--------------------------------------------------------- */
+
+new Chart(
+    document.getElementById("earningsExpensesChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+                    label: "Earnings",
+                    data: earningsValues,
+                    backgroundColor: "#16a34a",
+                    borderRadius: 7
+                },
+
+                {
+                    label: "Expenses",
+                    data: expenseValues,
+                    backgroundColor: "#dc2626",
+                    borderRadius: 7
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return "KSh " +
+                                Number(value).toLocaleString();
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            plugins: {
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return context.dataset.label +
+                                ": KSh " +
+                                Number(context.raw).toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ---------------------------------------------------------
+   DAILY PROFIT
+--------------------------------------------------------- */
+
+new Chart(
+    document.getElementById("profitChart"),
+    {
+
+        type: "line",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+
+                    label: "Daily Profit",
+
+                    data: profitValues,
+
+                    borderWidth: 3,
+
+                    tension: 0.3,
+
+                    fill: false,
+
+                    pointRadius: 5
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return "KSh " +
+                                Number(value).toLocaleString();
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            plugins: {
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return "Profit: KSh " +
+                                Number(context.raw).toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ---------------------------------------------------------
+   TARGET VS ACTUAL
+--------------------------------------------------------- */
+
+new Chart(
+    document.getElementById("targetChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: ["Monthly Earnings"],
+
+            datasets: [
+
+                {
+                    label: "Actual",
+                    data: [monthlyEarnings],
+                    backgroundColor: "#0284c7",
+                    borderRadius: 8
+                },
+
+                {
+                    label: "Target",
+                    data: [targetMonthly],
+                    backgroundColor: "#f59e0b",
+                    borderRadius: 8
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return "KSh " +
+                                Number(value).toLocaleString();
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            plugins: {
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return context.dataset.label +
+                                ": KSh " +
+                                Number(context.raw).toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
 </script>
 
 {% endblock %}
@@ -2816,10 +3361,6 @@
     outline: none !important;
 }
 </style>
-
-
-
-
 
 
 
