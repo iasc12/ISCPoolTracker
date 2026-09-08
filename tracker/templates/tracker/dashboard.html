@@ -412,8 +412,10 @@
 
 .history {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
     margin-top: 25px;
     flex-wrap: wrap;
 }
@@ -2640,7 +2642,7 @@
 
 /* Keep a simple separator between rows */
 .financial-item {
-    border-bottom: 1px solid rgba(0,0,0,0.10) !important;
+    border-bottom: none !important;
 }
 
 .financial-item:last-child {
@@ -2831,3 +2833,13 @@
 
 
 
+
+
+
+<style>
+/* FINAL CLEAN DASHBOARD - NO ROW DIVIDERS */
+.financial-item,
+.financial-item:last-child {
+    border-bottom: none !important;
+}
+</style>
