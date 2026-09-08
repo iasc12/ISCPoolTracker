@@ -164,20 +164,9 @@
     margin-bottom: 18px;
 }
 
-.analytics-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-    width: 100%;
-}
+.analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
-.analytics-card {
-    padding: 22px;
-    border-radius: 18px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-}
+.analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; overflow:hidden !important; }
 
 
 .analytics-earnings {
@@ -206,7 +195,7 @@
     margin-bottom: 8px;
 }
 
-.analytics-value {
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
     font-size: clamp(1rem, 1.8vw, 1.8rem);
     line-height: 1.2;
     white-space: normal;
@@ -434,9 +423,7 @@
 
 @media (max-width: 1000px) {
 
-    .analytics-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
 }
 
@@ -446,9 +433,7 @@
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     }
 
-    .analytics-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
     .actions {
         grid-template-columns: 1fr 1fr;
@@ -480,15 +465,11 @@
         grid-template-columns: 1fr !important;
     }
 
-    .analytics-grid {
-        grid-template-columns: 1fr !important;
-    }
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
 }
 
-    .analytics-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
     .target-header,
     .target-details {
@@ -615,11 +596,7 @@
     border: none !important;
 }
 
-.analytics-card {
-    color: #ffffff !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
+.analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; overflow:hidden !important; }
 
 .analytics-card:hover {
     transform: translateY(-5px);
@@ -634,7 +611,7 @@
     color: #ffffff !important;
 }
 
-.analytics-card h3 {
+.analytics-card h3 { font-size:clamp(12px,1.2vw,16px) !important; line-height:1.3 !important; overflow-wrap:anywhere !important;
     font-size: 16px;
     font-weight: 800;
     margin-bottom: 10px;
@@ -646,7 +623,7 @@
     opacity: 0.95;
 }
 
-.analytics-value {
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
     color: #ffffff !important;
     font-size: clamp(15px, 1.8vw, 28px) !important;
     font-weight: 900 !important;
@@ -692,20 +669,11 @@
     text-overflow: clip !important;
 }
 
-.analytics-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 18px;
-    width: 100%;
-}
+.analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
-.analytics-card {
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-}
+.analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; overflow:hidden !important; }
 
-.analytics-value {
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
     font-size: 22px !important;
     white-space: normal !important;
     overflow: visible !important;
@@ -863,7 +831,7 @@
 
 }
 
-</style>
+@media (max-width:950px) { .analytics-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; } } @media (max-width:600px) { .analytics-grid { grid-template-columns:1fr !important; } .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:20px !important; } } @media (max-width:400px) { .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:16px !important; } } @media (max-width:950px) { .analytics-card { padding:20px !important; } .analytics-card h3 { font-size:14px !important; } .analytics-value { font-size:22px !important; } } @media (max-width:600px) { .analytics-card { padding:18px !important; border-radius:20px !important; } .analytics-card h3 { font-size:15px !important; } .analytics-value { font-size:23px !important; } } @media (max-width:400px) { .analytics-card { padding:15px !important; border-radius:18px !important; } .analytics-card h3 { font-size:13px !important; } .analytics-value { font-size:20px !important; } } </style>
 
 
 <div class="dashboard">
@@ -953,9 +921,7 @@
 
 @media (max-width: 1000px) {
 
-    .analytics-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
 }
 
@@ -965,9 +931,7 @@
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     }
 
-    .analytics-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
     .actions {
         grid-template-columns: 1fr 1fr;
@@ -999,15 +963,11 @@
         grid-template-columns: 1fr !important;
     }
 
-    .analytics-grid {
-        grid-template-columns: 1fr !important;
-    }
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
 }
 
-    .analytics-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
     .target-header,
     .target-details {
@@ -1134,11 +1094,7 @@
     border: none !important;
 }
 
-.analytics-card {
-    color: #ffffff !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
+.analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; overflow:hidden !important; }
 
 .analytics-card:hover {
     transform: translateY(-5px);
@@ -1153,7 +1109,7 @@
     color: #ffffff !important;
 }
 
-.analytics-card h3 {
+.analytics-card h3 { font-size:clamp(12px,1.2vw,16px) !important; line-height:1.3 !important; overflow-wrap:anywhere !important;
     font-size: 16px;
     font-weight: 800;
     margin-bottom: 10px;
@@ -1165,7 +1121,7 @@
     opacity: 0.95;
 }
 
-.analytics-value {
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
     color: #ffffff !important;
     font-size: clamp(15px, 1.8vw, 28px) !important;
     font-weight: 900 !important;
@@ -1211,20 +1167,11 @@
     text-overflow: clip !important;
 }
 
-.analytics-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 18px;
-    width: 100%;
-}
+.analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
-.analytics-card {
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-}
+.analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; overflow:hidden !important; }
 
-.analytics-value {
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
     font-size: 22px !important;
     white-space: normal !important;
     overflow: visible !important;
@@ -1382,7 +1329,7 @@
 
 }
 
-</style><!-- ACTION BUTTONS -->
+@media (max-width:950px) { .analytics-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; } } @media (max-width:600px) { .analytics-grid { grid-template-columns:1fr !important; } .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:20px !important; } } @media (max-width:400px) { .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:16px !important; } } @media (max-width:950px) { .analytics-card { padding:20px !important; } .analytics-card h3 { font-size:14px !important; } .analytics-value { font-size:22px !important; } } @media (max-width:600px) { .analytics-card { padding:18px !important; border-radius:20px !important; } .analytics-card h3 { font-size:15px !important; } .analytics-value { font-size:23px !important; } } @media (max-width:400px) { .analytics-card { padding:15px !important; border-radius:18px !important; } .analytics-card h3 { font-size:13px !important; } .analytics-value { font-size:20px !important; } } </style><!-- ACTION BUTTONS -->
 
     <div class="actions">
 
@@ -1517,7 +1464,7 @@
     <!-- ANALYTICS -->
 
 <style>
-.analytics-value {
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
     font-size: clamp(1rem, 1.8vw, 1.8rem);
     line-height: 1.2;
     white-space: normal;
@@ -1528,7 +1475,7 @@
 }
 
 @media (max-width: 1100px) {
-    .analytics-value {
+    .analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
     font-size: clamp(1rem, 1.8vw, 1.8rem);
     line-height: 1.2;
     white-space: normal;
@@ -1540,7 +1487,7 @@
 }
 
 @media (max-width: 700px) {
-    .analytics-value {
+    .analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
     font-size: clamp(1rem, 1.8vw, 1.8rem);
     line-height: 1.2;
     white-space: normal;
@@ -1670,11 +1617,7 @@
     border: none !important;
 }
 
-.analytics-card {
-    color: #ffffff !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
+.analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; overflow:hidden !important; }
 
 .analytics-card:hover {
     transform: translateY(-5px);
@@ -1689,7 +1632,7 @@
     color: #ffffff !important;
 }
 
-.analytics-card h3 {
+.analytics-card h3 { font-size:clamp(12px,1.2vw,16px) !important; line-height:1.3 !important; overflow-wrap:anywhere !important;
     font-size: 16px;
     font-weight: 800;
     margin-bottom: 10px;
@@ -1701,7 +1644,7 @@
     opacity: 0.95;
 }
 
-.analytics-value {
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
     color: #ffffff !important;
     font-size: clamp(15px, 1.8vw, 28px) !important;
     font-weight: 900 !important;
@@ -1747,20 +1690,11 @@
     text-overflow: clip !important;
 }
 
-.analytics-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 18px;
-    width: 100%;
-}
+.analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
 
-.analytics-card {
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-}
+.analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; overflow:hidden !important; }
 
-.analytics-value {
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
     font-size: 22px !important;
     white-space: normal !important;
     overflow: visible !important;
@@ -1918,7 +1852,7 @@
 
 }
 
-</style><div class="analytics-section">
+@media (max-width:950px) { .analytics-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; } } @media (max-width:600px) { .analytics-grid { grid-template-columns:1fr !important; } .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:20px !important; } } @media (max-width:400px) { .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:16px !important; } } @media (max-width:950px) { .analytics-card { padding:20px !important; } .analytics-card h3 { font-size:14px !important; } .analytics-value { font-size:22px !important; } } @media (max-width:600px) { .analytics-card { padding:18px !important; border-radius:20px !important; } .analytics-card h3 { font-size:15px !important; } .analytics-value { font-size:23px !important; } } @media (max-width:400px) { .analytics-card { padding:15px !important; border-radius:18px !important; } .analytics-card h3 { font-size:13px !important; } .analytics-value { font-size:20px !important; } } </style><div class="analytics-section">
 
     <h2>Performance Analytics</h2>
 
@@ -2855,7 +2789,7 @@ new Chart(
 
 }
 
-</style>
+@media (max-width:950px) { .analytics-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; } } @media (max-width:600px) { .analytics-grid { grid-template-columns:1fr !important; } .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:20px !important; } } @media (max-width:400px) { .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:16px !important; } } @media (max-width:950px) { .analytics-card { padding:20px !important; } .analytics-card h3 { font-size:14px !important; } .analytics-value { font-size:22px !important; } } @media (max-width:600px) { .analytics-card { padding:18px !important; border-radius:20px !important; } .analytics-card h3 { font-size:15px !important; } .analytics-value { font-size:23px !important; } } @media (max-width:400px) { .analytics-card { padding:15px !important; border-radius:18px !important; } .analytics-card h3 { font-size:13px !important; } .analytics-value { font-size:20px !important; } } </style>
 
 
 <style>
@@ -3000,7 +2934,7 @@ new Chart(
 
 }
 
-</style>
+@media (max-width:950px) { .analytics-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; } } @media (max-width:600px) { .analytics-grid { grid-template-columns:1fr !important; } .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:20px !important; } } @media (max-width:400px) { .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:16px !important; } } @media (max-width:950px) { .analytics-card { padding:20px !important; } .analytics-card h3 { font-size:14px !important; } .analytics-value { font-size:22px !important; } } @media (max-width:600px) { .analytics-card { padding:18px !important; border-radius:20px !important; } .analytics-card h3 { font-size:15px !important; } .analytics-value { font-size:23px !important; } } @media (max-width:400px) { .analytics-card { padding:15px !important; border-radius:18px !important; } .analytics-card h3 { font-size:13px !important; } .analytics-value { font-size:20px !important; } } </style>
 
 
 <style>
@@ -3178,7 +3112,10 @@ new Chart(
 
 }
 
-</style>
+@media (max-width:950px) { .analytics-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; } } @media (max-width:600px) { .analytics-grid { grid-template-columns:1fr !important; } .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:20px !important; } } @media (max-width:400px) { .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:16px !important; } } @media (max-width:950px) { .analytics-card { padding:20px !important; } .analytics-card h3 { font-size:14px !important; } .analytics-value { font-size:22px !important; } } @media (max-width:600px) { .analytics-card { padding:18px !important; border-radius:20px !important; } .analytics-card h3 { font-size:15px !important; } .analytics-value { font-size:23px !important; } } @media (max-width:400px) { .analytics-card { padding:15px !important; border-radius:18px !important; } .analytics-card h3 { font-size:13px !important; } .analytics-value { font-size:20px !important; } } </style>
+
+
+
 
 
 
