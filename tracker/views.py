@@ -20,6 +20,10 @@ def dashboard(request):
 
     today = date.today()
 
+    # ---------------------------------------------------------
+    # DATE RANGES
+    # ---------------------------------------------------------
+
     week_start = today - timedelta(days=today.weekday())
     week_end = week_start + timedelta(days=6)
 
@@ -28,63 +32,109 @@ def dashboard(request):
     if month_start.month == 12:
         next_month = date(month_start.year + 1, 1, 1)
     else:
-        next_month = date(month_start.year, month_start.month + 1, 1)
+        next_month = date(
+            month_start.year,
+            month_start.month + 1,
+            1
+        )
 
     month_end = next_month - timedelta(days=1)
+
+    # ---------------------------------------------------------
+    # TODAY
+    # ---------------------------------------------------------
 
     today_earnings = money(
         DailyEarning.objects.filter(
             date=today
-        ).aggregate(total=Sum("amount_collected"))["total"]
+        ).aggregate(
+            total=Sum("amount_collected")
+        )["total"]
     )
 
     today_expenses = money(
         Expense.objects.filter(
             date=today
-        ).aggregate(total=Sum("amount"))["total"]
+        ).aggregate(
+            total=Sum("amount")
+        )["total"]
     )
+
+    today_profit = today_earnings - today_expenses
+
+    # ---------------------------------------------------------
+    # WEEK
+    # ---------------------------------------------------------
 
     weekly_earnings = money(
         DailyEarning.objects.filter(
             date__range=[week_start, week_end]
-        ).aggregate(total=Sum("amount_collected"))["total"]
+        ).aggregate(
+            total=Sum("amount_collected")
+        )["total"]
     )
 
     weekly_expenses = money(
         Expense.objects.filter(
             date__range=[week_start, week_end]
-        ).aggregate(total=Sum("amount"))["total"]
+        ).aggregate(
+            total=Sum("amount")
+        )["total"]
     )
+
+    weekly_profit = weekly_earnings - weekly_expenses
+
+    # ---------------------------------------------------------
+    # MONTH
+    # ---------------------------------------------------------
 
     monthly_earnings = money(
         DailyEarning.objects.filter(
             date__range=[month_start, month_end]
-        ).aggregate(total=Sum("amount_collected"))["total"]
+        ).aggregate(
+            total=Sum("amount_collected")
+        )["total"]
     )
 
     monthly_expenses = money(
         Expense.objects.filter(
             date__range=[month_start, month_end]
-        ).aggregate(total=Sum("amount"))["total"]
+        ).aggregate(
+            total=Sum("amount")
+        )["total"]
     )
 
-    chart_labels = []
-    chart_values = []
+    monthly_profit = monthly_earnings - monthly_expenses
 
-    for i in range(6, -1, -1):
-        chart_date = today - timedelta(days=i)
+    # ---------------------------------------------------------
+    # PROFIT MARGINS
+    # ---------------------------------------------------------
 
-        total = money(
-            DailyEarning.objects.filter(
-                date=chart_date
-            ).aggregate(total=Sum("amount_collected"))["total"]
-        )
+    if today_earnings:
+        today_profit_margin = (
+            today_profit / today_earnings
+        ) * Decimal("100")
+    else:
+        today_profit_margin = Decimal("0.00")
 
-        chart_labels.append(chart_date.strftime("%d %b"))
-        chart_values.append(float(total))
+    if weekly_earnings:
+        weekly_profit_margin = (
+            weekly_profit / weekly_earnings
+        ) * Decimal("100")
+    else:
+        weekly_profit_margin = Decimal("0.00")
 
-    # Expected earnings based on average earnings
-    # across the days where earnings have been recorded.
+    if monthly_earnings:
+        monthly_profit_margin = (
+            monthly_profit / monthly_earnings
+        ) * Decimal("100")
+    else:
+        monthly_profit_margin = Decimal("0.00")
+
+    # ---------------------------------------------------------
+    # OVERALL EARNING STATISTICS
+    # ---------------------------------------------------------
+
     earning_days = (
         DailyEarning.objects
         .values("date")
@@ -92,33 +142,134 @@ def dashboard(request):
         .count()
     )
 
-    if earning_days > 0:
+    total_earnings = money(
+        DailyEarning.objects.aggregate(
+            total=Sum("amount_collected")
+        )["total"]
+    )
 
-        total_earnings = money(
-            DailyEarning.objects.aggregate(
-                total=Sum("amount_collected")
-            )["total"]
-        )
+    total_expenses = money(
+        Expense.objects.aggregate(
+            total=Sum("amount")
+        )["total"]
+    )
+
+    total_profit = total_earnings - total_expenses
+
+    if earning_days > 0:
 
         average_daily_earnings = (
             total_earnings / Decimal(earning_days)
         )
 
-        expected_weekly_earnings = (
-            average_daily_earnings * Decimal("7")
-        )
-
-        expected_monthly_earnings = (
-            average_daily_earnings * Decimal("30")
+        average_daily_profit = (
+            total_profit / Decimal(earning_days)
         )
 
     else:
 
-        expected_weekly_earnings = Decimal("0.00")
-        expected_monthly_earnings = Decimal("0.00")
+        average_daily_earnings = Decimal("0.00")
+        average_daily_profit = Decimal("0.00")
 
+    # ---------------------------------------------------------
+    # EXPECTED EARNINGS
+    # ---------------------------------------------------------
+
+    expected_weekly_earnings = (
+        average_daily_earnings * Decimal("7")
+    )
+
+    expected_monthly_earnings = (
+        average_daily_earnings * Decimal("30")
+    )
+
+    # ---------------------------------------------------------
+    # BEST AND LOWEST EARNING DAYS
+    # ---------------------------------------------------------
+
+    best_day = (
+        DailyEarning.objects
+        .order_by("-amount_collected", "-date")
+        .first()
+    )
+
+    lowest_day = (
+        DailyEarning.objects
+        .order_by("amount_collected", "date")
+        .first()
+    )
+
+    # ---------------------------------------------------------
+    # LAST 7 DAYS CHART DATA
+    # ---------------------------------------------------------
+
+    chart_labels = []
+    earnings_chart_values = []
+    expense_chart_values = []
+    profit_chart_values = []
+
+    for i in range(6, -1, -1):
+
+        chart_date = today - timedelta(days=i)
+
+        daily_earnings = money(
+            DailyEarning.objects.filter(
+                date=chart_date
+            ).aggregate(
+                total=Sum("amount_collected")
+            )["total"]
+        )
+
+        daily_expenses = money(
+            Expense.objects.filter(
+                date=chart_date
+            ).aggregate(
+                total=Sum("amount")
+            )["total"]
+        )
+
+        daily_profit = (
+            daily_earnings - daily_expenses
+        )
+
+        chart_labels.append(
+            chart_date.strftime("%d %b")
+        )
+
+        earnings_chart_values.append(
+            float(daily_earnings)
+        )
+
+        expense_chart_values.append(
+            float(daily_expenses)
+        )
+
+        profit_chart_values.append(
+            float(daily_profit)
+        )
+
+    # ---------------------------------------------------------
+    # TARGET VS ACTUAL
+    # ---------------------------------------------------------
+
+    target_monthly = Decimal("50000.00")
+
+    target_progress = Decimal("0.00")
+
+    if target_monthly > 0:
+        target_progress = (
+            monthly_earnings / target_monthly
+        ) * Decimal("100")
+
+    if target_progress > Decimal("100"):
+        target_progress = Decimal("100")
+
+    # ---------------------------------------------------------
+    # CONTEXT
+    # ---------------------------------------------------------
 
     context = {
+
         "today": today,
 
         "week_start": week_start,
@@ -127,26 +278,60 @@ def dashboard(request):
         "month_start": month_start,
         "month_end": month_end,
 
+        # Today
         "today_earnings": today_earnings,
         "today_expenses": today_expenses,
-        "today_profit": today_earnings - today_expenses,
+        "today_profit": today_profit,
+        "today_profit_margin": today_profit_margin,
 
+        # Week
         "weekly_earnings": weekly_earnings,
         "weekly_expenses": weekly_expenses,
-        "weekly_profit": weekly_earnings - weekly_expenses,
+        "weekly_profit": weekly_profit,
+        "weekly_profit_margin": weekly_profit_margin,
 
+        # Month
         "monthly_earnings": monthly_earnings,
         "monthly_expenses": monthly_expenses,
-        "monthly_profit": monthly_earnings - monthly_expenses,
+        "monthly_profit": monthly_profit,
+        "monthly_profit_margin": monthly_profit_margin,
 
+        # General analytics
+        "earning_days": earning_days,
+        "average_daily_earnings": average_daily_earnings,
+        "average_daily_profit": average_daily_profit,
+
+        "total_earnings": total_earnings,
+        "total_expenses": total_expenses,
+        "total_profit": total_profit,
+
+        # Expected
         "expected_weekly_earnings": expected_weekly_earnings,
         "expected_monthly_earnings": expected_monthly_earnings,
 
-        "recent_earnings": DailyEarning.objects.all()[:5],
-        "recent_expenses": Expense.objects.all()[:5],
+        # Best / lowest
+        "best_day": best_day,
+        "lowest_day": lowest_day,
 
+        # Charts
         "chart_labels": chart_labels,
-        "chart_values": chart_values,
+        "chart_values": earnings_chart_values,
+        "earnings_chart_values": earnings_chart_values,
+        "expense_chart_values": expense_chart_values,
+        "profit_chart_values": profit_chart_values,
+
+        # Target
+        "target_monthly": target_monthly,
+        "target_progress": target_progress,
+
+        # Recent
+        "recent_earnings": DailyEarning.objects.all().order_by(
+            "-date", "-id"
+        )[:5],
+
+        "recent_expenses": Expense.objects.all().order_by(
+            "-date", "-id"
+        )[:5],
     }
 
     return render(
@@ -154,7 +339,6 @@ def dashboard(request):
         "tracker/dashboard.html",
         context
     )
-
 
 def add_earning(request):
 

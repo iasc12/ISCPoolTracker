@@ -1,4 +1,4 @@
-﻿{% extends "tracker/base.html" %}
+{% extends "tracker/base.html" %}
 
 {% block title %}Dashboard - ISC Pool Tracker{% endblock %}
 
@@ -102,9 +102,6 @@
     font-size: 24px;
 }
 
-
-/* DIFFERENT BACKGROUNDS */
-
 .today-card {
     background: #dbeafe;
 }
@@ -116,9 +113,6 @@
 .month-card {
     background: #ede9fe;
 }
-
-
-/* FINANCIAL ITEMS */
 
 .financial-item {
     display: flex;
@@ -152,7 +146,82 @@
 }
 
 
-/* CHART */
+/* ANALYTICS */
+
+.analytics-section {
+    margin-top: 35px;
+}
+
+.analytics-section h2 {
+    margin-bottom: 18px;
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.analytics-card {
+    padding: 22px;
+    border-radius: 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.analytics-label {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.analytics-value {
+    font-size: 23px;
+    font-weight: 900;
+}
+
+.analytics-small {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 7px;
+}
+
+
+/* PROFIT MARGINS */
+
+.margin-section {
+    margin-top: 25px;
+}
+
+.margin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.margin-card {
+    padding: 22px;
+    border-radius: 18px;
+    background: #fef3c7;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.margin-title {
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.margin-value {
+    font-size: 28px;
+    font-weight: 900;
+    margin-top: 8px;
+    color: #92400e;
+}
+
+
+/* EXPECTED */
 
 .expected-section {
     margin-top: 30px;
@@ -225,8 +294,89 @@
     color: var(--muted);
 }
 
-.chart {
-    margin-top: 25px;
+
+/* TARGET */
+
+.target-section {
+    margin-top: 30px;
+}
+
+.target-card {
+    padding: 25px;
+    border-radius: 20px;
+    background: #e0f2fe;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.10);
+}
+
+.target-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.target-title {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.target-percent {
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 18px;
+    background: rgba(255,255,255,0.75);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #0284c7;
+    border-radius: 20px;
+}
+
+.target-details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* CHARTS */
+
+.charts-section {
+    margin-top: 35px;
+}
+
+.charts-section h2 {
+    margin-bottom: 20px;
+}
+
+.chart-card {
+    margin-bottom: 25px;
+    padding: 25px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.chart-card h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.chart-description {
+    color: var(--muted);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 13px;
 }
 
 .chart-box {
@@ -248,6 +398,14 @@
 
 /* MOBILE */
 
+@media (max-width: 1000px) {
+
+    .analytics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
 @media (max-width: 900px) {
 
     .cards {
@@ -259,6 +417,7 @@
         width: 100%;
         max-width: 600px;
     }
+
 }
 
 @media (max-width: 800px) {
@@ -266,15 +425,6 @@
     .actions {
         grid-template-columns: 1fr;
     }
-
-    .chart-box {
-        height: 280px;
-    }
-}
-
-@media (max-width: 800px) {
-
-    /* expected-mobile-fix */
 
     .expected-cards {
         flex-direction: column;
@@ -286,38 +436,29 @@
         max-width: 600px;
     }
 
+    .margin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-box {
+        height: 280px;
+    }
+
 }
 
+@media (max-width: 600px) {
 
-<style>
-/* Plain chart presentation */
-.chart {
-    margin-top: 30px;
-}
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
 
-.chart > .card {
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-    padding: 0 !important;
-}
+    .target-header,
+    .target-details {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
-.chart-box {
-    height: 350px;
-    position: relative;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
 }
-
-.chart h2 {
-    margin-bottom: 5px;
-}
-
-.chart p {
-    margin-top: 0;
-}
-</style>
 
 </style>
 
@@ -336,7 +477,7 @@
         </p>
 
         <div class="brand-encouragement">
-            Keep pushing. Every game counts. Every shilling matters. 💪
+            Keep pushing. Every game counts. Every shilling matters.
         </div>
 
     </div>
@@ -394,155 +535,242 @@
 
     <h2>Financial Overview</h2>
 
-
     <div class="cards">
 
-
-        <!-- TODAY -->
 
         <div class="financial-card today-card">
 
             <h2>Today</h2>
 
             <div class="financial-item">
-
-                <span>
-                    Earnings
-                </span>
-
-                <strong>
-                    KSh {{ today_earnings|floatformat:2 }}
-                </strong>
-
+                <span>Earnings</span>
+                <strong>KSh {{ today_earnings|floatformat:2 }}</strong>
             </div>
 
-
             <div class="financial-item">
-
-                <span>
-                    Expenses
-                </span>
-
-                <strong>
-                    KSh {{ today_expenses|floatformat:2 }}
-                </strong>
-
+                <span>Expenses</span>
+                <strong>KSh {{ today_expenses|floatformat:2 }}</strong>
             </div>
 
-
             <div class="financial-item">
-
-                <span>
-                    Profit / Loss
-                </span>
+                <span>Profit / Loss</span>
 
                 <strong class="{% if today_profit < 0 %}loss{% else %}profit{% endif %}">
                     KSh {{ today_profit|floatformat:2 }}
                 </strong>
-
             </div>
 
         </div>
 
-
-        <!-- THIS WEEK -->
 
         <div class="financial-card week-card">
 
             <h2>This Week</h2>
 
             <div class="financial-item">
-
-                <span>
-                    Earnings
-                </span>
-
-                <strong>
-                    KSh {{ weekly_earnings|floatformat:2 }}
-                </strong>
-
+                <span>Earnings</span>
+                <strong>KSh {{ weekly_earnings|floatformat:2 }}</strong>
             </div>
 
-
             <div class="financial-item">
-
-                <span>
-                    Expenses
-                </span>
-
-                <strong>
-                    KSh {{ weekly_expenses|floatformat:2 }}
-                </strong>
-
+                <span>Expenses</span>
+                <strong>KSh {{ weekly_expenses|floatformat:2 }}</strong>
             </div>
 
-
             <div class="financial-item">
-
-                <span>
-                    Profit / Loss
-                </span>
+                <span>Profit / Loss</span>
 
                 <strong class="{% if weekly_profit < 0 %}loss{% else %}profit{% endif %}">
                     KSh {{ weekly_profit|floatformat:2 }}
                 </strong>
-
             </div>
 
         </div>
 
-
-        <!-- THIS MONTH -->
 
         <div class="financial-card month-card">
 
             <h2>This Month</h2>
 
             <div class="financial-item">
-
-                <span>
-                    Earnings
-                </span>
-
-                <strong>
-                    KSh {{ monthly_earnings|floatformat:2 }}
-                </strong>
-
+                <span>Earnings</span>
+                <strong>KSh {{ monthly_earnings|floatformat:2 }}</strong>
             </div>
 
-
             <div class="financial-item">
-
-                <span>
-                    Expenses
-                </span>
-
-                <strong>
-                    KSh {{ monthly_expenses|floatformat:2 }}
-                </strong>
-
+                <span>Expenses</span>
+                <strong>KSh {{ monthly_expenses|floatformat:2 }}</strong>
             </div>
 
-
             <div class="financial-item">
-
-                <span>
-                    Profit / Loss
-                </span>
+                <span>Profit / Loss</span>
 
                 <strong class="{% if monthly_profit < 0 %}loss{% else %}profit{% endif %}">
                     KSh {{ monthly_profit|floatformat:2 }}
                 </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ANALYTICS -->
+
+    <div class="analytics-section">
+
+        <h2>Performance Analytics</h2>
+
+        <div class="analytics-grid">
+
+            <div class="analytics-card">
+
+                <div class="analytics-label">
+                    Average Daily Earnings
+                </div>
+
+                <div class="analytics-value">
+                    KSh {{ average_daily_earnings|floatformat:2 }}
+                </div>
+
+                <div class="analytics-small">
+                    Based on {{ earning_days }} earning day{{ earning_days|pluralize }}
+                </div>
+
+            </div>
+
+
+            <div class="analytics-card">
+
+                <div class="analytics-label">
+                    Average Daily Profit
+                </div>
+
+                <div class="analytics-value {% if average_daily_profit < 0 %}loss{% else %}profit{% endif %}">
+                    KSh {{ average_daily_profit|floatformat:2 }}
+                </div>
+
+                <div class="analytics-small">
+                    Earnings minus expenses
+                </div>
+
+            </div>
+
+
+            <div class="analytics-card">
+
+                <div class="analytics-label">
+                    Best Earning Day
+                </div>
+
+                <div class="analytics-value">
+
+                    {% if best_day %}
+                        KSh {{ best_day.amount_collected|floatformat:2 }}
+                    {% else %}
+                        KSh 0.00
+                    {% endif %}
+
+                </div>
+
+                <div class="analytics-small">
+
+                    {% if best_day %}
+                        {{ best_day.date|date:"d M Y" }}
+                    {% else %}
+                        No records yet
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="analytics-card">
+
+                <div class="analytics-label">
+                    Lowest Earning Day
+                </div>
+
+                <div class="analytics-value">
+
+                    {% if lowest_day %}
+                        KSh {{ lowest_day.amount_collected|floatformat:2 }}
+                    {% else %}
+                        KSh 0.00
+                    {% endif %}
+
+                </div>
+
+                <div class="analytics-small">
+
+                    {% if lowest_day %}
+                        {{ lowest_day.date|date:"d M Y" }}
+                    {% else %}
+                        No records yet
+                    {% endif %}
+
+                </div>
 
             </div>
 
         </div>
 
+    </div>
+
+
+    <!-- PROFIT MARGINS -->
+
+    <div class="margin-section">
+
+        <h2>Profit Margins</h2>
+
+        <div class="margin-grid">
+
+            <div class="margin-card">
+
+                <div class="margin-title">
+                    Today
+                </div>
+
+                <div class="margin-value">
+                    {{ today_profit_margin|floatformat:1 }}%
+                </div>
+
+            </div>
+
+
+            <div class="margin-card">
+
+                <div class="margin-title">
+                    This Week
+                </div>
+
+                <div class="margin-value">
+                    {{ weekly_profit_margin|floatformat:1 }}%
+                </div>
+
+            </div>
+
+
+            <div class="margin-card">
+
+                <div class="margin-title">
+                    This Month
+                </div>
+
+                <div class="margin-value">
+                    {{ monthly_profit_margin|floatformat:1 }}%
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
 
-    <!-- EARNINGS CHART -->
+    <!-- EXPECTED EARNINGS -->
 
     <div class="expected-section">
 
@@ -552,11 +780,10 @@
 
             <div class="expected-card expected-week">
 
-                <div class="expected-icon">
-                    📅
-                </div>
+                <div class="expected-icon"></div>
 
                 <div>
+
                     <div class="expected-label">
                         Expected Weekly Earnings
                     </div>
@@ -568,6 +795,7 @@
                     <div class="expected-note">
                         Based on your current average daily earnings
                     </div>
+
                 </div>
 
             </div>
@@ -575,11 +803,10 @@
 
             <div class="expected-card expected-month">
 
-                <div class="expected-icon">
-                    📈
-                </div>
+                <div class="expected-icon"></div>
 
                 <div>
+
                     <div class="expected-label">
                         Expected Monthly Earnings
                     </div>
@@ -591,6 +818,7 @@
                     <div class="expected-note">
                         Based on your current average daily earnings
                     </div>
+
                 </div>
 
             </div>
@@ -600,15 +828,70 @@
     </div>
 
 
-    <div class="chart">
+    <!-- TARGET -->
 
-        <div class="card">
+    <div class="target-section">
 
-            <h2>
-                Earnings - Last 7 Days
-            </h2>
+        <h2>Monthly Target</h2>
 
-            <p style="color: var(--muted);">
+        <div class="target-card">
+
+            <div class="target-header">
+
+                <div class="target-title">
+                    Current Month Earnings
+                </div>
+
+                <div class="target-percent">
+                    {{ target_progress|floatformat:1 }}%
+                </div>
+
+            </div>
+
+
+            <div class="progress-bar">
+
+                <div
+                    class="progress-fill"
+                    style="width: {{ target_progress }}%;"
+                ></div>
+
+            </div>
+
+
+            <div class="target-details">
+
+                <span>
+                    Actual: KSh {{ monthly_earnings|floatformat:2 }}
+                </span>
+
+                <span>
+                    Target: KSh {{ target_monthly|floatformat:2 }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHARTS -->
+
+    <div class="charts-section">
+
+        <h2>Financial Charts</h2>
+
+
+        <!-- DAILY EARNINGS -->
+
+        <div class="chart-card">
+
+            <h3>
+                Daily Earnings - Last 7 Days
+            </h3>
+
+            <p class="chart-description">
                 Daily pool earnings.
             </p>
 
@@ -620,10 +903,8 @@
 
         </div>
 
-    </div>
 
-
-    <!-- HISTORY BUTTONS -->
+    <!-- HISTORY -->
 
     <div class="history">
 
@@ -645,10 +926,10 @@
 </div>
 
 
+<!-- CHART DATA -->
+
 {{ chart_labels|json_script:"chart-labels" }}
-
-{{ chart_values|json_script:"chart-values" }}
-
+{{ earnings_chart_values|json_script:"earnings-values" }}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -659,10 +940,16 @@ const labels = JSON.parse(
     document.getElementById("chart-labels").textContent
 );
 
-const values = JSON.parse(
-    document.getElementById("chart-values").textContent
+const earningsValues = JSON.parse(
+    document.getElementById("earnings-values").textContent
 );
 
+
+
+
+/* ---------------------------------------------------------
+   DAILY EARNINGS
+--------------------------------------------------------- */
 
 new Chart(
     document.getElementById("earningsChart"),
@@ -680,7 +967,7 @@ new Chart(
 
                     label: "Daily Earnings",
 
-                    data: values,
+                    data: earningsValues,
 
                     backgroundColor: "#16a34a",
 
@@ -691,7 +978,6 @@ new Chart(
             ]
 
         },
-
 
         options: {
 
@@ -750,7 +1036,515 @@ new Chart(
     }
 );
 
+
 </script>
 
+
+<script>
+
+const labels = JSON.parse(
+    document.getElementById("chart-labels").textContent
+);
+
+const earningsValues = JSON.parse(
+    document.getElementById("earnings-values").textContent
+);
+
+const profitValues = JSON.parse(
+    document.getElementById("profit-values").textContent
+);
+
+
+/* ---------------------------------------------------------
+   DAILY EARNINGS
+--------------------------------------------------------- */
+
+new Chart(
+    document.getElementById("earningsChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+
+                    label: "Daily Earnings",
+
+                    data: earningsValues,
+
+                    backgroundColor: "#16a34a",
+
+                    borderRadius: 8
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return "KSh " +
+                                Number(value).toLocaleString();
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            plugins: {
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return "KSh " +
+                                Number(context.raw).toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ---------------------------------------------------------
+   DAILY PROFIT
+--------------------------------------------------------- */
+
+new Chart(
+    document.getElementById("profitChart"),
+    {
+
+        type: "line",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+
+                    label: "Daily Profit",
+
+                    data: profitValues,
+
+                    borderWidth: 3,
+
+                    tension: 0.3,
+
+                    fill: false,
+
+                    pointRadius: 5
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: false,
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return "KSh " +
+                                Number(value).toLocaleString();
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            plugins: {
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return "Profit: KSh " +
+                                Number(context.raw).toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+</script>
+
+
+<script>
+
+const labels = JSON.parse(
+    document.getElementById("chart-labels").textContent
+);
+
+const earningsValues = JSON.parse(
+    document.getElementById("earnings-values").textContent
+);
+
+const expenseValues = JSON.parse(
+    document.getElementById("expense-values").textContent
+);
+
+const profitValues = JSON.parse(
+    document.getElementById("profit-values").textContent
+);
+
+const monthlyEarnings = JSON.parse(
+    document.getElementById("monthly-earnings").textContent
+);
+
+const targetMonthly = JSON.parse(
+    document.getElementById("target-monthly").textContent
+);
+
+
+/* ---------------------------------------------------------
+   EARNINGS VS EXPENSES
+--------------------------------------------------------- */
+
+new Chart(
+    document.getElementById("earningsExpensesChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+                    label: "Earnings",
+                    data: earningsValues,
+                    backgroundColor: "#16a34a",
+                    borderRadius: 7
+                },
+
+                {
+                    label: "Expenses",
+                    data: expenseValues,
+                    backgroundColor: "#dc2626",
+                    borderRadius: 7
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return "KSh " +
+                                Number(value).toLocaleString();
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            plugins: {
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return context.dataset.label +
+                                ": KSh " +
+                                Number(context.raw).toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ---------------------------------------------------------
+   DAILY PROFIT
+--------------------------------------------------------- */
+
+new Chart(
+    document.getElementById("profitChart"),
+    {
+
+        type: "line",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+
+                    label: "Daily Profit",
+
+                    data: profitValues,
+
+                    borderWidth: 3,
+
+                    tension: 0.3,
+
+                    fill: false,
+
+                    pointRadius: 5
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return "KSh " +
+                                Number(value).toLocaleString();
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            plugins: {
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return "Profit: KSh " +
+                                Number(context.raw).toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ---------------------------------------------------------
+   TARGET VS ACTUAL
+--------------------------------------------------------- */
+
+new Chart(
+    document.getElementById("targetChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: ["Monthly Earnings"],
+
+            datasets: [
+
+                {
+                    label: "Actual",
+                    data: [monthlyEarnings],
+                    backgroundColor: "#0284c7",
+                    borderRadius: 8
+                },
+
+                {
+                    label: "Target",
+                    data: [targetMonthly],
+                    backgroundColor: "#f59e0b",
+                    borderRadius: 8
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        callback: function(value) {
+
+                            return "KSh " +
+                                Number(value).toLocaleString();
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            plugins: {
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            return context.dataset.label +
+                                ": KSh " +
+                                Number(context.raw).toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+</script>
 
 {% endblock %}
