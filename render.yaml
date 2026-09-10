@@ -1,7 +1,8 @@
-services:
+﻿services:
   - type: web
     name: iscpooltracker
     runtime: python
+    plan: free
     buildCommand: "./build.sh"
     startCommand: "gunicorn config.wsgi:application"
     healthCheckPath: "/"
@@ -28,5 +29,6 @@ services:
 
 databases:
   - name: iscpooltracker-db
+    plan: free
     databaseName: iscpooltracker
     user: iscpooltracker
