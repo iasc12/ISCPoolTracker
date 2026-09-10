@@ -1,0 +1,438 @@
+﻿{% extends "tracker/base.html" %}
+
+{% block title %}Record Coin Collection - ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+    .coin-form-page {
+        max-width: 850px;
+        margin: 0 auto;
+        padding: 20px 0 50px;
+    }
+
+    .coin-form-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .coin-form-icon {
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 15px;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        box-shadow: 0 12px 30px rgba(245, 158, 11, 0.25);
+    }
+
+    .coin-form-title {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .coin-form-description {
+        max-width: 600px;
+        margin: 10px auto 0;
+        color: #6b7280;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    .coin-form-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 22px;
+        padding: 30px;
+        box-shadow: 0 12px 35px rgba(15, 23, 42, 0.07);
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #111827;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .form-help {
+        margin-top: 6px;
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+    .form-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 13px 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        background: #fff;
+        color: #111827;
+        font-size: 15px;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .form-input:focus {
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+    }
+
+    textarea.form-input {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .field-error {
+        margin-top: 6px;
+        color: #dc2626;
+        font-size: 13px;
+    }
+
+    /* COIN CALCULATION */
+    .coin-calculation {
+        margin: 25px 0;
+        padding: 20px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #fffbeb, #fef3c7);
+        border: 1px solid #fde68a;
+    }
+
+    .calculation-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        color: #92400e;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .calculation-main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .calculation-text {
+        color: #78350f;
+        font-size: 14px;
+    }
+
+    .calculation-result {
+        font-size: 25px;
+        font-weight: 900;
+        color: #b45309;
+    }
+
+    /* BUTTONS */
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 28px;
+    }
+
+    .btn {
+        flex: 1;
+        min-height: 48px;
+        border-radius: 12px;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .btn-primary {
+        background: #111827;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #000;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+        color: #111827;
+    }
+
+    /* DARK MODE */
+    body.dark-mode .coin-form-title {
+        color: #f9fafb;
+    }
+
+    body.dark-mode .coin-form-description {
+        color: #9ca3af;
+    }
+
+    body.dark-mode .coin-form-card {
+        background: #111827;
+        border-color: #374151;
+    }
+
+    body.dark-mode .form-label {
+        color: #f9fafb;
+    }
+
+    body.dark-mode .form-input {
+        background: #1f2937;
+        border-color: #4b5563;
+        color: #f9fafb;
+    }
+
+    body.dark-mode .form-input:focus {
+        border-color: #f59e0b;
+    }
+
+    body.dark-mode .btn-secondary {
+        background: #374151;
+        color: #f9fafb;
+    }
+
+    body.dark-mode .btn-secondary:hover {
+        background: #4b5563;
+    }
+
+    /* MOBILE */
+    @media (max-width: 600px) {
+        .coin-form-page {
+            padding: 10px 0 30px;
+        }
+
+        .coin-form-title {
+            font-size: 25px;
+        }
+
+        .coin-form-card {
+            padding: 20px;
+            border-radius: 18px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .calculation-main {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="coin-form-page">
+
+    <!-- HEADER -->
+    <div class="coin-form-header">
+
+        <div class="coin-form-icon">
+            🪙
+        </div>
+
+        <h1 class="coin-form-title">
+            Record Coin Collection
+        </h1>
+
+        <p class="coin-form-description">
+            Record the coins physically removed from the pool tables
+            and the earnings received for today's collection.
+        </p>
+
+    </div>
+
+
+    <!-- FORM CARD -->
+    <div class="coin-form-card">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            <!-- COLLECTION DATE -->
+            <div class="form-group">
+
+                <label class="form-label" for="{{ form.collection_date.id_for_label }}">
+                    📅 Collection Date
+                </label>
+
+                {{ form.collection_date }}
+
+                {% if form.collection_date.errors %}
+                    <div class="field-error">
+                        {{ form.collection_date.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <!-- COINS -->
+            <div class="form-group">
+
+                <label class="form-label" for="{{ form.coins_collected.id_for_label }}">
+                    🪙 Coins Collected
+                </label>
+
+                {{ form.coins_collected }}
+
+                <div class="form-help">
+                    Number of coins physically removed from the pool tables.
+                </div>
+
+                {% if form.coins_collected.errors %}
+                    <div class="field-error">
+                        {{ form.coins_collected.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <!-- AUTOMATIC EXPECTED AMOUNT -->
+            <div class="coin-calculation">
+
+                <div class="calculation-title">
+                    💰 Next Expected Earnings
+                </div>
+
+                <div class="calculation-main">
+
+                    <div class="calculation-text">
+                        Coins × KSh 20
+                    </div>
+
+                    <div class="calculation-result" id="expectedAmount">
+                        KSh 0.00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TODAY'S EARNINGS -->
+            <div class="form-group">
+
+                <label class="form-label" for="{{ form.actual_m_pesa.id_for_label }}">
+                    💵 Today's Earnings
+                </label>
+
+                {{ form.actual_m_pesa }}
+
+                <div class="form-help">
+                    Enter the actual earnings received for today's collection.
+                </div>
+
+                {% if form.actual_m_pesa.errors %}
+                    <div class="field-error">
+                        {{ form.actual_m_pesa.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <!-- NOTES -->
+            <div class="form-group">
+
+                <label class="form-label" for="{{ form.notes.id_for_label }}">
+                    📝 Notes
+                </label>
+
+                {{ form.notes }}
+
+                {% if form.notes.errors %}
+                    <div class="field-error">
+                        {{ form.notes.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <!-- BUTTONS -->
+            <div class="form-actions">
+
+                <button type="submit" class="btn btn-primary">
+                    🪙 Record Collection
+                </button>
+
+                <a
+                    href="{% url 'coin_collections' %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const coinsInput = document.getElementById("id_coins_collected");
+        const expectedAmount = document.getElementById("expectedAmount");
+
+        const COIN_VALUE = 20;
+
+        function updateExpectedAmount() {
+
+            if (!coinsInput || !expectedAmount) {
+                return;
+            }
+
+            const coins = parseInt(coinsInput.value) || 0;
+            const expected = coins * COIN_VALUE;
+
+            expectedAmount.textContent =
+                "KSh " + expected.toLocaleString(
+                    "en-KE",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+        }
+
+        if (coinsInput) {
+            coinsInput.addEventListener(
+                "input",
+                updateExpectedAmount
+            );
+
+            updateExpectedAmount();
+        }
+
+    });
+</script>
+
+{% endblock %}

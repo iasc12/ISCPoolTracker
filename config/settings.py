@@ -30,12 +30,7 @@ DEBUG = os.getenv(
 # HOSTS
 # ============================================================
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "iscpooltracker.onrender.com",
-    "isac1213.pythonanywhere.com",
-]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "testserver"]
 
 
 # ============================================================
@@ -271,3 +266,7 @@ POOL_TRACKER_REMINDER_EMAIL = os.getenv(
 DEFAULT_AUTO_FIELD = (
     "django.db.models.BigAutoField"
 )
+
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"

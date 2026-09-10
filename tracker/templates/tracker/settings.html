@@ -1,0 +1,700 @@
+﻿{% extends "tracker/base.html" %}
+
+{% block title %}Settings - ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+.settings-page {
+    max-width: 980px;
+    margin: 0 auto;
+    padding-bottom: 30px;
+}
+
+.settings-header {
+    margin-bottom: 24px;
+}
+
+.settings-header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.settings-header p {
+    margin: 7px 0 0;
+    opacity: .58;
+    font-size: 14px;
+}
+
+/* HERO */
+
+.settings-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 26px;
+    padding: 30px;
+    margin-bottom: 20px;
+    color: white;
+    background:
+        radial-gradient(circle at 85% 20%, rgba(255,255,255,.22), transparent 28%),
+        linear-gradient(135deg, var(--accent), var(--accent-dark));
+    box-shadow: 0 18px 45px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.settings-hero::after {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    right: -60px;
+    bottom: -90px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.10);
+}
+
+.settings-hero-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.16);
+    backdrop-filter: blur(10px);
+    margin-bottom: 18px;
+}
+
+.settings-hero-icon svg {
+    width: 27px;
+    height: 27px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.settings-hero h2 {
+    margin: 0 0 7px;
+    font-size: 24px;
+}
+
+.settings-hero p {
+    margin: 0;
+    max-width: 600px;
+    line-height: 1.6;
+    opacity: .82;
+    font-size: 14px;
+}
+
+/* CARDS */
+
+.settings-card {
+    background: var(--card-bg, #fff);
+    border-radius: 24px;
+    padding: 26px;
+    margin-bottom: 18px;
+    box-shadow: 0 9px 30px rgba(0,0,0,.07);
+}
+
+.settings-card-header {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 22px;
+}
+
+.settings-card-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+}
+
+.settings-card-icon svg {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.settings-card-header h2 {
+    margin: 0;
+    font-size: 19px;
+}
+
+.settings-card-header p {
+    margin: 3px 0 0;
+    font-size: 12px;
+    opacity: .55;
+}
+
+/* THEME GRID */
+
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.theme-option {
+    position: relative;
+    border: 2px solid transparent;
+    border-radius: 18px;
+    padding: 12px;
+    background: rgba(127,127,127,.055);
+    cursor: pointer;
+    text-align: left;
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.theme-option:hover {
+    transform: translateY(-3px);
+}
+
+.theme-option.active {
+    border-color: var(--theme-color);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--theme-color) 25%, transparent);
+}
+
+.theme-preview {
+    height: 76px;
+    border-radius: 12px;
+    background: linear-gradient(
+        135deg,
+        var(--theme-color),
+        var(--theme-dark)
+    );
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 11px;
+}
+
+.theme-preview::before {
+    content: "";
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    right: -20px;
+    top: -25px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+}
+
+.theme-preview::after {
+    content: "";
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    left: 12px;
+    bottom: -20px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.10);
+}
+
+.theme-preview-inner {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    height: 25px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.18);
+}
+
+.theme-name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.theme-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: var(--theme-color);
+    color: white;
+}
+
+.theme-option.active .theme-check {
+    display: flex;
+}
+
+.theme-check svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* THEME COLORS */
+
+.theme-ocean {
+    --theme-color: #0ea5e9;
+    --theme-dark: #0369a1;
+}
+
+.theme-emerald {
+    --theme-color: #10b981;
+    --theme-dark: #047857;
+}
+
+.theme-purple {
+    --theme-color: #8b5cf6;
+    --theme-dark: #6d28d9;
+}
+
+.theme-sunset {
+    --theme-color: #f97316;
+    --theme-dark: #c2410c;
+}
+
+.theme-rose {
+    --theme-color: #f43f5e;
+    --theme-dark: #be123c;
+}
+
+.theme-amber {
+    --theme-color: #f59e0b;
+    --theme-dark: #b45309;
+}
+
+.theme-sky {
+    --theme-color: #38bdf8;
+    --theme-dark: #0284c7;
+}
+
+.theme-midnight {
+    --theme-color: #6366f1;
+    --theme-dark: #312e81;
+}
+
+/* CURRENT THEME */
+
+.current-theme {
+    margin-top: 20px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.current-theme-label {
+    font-size: 13px;
+    opacity: .65;
+}
+
+.current-theme-name {
+    font-weight: 800;
+    color: var(--accent);
+}
+
+/* LOGOUT */
+
+.logout-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.logout-info strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.logout-info span {
+    font-size: 13px;
+    opacity: .55;
+}
+
+.logout-button {
+    border: 0;
+    border-radius: 13px;
+    padding: 12px 19px;
+    background: rgba(220,38,38,.10);
+    color: #dc2626;
+    font-weight: 750;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.logout-button:hover {
+    background: rgba(220,38,38,.16);
+    transform: translateY(-1px);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 800px) {
+    .theme-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 520px) {
+    .settings-page {
+        padding-bottom: 20px;
+    }
+
+    .settings-header h1 {
+        font-size: 27px;
+    }
+
+    .settings-hero {
+        padding: 23px;
+        border-radius: 22px;
+    }
+
+    .settings-card {
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .theme-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .theme-preview {
+        height: 62px;
+    }
+
+    .logout-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .logout-button {
+        width: 100%;
+    }
+}
+</style>
+
+<div class="settings-page">
+
+    <div class="settings-header">
+        <h1>Settings</h1>
+        <p>Personalize the way ISC Pool Tracker looks and feels.</p>
+    </div>
+
+    <section class="settings-hero">
+
+        <div class="settings-hero-icon">
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.5 1.5-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V20h-2.1v-.4a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1-1.5-1.5.1-.1A1.7 1.7 0 0 0 9 15a1.7 1.7 0 0 0-1.5-1H7v-2h.5A1.7 1.7 0 0 0 9 11a1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.5-1.5.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V6h2.1v.4a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.5 1.5-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.5v2h-.5a1.7 1.7 0 0 0-1.4 1z"></path>
+            </svg>
+        </div>
+
+        <h2>Make it yours</h2>
+        <p>
+            Choose a color theme that matches your style.
+            Your choice is saved automatically and will remain active
+            when you return to the tracker.
+        </p>
+
+    </section>
+
+    <section class="settings-card">
+
+        <div class="settings-card-header">
+
+            <div class="settings-card-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="13" cy="13" r="7"></circle>
+                    <path d="M13 9v4l2.5 2"></path>
+                    <path d="M5 3v4"></path>
+                    <path d="M3 5h4"></path>
+                </svg>
+            </div>
+
+            <div>
+                <h2>Color Themes</h2>
+                <p>Select your preferred accent color.</p>
+            </div>
+
+        </div>
+
+        <div class="theme-grid">
+
+            <button type="button"
+                    class="theme-option theme-ocean"
+                    data-theme="ocean"
+                    data-name="Ocean"
+                    onclick="applyTheme('ocean')">
+                <div class="theme-preview">
+                    <div class="theme-preview-inner"></div>
+                </div>
+                <div class="theme-name">
+                    <span>Ocean</span>
+                    <span class="theme-check">
+                        <svg viewBox="0 0 24 24">
+                            <path d="m5 12 4 4L19 6"></path>
+                        </svg>
+                    </span>
+                </div>
+            </button>
+
+            <button type="button"
+                    class="theme-option theme-emerald"
+                    data-theme="emerald"
+                    data-name="Emerald"
+                    onclick="applyTheme('emerald')">
+                <div class="theme-preview">
+                    <div class="theme-preview-inner"></div>
+                </div>
+                <div class="theme-name">
+                    <span>Emerald</span>
+                    <span class="theme-check">
+                        <svg viewBox="0 0 24 24">
+                            <path d="m5 12 4 4L19 6"></path>
+                        </svg>
+                    </span>
+                </div>
+            </button>
+
+            <button type="button"
+                    class="theme-option theme-purple"
+                    data-theme="purple"
+                    data-name="Royal Purple"
+                    onclick="applyTheme('purple')">
+                <div class="theme-preview">
+                    <div class="theme-preview-inner"></div>
+                </div>
+                <div class="theme-name">
+                    <span>Royal Purple</span>
+                    <span class="theme-check">
+                        <svg viewBox="0 0 24 24">
+                            <path d="m5 12 4 4L19 6"></path>
+                        </svg>
+                    </span>
+                </div>
+            </button>
+
+            <button type="button"
+                    class="theme-option theme-sunset"
+                    data-theme="sunset"
+                    data-name="Sunset"
+                    onclick="applyTheme('sunset')">
+                <div class="theme-preview">
+                    <div class="theme-preview-inner"></div>
+                </div>
+                <div class="theme-name">
+                    <span>Sunset</span>
+                    <span class="theme-check">
+                        <svg viewBox="0 0 24 24">
+                            <path d="m5 12 4 4L19 6"></path>
+                        </svg>
+                    </span>
+                </div>
+            </button>
+
+            <button type="button"
+                    class="theme-option theme-rose"
+                    data-theme="rose"
+                    data-name="Rose"
+                    onclick="applyTheme('rose')">
+                <div class="theme-preview">
+                    <div class="theme-preview-inner"></div>
+                </div>
+                <div class="theme-name">
+                    <span>Rose</span>
+                    <span class="theme-check">
+                        <svg viewBox="0 0 24 24">
+                            <path d="m5 12 4 4L19 6"></path>
+                        </svg>
+                    </span>
+                </div>
+            </button>
+
+            <button type="button"
+                    class="theme-option theme-amber"
+                    data-theme="amber"
+                    data-name="Amber"
+                    onclick="applyTheme('amber')">
+                <div class="theme-preview">
+                    <div class="theme-preview-inner"></div>
+                </div>
+                <div class="theme-name">
+                    <span>Amber</span>
+                    <span class="theme-check">
+                        <svg viewBox="0 0 24 24">
+                            <path d="m5 12 4 4L19 6"></path>
+                        </svg>
+                    </span>
+                </div>
+            </button>
+
+            <button type="button"
+                    class="theme-option theme-sky"
+                    data-theme="sky"
+                    data-name="Sky"
+                    onclick="applyTheme('sky')">
+                <div class="theme-preview">
+                    <div class="theme-preview-inner"></div>
+                </div>
+                <div class="theme-name">
+                    <span>Sky</span>
+                    <span class="theme-check">
+                        <svg viewBox="0 0 24 24">
+                            <path d="m5 12 4 4L19 6"></path>
+                        </svg>
+                    </span>
+                </div>
+            </button>
+
+            <button type="button"
+                    class="theme-option theme-midnight"
+                    data-theme="midnight"
+                    data-name="Midnight"
+                    onclick="applyTheme('midnight')">
+                <div class="theme-preview">
+                    <div class="theme-preview-inner"></div>
+                </div>
+                <div class="theme-name">
+                    <span>Midnight</span>
+                    <span class="theme-check">
+                        <svg viewBox="0 0 24 24">
+                            <path d="m5 12 4 4L19 6"></path>
+                        </svg>
+                    </span>
+                </div>
+            </button>
+
+        </div>
+
+        <div class="current-theme">
+            <div class="current-theme-label">
+                Currently selected
+            </div>
+
+            <div class="current-theme-name" id="currentThemeName">
+                Ocean
+            </div>
+        </div>
+
+    </section>
+
+
+
+</div>
+
+<script>
+(function () {
+
+    const themes = {
+        ocean: {
+            name: "Ocean",
+            accent: "#0ea5e9",
+            dark: "#0369a1"
+        },
+        emerald: {
+            name: "Emerald",
+            accent: "#10b981",
+            dark: "#047857"
+        },
+        purple: {
+            name: "Royal Purple",
+            accent: "#8b5cf6",
+            dark: "#6d28d9"
+        },
+        sunset: {
+            name: "Sunset",
+            accent: "#f97316",
+            dark: "#c2410c"
+        },
+        rose: {
+            name: "Rose",
+            accent: "#f43f5e",
+            dark: "#be123c"
+        },
+        amber: {
+            name: "Amber",
+            accent: "#f59e0b",
+            dark: "#b45309"
+        },
+        sky: {
+            name: "Sky",
+            accent: "#38bdf8",
+            dark: "#0284c7"
+        },
+        midnight: {
+            name: "Midnight",
+            accent: "#6366f1",
+            dark: "#312e81"
+        }
+    };
+
+    window.applyTheme = function (theme) {
+
+        if (!themes[theme]) {
+            theme = "ocean";
+        }
+
+        const selected = themes[theme];
+
+        document.documentElement.style.setProperty(
+            "--accent",
+            selected.accent
+        );
+
+        document.documentElement.style.setProperty(
+            "--accent-dark",
+            selected.dark
+        );
+
+        localStorage.setItem(
+            "iscPoolTrackerTheme",
+            theme
+        );
+
+        document.querySelectorAll(".theme-option").forEach(function (button) {
+            button.classList.toggle(
+                "active",
+                button.dataset.theme === theme
+            );
+        });
+
+        const currentName = document.getElementById(
+            "currentThemeName"
+        );
+
+        if (currentName) {
+            currentName.textContent = selected.name;
+        }
+    };
+
+    const savedTheme =
+        localStorage.getItem("iscPoolTrackerTheme") || "ocean";
+
+    applyTheme(savedTheme);
+
+})();
+</script>
+
+{% endblock %}

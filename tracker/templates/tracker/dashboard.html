@@ -1,4 +1,4 @@
-{% extends "tracker/base.html" %}
+﻿{% extends "tracker/base.html" %}
 
 {% block title %}Dashboard - ISC Pool Tracker{% endblock %}
 
@@ -128,7 +128,7 @@
     align-items: center;
     gap: 15px;
     padding: 14px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+    border-bottom: none;
 }
 
 .financial-item:last-child {
@@ -408,20 +408,7 @@
 }
 
 
-/* HISTORY */
-
-.history {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 25px;
-    flex-wrap: wrap;
-}
-
-
- /* MOBILE */
+/* MOBILE */
 
 @media (max-width: 1000px) {
 
@@ -2059,17 +2046,11 @@
 
     <div class="history">
 
-        <a href="{% url 'earnings_list' %}" class="button earning">
-            Earnings History
-        </a>
+        
 
-        <a href="{% url 'expenses_list' %}" class="button expense">
-            Expenses History
-        </a>
+        
 
-        <a href="{% url 'reports' %}" class="button primary">
-            Reports
-        </a>
+        
 
     </div>
 
@@ -2843,3 +2824,53 @@
     border-bottom: none !important;
 }
 </style>
+
+
+<style>
+/* REMOVE ALL DIVIDER LINES FROM FINANCIAL OVERVIEW */
+
+.financial-card,
+.today-card,
+.week-card,
+.month-card {
+    border: none !important;
+    outline: none !important;
+    background-image: none !important;
+}
+
+.financial-card::before,
+.financial-card::after,
+.today-card::before,
+.today-card::after,
+.week-card::before,
+.week-card::after,
+.month-card::before,
+.month-card::after {
+    content: none !important;
+    display: none !important;
+    border: none !important;
+    background: none !important;
+}
+
+.financial-item,
+.financial-item:last-child {
+    border: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    background-image: none !important;
+}
+
+.financial-item::before,
+.financial-item::after {
+    content: none !important;
+    display: none !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+</style>
+
+
+
+

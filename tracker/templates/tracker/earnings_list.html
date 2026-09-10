@@ -1,129 +1,1041 @@
-{% extends "tracker/base.html" %}
+﻿{% extends "tracker/base.html" %}
 
 {% block title %}Earnings History - ISC Pool Tracker{% endblock %}
 
 {% block content %}
 
-<div class="card">
+<style>
 
-    <h1>Earnings History</h1>
+    /* =========================================================
+       EARNINGS HISTORY
+    ========================================================= */
 
-    <p>
-        Total Earnings:
-        <strong>KSh {{ total|floatformat:2 }}</strong>
-    </p>
+    .earnings-page {
+        max-width: 1150px;
+        margin: 0 auto;
+        padding-bottom: 35px;
+    }
 
-    <div style="overflow-x:auto;">
 
-        <table>
+    /* =========================================================
+       HEADER
+    ========================================================= */
 
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Notes</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
+    .earnings-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 28px;
+    }
 
-            <tbody>
+    .earnings-heading {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
 
-                {% for earning in earnings %}
+    .earnings-icon {
+        width: 58px;
+        height: 58px;
 
-                    <tr>
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-                        <td>
-                            {{ earning.date|date:"d M Y" }}
-                        </td>
+        flex-shrink: 0;
 
-                        <td>
-                            KSh {{ earning.amount_collected|floatformat:2 }}
-                        </td>
+        border-radius: 18px;
 
-                        <td>
-                            {{ earning.notes|default:"-" }}
-                        </td>
+        background:
+            linear-gradient(
+                145deg,
+                #22c55e,
+                #15803d
+            );
 
-                        <td>
+        color: white;
 
-                            <a
-                                href="{% url 'edit_earning' earning.id %}"
-                                class="button primary"
-                            >
-                                Edit
-                            </a>
+        box-shadow:
+            0 10px 25px rgba(34,197,94,.22);
+    }
 
-                            <a
-                                href="{% url 'delete_earning' earning.id %}"
-                                class="button danger"
-                            >
-                                Delete
-                            </a>
+    .earnings-icon svg {
+        width: 29px;
+        height: 29px;
 
-                        </td>
+        fill: none;
 
-                    </tr>
+        stroke: currentColor;
 
-                {% empty %}
+        stroke-width: 1.9;
 
-                    <tr>
-                        <td colspan="4">
-                            No earnings recorded.
-                        </td>
-                    </tr>
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
 
-                {% endfor %}
+    .earnings-heading h1 {
+        margin: 0;
 
-            </tbody>
+        font-size: 30px;
+        font-weight: 850;
 
-        </table>
+        letter-spacing: -1px;
+    }
 
-    </div>
+    .earnings-heading p {
+        margin: 5px 0 0;
 
-    {% if earnings.has_other_pages %}
+        color: #64748b;
 
-        <div style="
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            gap:10px;
-            margin-top:25px;
-            flex-wrap:wrap;
-        ">
+        font-size: 13px;
+    }
 
-            {% if earnings.has_previous %}
-                <a
-                    href="?page={{ earnings.previous_page_number }}"
-                    class="button"
-                >
-                    &larr; Previous
-                </a>
-            {% endif %}
 
-            <span style="font-weight:600;">
-                Page {{ earnings.number }} of {{ earnings.paginator.num_pages }}
-            </span>
+    /* =========================================================
+       TOTAL CARD
+    ========================================================= */
 
-            {% if earnings.has_next %}
-                <a
-                    href="?page={{ earnings.next_page_number }}"
-                    class="button primary"
-                >
-                    Next &rarr;
-                </a>
-            {% endif %}
+    .total-card {
+        min-width: 220px;
+
+        padding: 18px 21px;
+
+        border-radius: 20px;
+
+        background:
+            linear-gradient(
+                145deg,
+                #f0fdf4,
+                #dcfce7
+            );
+
+        border:
+            1px solid rgba(34,197,94,.12);
+    }
+
+    .total-label {
+        color: #64748b;
+
+        font-size: 11px;
+
+        font-weight: 750;
+
+        text-transform: uppercase;
+
+        letter-spacing: .8px;
+    }
+
+    .total-value {
+        margin-top: 5px;
+
+        color: #15803d;
+
+        font-size: 25px;
+
+        font-weight: 850;
+
+        letter-spacing: -.6px;
+    }
+
+
+    /* =========================================================
+       TABLE CARD
+    ========================================================= */
+
+    .earnings-card {
+        overflow: hidden;
+
+        background:
+            rgba(255,255,255,.94);
+
+        border:
+            1px solid rgba(15,23,42,.06);
+
+        border-radius: 27px;
+
+        box-shadow:
+            0 15px 40px rgba(15,23,42,.065);
+    }
+
+    .table-header {
+        padding: 21px 24px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        border-bottom:
+            1px solid rgba(15,23,42,.055);
+    }
+
+    .table-header h2 {
+        margin: 0;
+
+        font-size: 16px;
+
+        font-weight: 800;
+    }
+
+    .record-count {
+        padding: 6px 11px;
+
+        border-radius: 999px;
+
+        background: #f1f5f9;
+
+        color: #64748b;
+
+        font-size: 11px;
+
+        font-weight: 750;
+    }
+
+
+    /* =========================================================
+       TABLE
+    ========================================================= */
+
+    .table-wrapper {
+        width: 100%;
+
+        overflow-x: auto;
+    }
+
+    .earnings-table {
+        width: 100%;
+
+        border-collapse: collapse;
+
+        min-width: 720px;
+    }
+
+    .earnings-table th {
+        padding: 15px 22px;
+
+        text-align: left;
+
+        background: #f8fafc;
+
+        color: #64748b;
+
+        font-size: 11px;
+
+        font-weight: 800;
+
+        text-transform: uppercase;
+
+        letter-spacing: .65px;
+    }
+
+    .earnings-table td {
+        padding: 17px 22px;
+
+        color: #334155;
+
+        font-size: 13px;
+
+        border-top:
+            1px solid rgba(15,23,42,.045);
+    }
+
+    .earnings-table tbody tr {
+        transition:
+            background .2s ease;
+    }
+
+    .earnings-table tbody tr:hover {
+        background:
+            #f8fafc;
+    }
+
+
+    /* =========================================================
+       DATE
+    ========================================================= */
+
+    .date-main {
+        font-weight: 750;
+
+        color: #1e293b;
+    }
+
+
+    /* =========================================================
+       AMOUNT
+    ========================================================= */
+
+    .earning-amount {
+        color: #16a34a;
+
+        font-weight: 850;
+
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       NOTES
+    ========================================================= */
+
+    .notes {
+        max-width: 280px;
+
+        color: #64748b;
+
+        line-height: 1.5;
+    }
+
+    .no-notes {
+        color: #94a3b8;
+
+        font-style: italic;
+    }
+
+
+    /* =========================================================
+       ACTIONS
+    ========================================================= */
+
+    .actions {
+        display: flex;
+
+        align-items: center;
+
+        gap: 7px;
+    }
+
+    .action-button {
+        min-width: 62px;
+
+        padding: 8px 11px;
+
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 10px;
+
+        text-decoration: none;
+
+        font-size: 11px;
+
+        font-weight: 750;
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .action-button:hover {
+        transform:
+            translateY(-2px);
+    }
+
+    .edit-button {
+        background:
+            #eff6ff;
+
+        color:
+            #2563eb;
+    }
+
+    .delete-button {
+        background:
+            #fef2f2;
+
+        color:
+            #dc2626;
+    }
+
+
+    /* =========================================================
+       EMPTY STATE
+    ========================================================= */
+
+    .empty-state {
+        padding: 60px 25px;
+
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 62px;
+        height: 62px;
+
+        margin: 0 auto 15px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 20px;
+
+        background: #f0fdf4;
+
+        color: #16a34a;
+    }
+
+    .empty-icon svg {
+        width: 28px;
+        height: 28px;
+
+        fill: none;
+
+        stroke: currentColor;
+
+        stroke-width: 1.8;
+
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 7px;
+
+        font-size: 17px;
+
+        font-weight: 800;
+    }
+
+    .empty-state p {
+        margin: 0;
+
+        color: #64748b;
+
+        font-size: 13px;
+    }
+
+
+    /* =========================================================
+       PAGINATION
+    ========================================================= */
+
+    .pagination {
+        padding: 20px 23px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 13px;
+
+        border-top:
+            1px solid rgba(15,23,42,.05);
+
+        flex-wrap: wrap;
+    }
+
+    .page-button {
+        min-width: 90px;
+
+        padding: 9px 14px;
+
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 12px;
+
+        background: #f1f5f9;
+
+        color: #334155;
+
+        text-decoration: none;
+
+        font-size: 12px;
+
+        font-weight: 750;
+
+        transition:
+            transform .2s ease,
+            background .2s ease;
+    }
+
+    .page-button:hover {
+        transform:
+            translateY(-2px);
+
+        background: #e2e8f0;
+    }
+
+    .page-button.next {
+        background: #111827;
+
+        color: white;
+    }
+
+    .page-number {
+        font-size: 12px;
+
+        font-weight: 750;
+
+        color: #64748b;
+    }
+
+
+    /* =========================================================
+       BACK BUTTON
+    ========================================================= */
+
+    .back-section {
+        margin-top: 25px;
+    }
+
+    .back-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 9px;
+
+        padding: 11px 17px;
+
+        border-radius: 13px;
+
+        background: #111827;
+
+        color: white;
+
+        border: none;
+
+        text-decoration: none;
+
+        cursor: pointer;
+
+        font-family: inherit;
+
+        font-size: 12px;
+
+        font-weight: 750;
+
+        box-shadow:
+            0 8px 18px rgba(15,23,42,.13);
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .back-button:hover {
+        transform:
+            translateY(-2px);
+
+        box-shadow:
+            0 12px 25px rgba(15,23,42,.18);
+    }
+
+    .back-button svg {
+        width: 17px;
+        height: 17px;
+
+        fill: none;
+
+        stroke: currentColor;
+
+        stroke-width: 2;
+
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+
+    /* =========================================================
+       DARK MODE
+    ========================================================= */
+
+    body.dark-mode .earnings-heading p {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .total-card {
+        background:
+            linear-gradient(
+                145deg,
+                #10281a,
+                #12351f
+            );
+
+        border-color:
+            rgba(34,197,94,.16);
+    }
+
+    body.dark-mode .total-label {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .total-value {
+        color: #4ade80;
+    }
+
+    body.dark-mode .earnings-card {
+        background:
+            #111923;
+
+        border-color:
+            rgba(255,255,255,.07);
+
+        box-shadow:
+            0 18px 45px rgba(0,0,0,.25);
+    }
+
+    body.dark-mode .table-header {
+        border-bottom-color:
+            rgba(255,255,255,.06);
+    }
+
+    body.dark-mode .record-count {
+        background:
+            #202b3a;
+
+        color:
+            #94a3b8;
+    }
+
+    body.dark-mode .earnings-table th {
+        background:
+            #17212e;
+
+        color:
+            #94a3b8;
+    }
+
+    body.dark-mode .earnings-table td {
+        color:
+            #cbd5e1;
+
+        border-top-color:
+            rgba(255,255,255,.05);
+    }
+
+    body.dark-mode .earnings-table tbody tr:hover {
+        background:
+            #17212e;
+    }
+
+    body.dark-mode .date-main {
+        color:
+            #f1f5f9;
+    }
+
+    body.dark-mode .earning-amount {
+        color:
+            #4ade80;
+    }
+
+    body.dark-mode .notes {
+        color:
+            #94a3b8;
+    }
+
+    body.dark-mode .no-notes {
+        color:
+            #64748b;
+    }
+
+    body.dark-mode .edit-button {
+        background:
+            #172b4d;
+
+        color:
+            #60a5fa;
+    }
+
+    body.dark-mode .delete-button {
+        background:
+            #3a1c20;
+
+        color:
+            #f87171;
+    }
+
+    body.dark-mode .pagination {
+        border-top-color:
+            rgba(255,255,255,.06);
+    }
+
+    body.dark-mode .page-button {
+        background:
+            #202b3a;
+
+        color:
+            #cbd5e1;
+    }
+
+    body.dark-mode .page-button:hover {
+        background:
+            #293749;
+    }
+
+    body.dark-mode .page-button.next {
+        background:
+            #f8fafc;
+
+        color:
+            #111827;
+    }
+
+    body.dark-mode .page-number {
+        color:
+            #94a3b8;
+    }
+
+    body.dark-mode .empty-icon {
+        background:
+            #10281a;
+
+        color:
+            #4ade80;
+    }
+
+    body.dark-mode .empty-state p {
+        color:
+            #94a3b8;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 700px) {
+
+        .earnings-header {
+            flex-direction: column;
+        }
+
+        .total-card {
+            width: 100%;
+        }
+
+        .earnings-heading h1 {
+            font-size: 27px;
+        }
+
+        .earnings-card {
+            border-radius: 23px;
+        }
+
+    }
+
+
+    @media (max-width: 450px) {
+
+        .earnings-heading {
+            gap: 11px;
+        }
+
+        .earnings-icon {
+            width: 51px;
+            height: 51px;
+
+            border-radius: 16px;
+        }
+
+        .earnings-heading h1 {
+            font-size: 24px;
+        }
+
+        .earnings-heading p {
+            font-size: 12px;
+        }
+
+        .table-header {
+            padding: 18px;
+        }
+
+        .earnings-table th,
+        .earnings-table td {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+    }
+
+</style>
+
+
+<div class="earnings-page">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="earnings-header">
+
+        <div class="earnings-heading">
+
+            <div class="earnings-icon">
+
+                <svg viewBox="0 0 24 24">
+
+                    <path d="M12 2V22"></path>
+
+                    <path
+                        d="M17 5H9.5A3.5 3.5 0 0 0 9.5 12H14.5A3.5 3.5 0 0 1 14.5 19H7"
+                    ></path>
+
+                </svg>
+
+            </div>
+
+            <div>
+
+                <h1>
+                    Earnings History
+                </h1>
+
+                <p>
+                    Complete record of your daily pool earnings
+                </p>
+
+            </div>
 
         </div>
 
-    {% endif %}
 
-    <div style="margin-top:25px;">
-        <a href="{% url 'dashboard' %}" class="button" style="background:#000000;color:#ffffff;">&larr; Back to Dashboard</a>
+        <div class="total-card">
+
+            <div class="total-label">
+                Total Earnings
+            </div>
+
+            <div class="total-value">
+                KSh {{ total|floatformat:2 }}
+            </div>
+
+        </div>
+
     </div>
+
+
+    <!-- =====================================================
+         RECORDS
+    ====================================================== -->
+
+    <div class="earnings-card">
+
+
+        <div class="table-header">
+
+            <h2>
+                Earnings Records
+            </h2>
+
+            <div class="record-count">
+                {% if earnings.paginator %}
+                    {{ earnings.paginator.count }} records
+                {% else %}
+                    Records
+                {% endif %}
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table class="earnings-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for earning in earnings %}
+
+                        <tr>
+
+                            <td>
+                                <div class="date-main">
+                                    {{ earning.date|date:"d M Y" }}
+                                </div>
+                            </td>
+
+
+                            <td>
+
+                                <div class="earning-amount">
+                                    + KSh {{ earning.amount_collected|floatformat:2 }}
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if earning.notes %}
+
+                                    <div class="notes">
+                                        {{ earning.notes }}
+                                    </div>
+
+                                {% else %}
+
+                                    <div class="notes no-notes">
+                                        No notes
+                                    </div>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="actions">
+
+                                    <a
+                                        href="{% url 'edit_earning' earning.id %}"
+                                        class="action-button edit-button"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    <a
+                                        href="{% url 'delete_earning' earning.id %}"
+                                        class="action-button delete-button"
+                                    >
+                                        Delete
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td colspan="4">
+
+                                <div class="empty-state">
+
+                                    <div class="empty-icon">
+
+                                        <svg viewBox="0 0 24 24">
+
+                                            <path d="M12 2V22"></path>
+
+                                            <path
+                                                d="M17 5H9.5A3.5 3.5 0 0 0 9.5 12H14.5A3.5 3.5 0 0 1 14.5 19H7"
+                                            ></path>
+
+                                        </svg>
+
+                                    </div>
+
+                                    <h3>
+                                        No earnings yet
+                                    </h3>
+
+                                    <p>
+                                        Your earning records will appear here.
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- =================================================
+             PAGINATION
+        ================================================== -->
+
+        {% if earnings.has_other_pages %}
+
+            <div class="pagination">
+
+                {% if earnings.has_previous %}
+
+                    <a
+                        href="?page={{ earnings.previous_page_number }}"
+                        class="page-button"
+                    >
+                        ← Previous
+                    </a>
+
+                {% endif %}
+
+
+                <span class="page-number">
+                    Page {{ earnings.number }}
+                    of
+                    {{ earnings.paginator.num_pages }}
+                </span>
+
+
+                {% if earnings.has_next %}
+
+                    <a
+                        href="?page={{ earnings.next_page_number }}"
+                        class="page-button next"
+                    >
+                        Next →
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         BACK
+    ====================================================== -->
+
+    <div class="back-section">
+
+        <button
+            type="button"
+            class="back-button"
+            onclick="history.back()"
+        >
+
+            <svg viewBox="0 0 24 24">
+
+                <path d="M19 12H5"></path>
+
+                <path d="M11 18L5 12L11 6"></path>
+
+            </svg>
+
+            Back
+
+        </button>
+
+    </div>
+
 
 </div>
 
 {% endblock %}
-
-
-

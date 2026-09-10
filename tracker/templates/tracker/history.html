@@ -1,0 +1,854 @@
+﻿{% extends "tracker/base.html" %}
+
+{% block title %}History - ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+
+    /* =========================================================
+       HISTORY PAGE
+    ========================================================= */
+
+    .history-page {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding-bottom: 30px;
+    }
+
+
+    /* =========================================================
+       HEADER
+    ========================================================= */
+
+    .history-header {
+        margin-bottom: 32px;
+    }
+
+    .history-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        margin-bottom: 10px;
+
+        font-size: 11px;
+        font-weight: 800;
+
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+
+        color: #64748b;
+    }
+
+    .history-eyebrow::before {
+        content: "";
+
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #111827;
+    }
+
+    .history-header h1 {
+        margin: 0;
+
+        font-size: 34px;
+        line-height: 1.1;
+
+        font-weight: 850;
+
+        letter-spacing: -1.2px;
+    }
+
+    .history-header p {
+        margin: 10px 0 0;
+
+        max-width: 650px;
+
+        color: #64748b;
+
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+
+    /* =========================================================
+       BUTTON GRID
+    ========================================================= */
+
+    .history-actions {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 20px;
+    }
+
+
+    /* =========================================================
+       MAIN BUTTON
+    ========================================================= */
+
+    .history-button {
+        position: relative;
+
+        min-height: 215px;
+
+        padding: 28px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        overflow: hidden;
+
+        text-decoration: none;
+
+        color: white;
+
+        border-radius: 30px;
+
+        box-shadow:
+            0 18px 40px rgba(15,23,42,.12);
+
+        transition:
+            transform .28s cubic-bezier(.22,1,.36,1),
+            box-shadow .28s ease;
+    }
+
+
+    .history-button:hover {
+        transform:
+            translateY(-7px);
+
+        box-shadow:
+            0 28px 60px rgba(15,23,42,.18);
+    }
+
+
+    .history-button:active {
+        transform:
+            scale(.97);
+    }
+
+
+    /* =========================================================
+       COLORED BACKGROUNDS
+    ========================================================= */
+
+    .history-button.earnings {
+        background:
+            linear-gradient(
+                145deg,
+                #22c55e,
+                #15803d
+            );
+    }
+
+
+    .history-button.expenses {
+        background:
+            linear-gradient(
+                145deg,
+                #ef4444,
+                #b91c1c
+            );
+    }
+
+
+    .history-button.reports {
+        background:
+            linear-gradient(
+                145deg,
+                #3b82f6,
+                #1d4ed8
+            );
+    }
+
+
+    /* =========================================================
+       DECORATIVE GLOW
+    ========================================================= */
+
+    .history-button::before {
+        content: "";
+
+        position: absolute;
+
+        width: 180px;
+        height: 180px;
+
+        top: -90px;
+        right: -70px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(255,255,255,.13);
+
+        pointer-events: none;
+    }
+
+
+    .history-button::after {
+        content: "";
+
+        position: absolute;
+
+        width: 130px;
+        height: 130px;
+
+        bottom: -75px;
+        left: -45px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(255,255,255,.08);
+
+        pointer-events: none;
+    }
+
+
+    /* =========================================================
+       ICON
+    ========================================================= */
+
+    .history-button-top {
+        display: flex;
+
+        align-items: flex-start;
+        justify-content: space-between;
+
+        position: relative;
+        z-index: 2;
+    }
+
+
+    .history-icon {
+        width: 62px;
+        height: 62px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 20px;
+
+        background:
+            rgba(255,255,255,.18);
+
+        border:
+            1px solid rgba(255,255,255,.22);
+
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.18);
+
+        backdrop-filter:
+            blur(10px);
+    }
+
+
+    .history-icon svg {
+        width: 30px;
+        height: 30px;
+
+        fill: none;
+
+        stroke: currentColor;
+
+        stroke-width: 1.9;
+
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+
+    /* =========================================================
+       ARROW
+    ========================================================= */
+
+    .history-arrow {
+        width: 42px;
+        height: 42px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background:
+            rgba(255,255,255,.16);
+
+        border:
+            1px solid rgba(255,255,255,.18);
+
+        transition:
+            transform .28s ease,
+            background .28s ease;
+    }
+
+
+    .history-button:hover .history-arrow {
+        transform:
+            translateX(5px);
+
+        background:
+            rgba(255,255,255,.25);
+    }
+
+
+    .history-arrow svg {
+        width: 19px;
+        height: 19px;
+
+        fill: none;
+
+        stroke: currentColor;
+
+        stroke-width: 2;
+
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+
+    /* =========================================================
+       TEXT
+    ========================================================= */
+
+    .history-button-content {
+        position: relative;
+        z-index: 2;
+    }
+
+
+    .history-button h2 {
+        margin:
+            22px 0 7px;
+
+        font-size: 21px;
+
+        font-weight: 850;
+
+        letter-spacing: -.45px;
+    }
+
+
+    .history-button p {
+        max-width: 255px;
+
+        margin: 0;
+
+        color:
+            rgba(255,255,255,.82);
+
+        font-size: 13px;
+
+        line-height: 1.6;
+    }
+
+
+    /* =========================================================
+       BOTTOM LABEL
+    ========================================================= */
+
+    .history-button-footer {
+        position: relative;
+        z-index: 2;
+
+        margin-top: 22px;
+
+        display: flex;
+        align-items: center;
+        gap: 7px;
+
+        font-size: 11px;
+
+        font-weight: 750;
+
+        letter-spacing: .5px;
+
+        color:
+            rgba(255,255,255,.72);
+
+        text-transform: uppercase;
+    }
+
+
+    .history-button-footer span {
+        width: 5px;
+        height: 5px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(255,255,255,.72);
+    }
+
+
+    /* =========================================================
+       QUICK INFO
+    ========================================================= */
+
+    .history-info {
+        margin-top: 24px;
+
+        padding: 20px 23px;
+
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        background:
+            rgba(255,255,255,.8);
+
+        border:
+            1px solid rgba(15,23,42,.06);
+
+        border-radius: 22px;
+
+        box-shadow:
+            0 10px 25px rgba(15,23,42,.045);
+    }
+
+
+    .history-info-icon {
+        width: 43px;
+        height: 43px;
+
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 14px;
+
+        background:
+            #f1f5f9;
+
+        color:
+            #475569;
+    }
+
+
+    .history-info-icon svg {
+        width: 21px;
+        height: 21px;
+
+        fill: none;
+
+        stroke: currentColor;
+
+        stroke-width: 1.8;
+
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+
+    .history-info strong {
+        display: block;
+
+        margin-bottom: 3px;
+
+        font-size: 13px;
+
+        font-weight: 800;
+    }
+
+
+    .history-info p {
+        margin: 0;
+
+        color: #64748b;
+
+        font-size: 12px;
+
+        line-height: 1.5;
+    }
+
+
+    /* =========================================================
+       DARK MODE
+    ========================================================= */
+
+    body.dark-mode .history-eyebrow {
+        color: #94a3b8;
+    }
+
+
+    body.dark-mode .history-eyebrow::before {
+        background: #f8fafc;
+    }
+
+
+    body.dark-mode .history-header p {
+        color: #94a3b8;
+    }
+
+
+    body.dark-mode .history-info {
+        background:
+            rgba(20,28,39,.88);
+
+        border-color:
+            rgba(255,255,255,.07);
+
+        box-shadow:
+            0 15px 35px rgba(0,0,0,.22);
+    }
+
+
+    body.dark-mode .history-info-icon {
+        background:
+            #202b3a;
+
+        color:
+            #cbd5e1;
+    }
+
+
+    body.dark-mode .history-info p {
+        color:
+            #94a3b8;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 850px) {
+
+        .history-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .history-button {
+            min-height: 190px;
+        }
+
+    }
+
+
+    @media (max-width: 500px) {
+
+        .history-header h1 {
+            font-size: 29px;
+        }
+
+        .history-header p {
+            font-size: 13px;
+        }
+
+        .history-button {
+            min-height: 185px;
+
+            padding: 23px;
+
+            border-radius: 26px;
+        }
+
+        .history-icon {
+            width: 56px;
+            height: 56px;
+
+            border-radius: 18px;
+        }
+
+        .history-icon svg {
+            width: 27px;
+            height: 27px;
+        }
+
+        .history-button h2 {
+            font-size: 20px;
+        }
+
+        .history-info {
+            padding: 17px;
+        }
+
+    }
+
+</style>
+
+
+<div class="history-page">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="history-header">
+
+        <div class="history-eyebrow">
+            Business Records
+        </div>
+
+        <h1>
+            History
+        </h1>
+
+        <p>
+            Choose what you want to review. Your earnings,
+            expenses and financial reports are organized here.
+        </p>
+
+    </header>
+
+
+    <!-- =====================================================
+         THREE MAIN BUTTONS
+    ====================================================== -->
+
+    <div class="history-actions">
+
+
+        <!-- =================================================
+             EARNINGS
+        ================================================== -->
+
+        <a
+            href="{% url 'earnings_list' %}"
+            class="history-button earnings"
+        >
+
+            <div class="history-button-top">
+
+                <div class="history-icon">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <path d="M12 2V22"></path>
+
+                        <path
+                            d="M17 5H9.5A3.5 3.5 0 0 0 9.5 12H14.5A3.5 3.5 0 0 1 14.5 19H7"
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+
+                <div class="history-arrow">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <path d="M5 12H19"></path>
+
+                        <path d="M13 6L19 12L13 18"></path>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+
+            <div class="history-button-content">
+
+                <h2>
+                    Earnings History
+                </h2>
+
+                <p>
+                    Review every daily earning,
+                    amount collected and earning record.
+                </p>
+
+                <div class="history-button-footer">
+                    <span></span>
+                    Income records
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <!-- =================================================
+             EXPENSES
+        ================================================== -->
+
+        <a
+            href="{% url 'expenses_list' %}"
+            class="history-button expenses"
+        >
+
+            <div class="history-button-top">
+
+                <div class="history-icon">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <path d="M4 7H20"></path>
+
+                        <path d="M6 7V19H18V7"></path>
+
+                        <path d="M9 7V4H15V7"></path>
+
+                        <path d="M9 11V16"></path>
+
+                        <path d="M15 11V16"></path>
+
+                    </svg>
+
+                </div>
+
+
+                <div class="history-arrow">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <path d="M5 12H19"></path>
+
+                        <path d="M13 6L19 12L13 18"></path>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+
+            <div class="history-button-content">
+
+                <h2>
+                    Expenses History
+                </h2>
+
+                <p>
+                    Review business expenses,
+                    categories, amounts and spending records.
+                </p>
+
+                <div class="history-button-footer">
+                    <span></span>
+                    Spending records
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <!-- =================================================
+             REPORTS
+        ================================================== -->
+
+        <a
+            href="{% url 'reports' %}"
+            class="history-button reports"
+        >
+
+            <div class="history-button-top">
+
+                <div class="history-icon">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <path d="M4 19V5"></path>
+
+                        <path d="M4 19H20"></path>
+
+                        <path d="M8 16V11"></path>
+
+                        <path d="M12 16V7"></path>
+
+                        <path d="M16 16V9"></path>
+
+                    </svg>
+
+                </div>
+
+
+                <div class="history-arrow">
+
+                    <svg viewBox="0 0 24 24">
+
+                        <path d="M5 12H19"></path>
+
+                        <path d="M13 6L19 12L13 18"></path>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+
+            <div class="history-button-content">
+
+                <h2>
+                    Reports
+                </h2>
+
+                <p>
+                    Analyze earnings, expenses,
+                    profit and overall business performance.
+                </p>
+
+                <div class="history-button-footer">
+                    <span></span>
+                    Financial reports
+                </div>
+
+            </div>
+
+        </a>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         INFORMATION
+    ====================================================== -->
+
+    <div class="history-info">
+
+        <div class="history-info-icon">
+
+            <svg viewBox="0 0 24 24">
+
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                ></circle>
+
+                <path d="M12 10V16"></path>
+
+                <path d="M12 7H12.01"></path>
+
+            </svg>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                Everything in one place
+            </strong>
+
+            <p>
+                Select a section above to view the complete
+                records and financial details for your pool business.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,368 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}Profile - ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+.profile-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding-bottom: 30px;
+}
+
+.profile-hero {
+    background: linear-gradient(135deg, #111827, #1f2937);
+    color: white;
+    border-radius: 24px;
+    padding: 34px;
+    margin-bottom: 22px;
+    box-shadow: 0 14px 35px rgba(0,0,0,.12);
+}
+
+.profile-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: white;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 18px;
+    overflow: hidden;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-hero h1 {
+    margin: 0 0 7px;
+    font-size: 30px;
+}
+
+.profile-hero p {
+    margin: 0;
+    opacity: .75;
+}
+
+.profile-card {
+    background: var(--card-bg, #fff);
+    border-radius: 22px;
+    padding: 26px;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.07);
+}
+
+.profile-card h2 {
+    margin: 0 0 20px;
+    font-size: 19px;
+}
+
+.profile-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.info-box {
+    background: rgba(127,127,127,.08);
+    border-radius: 15px;
+    padding: 17px;
+}
+
+.info-label {
+    font-size: 12px;
+    opacity: .6;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.info-value {
+    font-size: 16px;
+    font-weight: 650;
+    word-break: break-word;
+}
+
+.profile-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+.profile-action {
+    text-decoration: none;
+    color: inherit;
+    border-radius: 17px;
+    padding: 19px;
+    background: rgba(127,127,127,.08);
+    transition: transform .2s ease, background .2s ease;
+}
+
+.profile-action:hover {
+    transform: translateY(-2px);
+    background: rgba(127,127,127,.14);
+}
+
+.profile-action strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.profile-action span {
+    font-size: 13px;
+    opacity: .62;
+}
+
+.profile-picture-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.profile-picture-form input[type="file"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px;
+    border: 1px dashed rgba(127,127,127,.35);
+    border-radius: 14px;
+    background: rgba(127,127,127,.05);
+}
+
+.upload-button {
+    width: fit-content;
+    border: none;
+    border-radius: 13px;
+    padding: 12px 20px;
+    background: #111827;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.upload-button:hover {
+    opacity: .9;
+}
+
+.signout-card {
+    border: 1px solid rgba(220,38,38,.18);
+    background: rgba(220,38,38,.04);
+}
+
+.signout-card form {
+    margin: 0;
+}
+
+.signout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 52px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 16px;
+    background: #dc2626;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: transform .2s ease, opacity .2s ease;
+}
+
+.signout-button:hover {
+    transform: translateY(-1px);
+    opacity: .92;
+}
+
+@media (max-width: 650px) {
+
+    .profile-hero {
+        padding: 25px;
+    }
+
+    .profile-info,
+    .profile-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-card {
+        padding: 21px;
+    }
+}
+</style>
+
+<div class="profile-page">
+
+    <!-- PROFILE HEADER -->
+    <section class="profile-hero">
+
+        <div class="profile-avatar">
+
+            {% if profile.profile_picture %}
+                <img
+                    src="{{ profile.profile_picture.url }}"
+                    alt="{{ request.user.username }} profile picture"
+                >
+            {% else %}
+                {{ request.user.username|first|upper }}
+            {% endif %}
+
+        </div>
+
+        <h1>{{ request.user.username }}</h1>
+
+        <p>
+            Your ISC Pool Tracker account
+        </p>
+
+    </section>
+
+
+    <!-- ACCOUNT INFORMATION -->
+    <section class="profile-card">
+
+        <h2>Account Information</h2>
+
+        <div class="profile-info">
+
+            <div class="info-box">
+                <div class="info-label">Username</div>
+
+                <div class="info-value">
+                    {{ request.user.username }}
+                </div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-label">Email</div>
+
+                <div class="info-value">
+
+                    {% if request.user.email %}
+                        {{ request.user.email }}
+                    {% else %}
+                        No email added
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-label">Account Status</div>
+
+                <div class="info-value">
+
+                    {% if request.user.is_active %}
+                        Active
+                    {% else %}
+                        Inactive
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-label">Member Since</div>
+
+                <div class="info-value">
+                    {{ request.user.date_joined|date:"d M Y" }}
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PROFILE PICTURE -->
+    <section class="profile-card">
+
+        <h2>Profile Picture</h2>
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            class="profile-picture-form"
+        >
+
+            {% csrf_token %}
+
+            {{ profile_form.profile_picture }}
+
+            {% if profile_form.profile_picture.errors %}
+                <div class="field-errors">
+                    {{ profile_form.profile_picture.errors }}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="upload-button">
+                Update Profile Picture
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- PROFILE & SECURITY -->
+    <section class="profile-card">
+
+        <h2>Profile & Security</h2>
+
+        <div class="profile-actions">
+
+            <a
+                href="{% url 'edit_profile' %}"
+                class="profile-action"
+            >
+                <strong>Edit Profile</strong>
+
+                <span>
+                    Update your username and email address.
+                </span>
+            </a>
+
+            <a
+                href="{% url 'change_password' %}"
+                class="profile-action"
+            >
+                <strong>Change Password</strong>
+
+                <span>
+                    Keep your account secure with a new password.
+                </span>
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- SIGN OUT -->
+    <section class="profile-card signout-card">
+
+        <h2>Account</h2>
+
+        <form method="post" action="{% url 'logout' %}">
+
+            {% csrf_token %}
+
+            <button type="submit" class="signout-button">
+                Sign Out
+            </button>
+
+        </form>
+
+    </section>
+
+</div>
+
+{% endblock %}
