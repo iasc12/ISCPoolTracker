@@ -1,6 +1,8 @@
-from django.apps import AppConfig
+﻿from django.apps import AppConfig
 
 
 class TrackerConfig(AppConfig):
-    name = 'tracker'
+    name = "tracker"
 
+    def ready(self):
+        import tracker.signals

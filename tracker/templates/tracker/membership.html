@@ -1,0 +1,291 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}Membership - ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+.membership-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+.membership-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.membership-header h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+}
+
+.membership-header p {
+    margin: 0;
+    opacity: .65;
+}
+
+.membership-card {
+    background: var(--card-bg, #fff);
+    border-radius: 26px;
+    padding: 34px;
+    box-shadow: 0 12px 35px rgba(0,0,0,.08);
+    text-align: center;
+}
+
+.membership-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    border-radius: 22px;
+    background: #111827;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.membership-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 15px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.status-trial {
+    background: rgba(16,185,129,.12);
+    color: #059669;
+}
+
+.status-active {
+    background: rgba(59,130,246,.12);
+    color: #2563eb;
+}
+
+.status-expired {
+    background: rgba(220,38,38,.12);
+    color: #dc2626;
+}
+
+.membership-card h2 {
+    margin: 0 0 10px;
+    font-size: 25px;
+}
+
+.membership-description {
+    max-width: 600px;
+    margin: 0 auto 28px;
+    line-height: 1.6;
+    opacity: .68;
+}
+
+.membership-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.detail-box {
+    background: rgba(127,127,127,.08);
+    border-radius: 17px;
+    padding: 18px;
+}
+
+.detail-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    opacity: .55;
+    margin-bottom: 7px;
+}
+
+.detail-value {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.membership-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 220px;
+    padding: 14px 24px;
+    border-radius: 14px;
+    background: #111827;
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform .2s ease, opacity .2s ease;
+}
+
+.membership-button:hover {
+    transform: translateY(-1px);
+    opacity: .92;
+}
+
+.membership-note {
+    margin-top: 18px;
+    font-size: 12px;
+    opacity: .5;
+}
+
+@media (max-width: 600px) {
+    .membership-card {
+        padding: 25px 20px;
+    }
+
+    .membership-details {
+        grid-template-columns: 1fr;
+    }
+
+    .membership-header h1 {
+        font-size: 26px;
+    }
+}
+</style>
+
+<div class="membership-page">
+
+    <div class="membership-header">
+        <h1>Membership</h1>
+        <p>Manage your ISC Pool Tracker access.</p>
+    </div>
+
+    <section class="membership-card">
+
+        <div class="membership-icon">
+            
+        </div>
+
+        {% if membership.status == "trial" %}
+
+            {% if membership.is_active %}
+
+                <div class="membership-status status-trial">
+                    FREE TRIAL
+                </div>
+
+                <h2>Your 7-Day Free Trial</h2>
+
+                <p class="membership-description">
+                    You currently have full access to ISC Pool Tracker.
+                    Your free trial will continue until the date shown below.
+                </p>
+
+            {% else %}
+
+                <div class="membership-status status-expired">
+                    TRIAL EXPIRED
+                </div>
+
+                <h2>Your Free Trial Has Ended</h2>
+
+                <p class="membership-description">
+                    Your 7-day free trial has expired.
+                    Renew your membership to continue using ISC Pool Tracker.
+                </p>
+
+            {% endif %}
+
+        {% elif membership.status == "active" %}
+
+            <div class="membership-status status-active">
+                ACTIVE MEMBERSHIP
+            </div>
+
+            <h2>Your Membership Is Active</h2>
+
+            <p class="membership-description">
+                You have full access to ISC Pool Tracker.
+            </p>
+
+        {% else %}
+
+            <div class="membership-status status-expired">
+                MEMBERSHIP EXPIRED
+            </div>
+
+            <h2>Your Membership Has Expired</h2>
+
+            <p class="membership-description">
+                Renew your membership to continue using ISC Pool Tracker.
+            </p>
+
+        {% endif %}
+
+
+        <div class="membership-details">
+
+            {% if membership.status == "trial" %}
+
+                <div class="detail-box">
+                    <div class="detail-label">Plan</div>
+                    <div class="detail-value">
+                        7-Day Free Trial
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">Expires</div>
+                    <div class="detail-value">
+                        {{ membership.trial_ends_at|date:"d M Y, H:i" }}
+                    </div>
+                </div>
+
+            {% else %}
+
+                <div class="detail-box">
+                    <div class="detail-label">Plan</div>
+                    <div class="detail-value">
+                        Monthly Membership
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">Expires</div>
+                    <div class="detail-value">
+                        {{ membership.membership_ends_at|date:"d M Y, H:i" }}
+                    </div>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if membership.status != "trial" or not membership.is_active %}
+
+            <a href="#" class="membership-button">
+                Pay with M-Pesa
+            </a>
+
+            <div class="membership-note">
+                M-Pesa payment will be available here.
+            </div>
+
+        {% else %}
+
+            <a href="{% url 'dashboard' %}" class="membership-button">
+                Continue to Dashboard
+            </a>
+
+            <div class="membership-note">
+                Your free trial is currently active.
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}
+

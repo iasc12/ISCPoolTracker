@@ -1,85 +1,101 @@
-﻿from django.urls import path
+from django.urls import path
 
 from .views import (
+    register,
+    membership,
     dashboard,
+    profile,
+    edit_profile,
+    change_password,
+    settings_page,
+    history,
+
     add_earning,
     earnings_list,
     edit_earning,
     delete_earning,
+
     add_expense,
     expenses_list,
     edit_expense,
     delete_expense,
+
     reports,
     generate_report,
-)
 
+    coin_collection_list,
+    add_coin_collection,
+    edit_coin_collection,
+    delete_coin_collection,
+)
 
 urlpatterns = [
 
-    path(
-        "",
-        dashboard,
-        name="dashboard"
-    ),
+    path("register/", register, name="register"),
 
-    path(
-        "earnings/add/",
-        add_earning,
-        name="add_earning"
-    ),
+    path("", dashboard, name="dashboard"),
 
-    path(
-        "earnings/",
-        earnings_list,
-        name="earnings_list"
-    ),
+    path("history/", history, name="history"),
 
+    path("settings/", settings_page, name="settings"),
+    path("membership/", membership, name="membership"),
+    path("profile/", profile, name="profile"),
+    path("profile/edit/", edit_profile, name="edit_profile"),
+    path("profile/password/", change_password, name="change_password"),
+
+    path("earnings/add/", add_earning, name="add_earning"),
+    path("earnings/", earnings_list, name="earnings_list"),
     path(
         "earnings/<int:earning_id>/edit/",
         edit_earning,
-        name="edit_earning"
+        name="edit_earning",
     ),
-
     path(
         "earnings/<int:earning_id>/delete/",
         delete_earning,
-        name="delete_earning"
+        name="delete_earning",
     ),
 
-    path(
-        "expenses/add/",
-        add_expense,
-        name="add_expense"
-    ),
-
-    path(
-        "expenses/",
-        expenses_list,
-        name="expenses_list"
-    ),
-
+    path("expenses/add/", add_expense, name="add_expense"),
+    path("expenses/", expenses_list, name="expenses_list"),
     path(
         "expenses/<int:expense_id>/edit/",
         edit_expense,
-        name="edit_expense"
+        name="edit_expense",
     ),
-
     path(
         "expenses/<int:expense_id>/delete/",
         delete_expense,
-        name="delete_expense"
+        name="delete_expense",
     ),
 
-    path(
-        "reports/",
-        reports,
-        name="reports"
-    ),
-
+    path("reports/", reports, name="reports"),
     path(
         "reports/generate/",
         generate_report,
-        name="generate_report"
+        name="generate_report",
+    ),
+
+    path("coins/", coin_collection_list, name="coin_collections"),
+    path(
+        "coins/add/",
+        add_coin_collection,
+        name="add_coin_collection",
+    ),
+    path(
+        "coins/<int:collection_id>/edit/",
+        edit_coin_collection,
+        name="edit_coin_collection",
+    ),
+    path(
+        "coins/<int:collection_id>/delete/",
+        delete_coin_collection,
+        name="delete_coin_collection",
     ),
 ]
+
+
+
+
+
+
