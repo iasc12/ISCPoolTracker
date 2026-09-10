@@ -3,6 +3,8 @@ from django.urls import path
 from .views import (
     register,
     membership,
+    pay_membership,
+    mpesa_callback,
     dashboard,
     profile,
     edit_profile,
@@ -39,6 +41,8 @@ urlpatterns = [
 
     path("settings/", settings_page, name="settings"),
     path("membership/", membership, name="membership"),
+    path("membership/pay/", pay_membership, name="pay_membership"),
+    path("mpesa/callback/", mpesa_callback, name="mpesa_callback"),
     path("profile/", profile, name="profile"),
     path("profile/edit/", edit_profile, name="edit_profile"),
     path("profile/password/", change_password, name="change_password"),
@@ -93,6 +97,10 @@ urlpatterns = [
         name="delete_coin_collection",
     ),
 ]
+
+
+
+
 
 
 

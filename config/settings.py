@@ -4,11 +4,16 @@ Django settings for config project.
 
 import os
 from pathlib import Path
+from decimal import Decimal
 
 import dj_database_url
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+from dotenv import load_dotenv
+
+load_dotenv(BASE_DIR / ".env")
 
 
 # ============================================================
@@ -30,7 +35,19 @@ DEBUG = os.getenv(
 # HOSTS
 # ============================================================
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "testserver"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "testserver",
+]
+
+render_hostname = os.getenv(
+    "RENDER_EXTERNAL_HOSTNAME",
+)
+
+if render_hostname:
+    ALLOWED_HOSTS.append(render_hostname)
+
 
 
 # ============================================================
@@ -43,6 +60,12 @@ CSRF_TRUSTED_ORIGINS = [
     "https://iscpooltracker.onrender.com",
     "https://isac1213.pythonanywhere.com",
 ]
+
+if render_hostname:
+    CSRF_TRUSTED_ORIGINS.append(
+        f"https://{render_hostname}"
+    )
+
 
 
 # ============================================================
@@ -270,3 +293,52 @@ DEFAULT_AUTO_FIELD = (
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
+
+# ============================================================
+# M-PESA DARAJA
+# ============================================================
+
+MPESA_ENVIRONMENT = os.getenv(
+    "MPESA_ENVIRONMENT",
+    "sandbox",
+)
+
+MPESA_CONSUMER_KEY = os.getenv(
+    "MPESA_CONSUMER_KEY",
+    "",
+)
+
+MPESA_CONSUMER_SECRET = os.getenv(
+    "MPESA_CONSUMER_SECRET",
+    "",
+)
+
+MPESA_SHORTCODE = os.getenv(
+    "MPESA_SHORTCODE",
+    "",
+)
+
+MPESA_PASSKEY = os.getenv(
+    "MPESA_PASSKEY",
+    "",
+)
+
+MPESA_CALLBACK_URL = os.getenv(
+    "MPESA_CALLBACK_URL",
+    "",
+)
+
+MPESA_MEMBERSHIP_AMOUNT = Decimal(
+    os.getenv(
+        "MPESA_MEMBERSHIP_AMOUNT",
+        "500",
+    )
+)
+
+MPESA_MEMBERSHIP_DAYS = int(
+    os.getenv(
+        "MPESA_MEMBERSHIP_DAYS",
+        "30",
+    )
+)
+

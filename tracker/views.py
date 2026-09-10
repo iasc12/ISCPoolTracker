@@ -1,6 +1,10 @@
-﻿from datetime import date, timedelta
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from datetime import date, timedelta
 from decimal import Decimal
+import json
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -17,8 +21,6 @@ from django.utils import timezone
 
 from .decorators import membership_required
 
-from .decorators import membership_required
-
 from .forms import (
     DailyEarningForm,
     ExpenseForm,
@@ -29,11 +31,13 @@ from .forms import (
 
 from .models import (
     Profile,
+    MpesaPayment,
     Membership,
     DailyEarning,
     Expense,
     CoinCollection,
 )
+
 
 def money(value):
 
@@ -1441,5 +1445,268 @@ def membership(request):
 
 
 
+
+
+
+
+def _normalize_mpesa_phone(phone_number):
+    """
+    Normalize common Kenyan phone formats to 2547XXXXXXXX.
+    """
+
+    phone = "".join(
+        character
+        for character in phone_number
+        if character.isdigit()
+    )
+
+    if phone.startswith("07") and len(phone) == 10:
+        return "254" + phone[1:]
+
+    if phone.startswith("01") and len(phone) == 10:
+        return "254" + phone[1:]
+
+    if phone.startswith("7") and len(phone) == 9:
+        return "254" + phone
+
+    if phone.startswith("1") and len(phone) == 9:
+        return "254" + phone
+
+    if phone.startswith("2547") and len(phone) == 12:
+        return phone
+
+    if phone.startswith("2541") and len(phone) == 12:
+        return phone
+
+    return None
+
+
+@login_required
+def pay_membership(request):
+
+    if request.method != "POST":
+        return redirect("membership")
+
+    phone_number = request.POST.get(
+        "phone_number",
+        ""
+    ).strip()
+
+    normalized_phone = _normalize_mpesa_phone(
+        phone_number
+    )
+
+    if not normalized_phone:
+        messages.error(
+            request,
+            "Enter a valid Kenyan M-Pesa number."
+        )
+        return redirect("membership")
+
+    amount = settings.MPESA_MEMBERSHIP_AMOUNT
+
+    payment = MpesaPayment.objects.create(
+        user=request.user,
+        amount=amount,
+        phone_number=normalized_phone,
+        status=MpesaPayment.STATUS_PENDING,
+    )
+
+    try:
+
+        from .mpesa import initiate_stk_push
+
+        response = initiate_stk_push(
+            phone_number=normalized_phone,
+            amount=amount,
+            account_reference=f"ISC-{request.user.id}",
+        )
+
+        payment.merchant_request_id = response.get(
+            "MerchantRequestID"
+        )
+
+        payment.checkout_request_id = response.get(
+            "CheckoutRequestID"
+        )
+
+        payment.result_code = response.get(
+            "ResponseCode"
+        )
+
+        payment.result_description = response.get(
+            "ResponseDescription"
+        )
+
+        if response.get("ResponseCode") != "0":
+            payment.status = MpesaPayment.STATUS_FAILED
+
+            payment.save()
+
+            messages.error(
+                request,
+                response.get(
+                    "ResponseDescription",
+                    "M-Pesa payment request failed."
+                ),
+            )
+
+            return redirect("membership")
+
+        payment.save()
+
+        messages.success(
+            request,
+            "M-Pesa payment request sent. "
+            "Check your phone and enter your M-Pesa PIN."
+        )
+
+    except Exception as exc:
+
+        payment.status = MpesaPayment.STATUS_FAILED
+        payment.result_description = str(exc)
+        payment.save()
+
+        messages.error(
+            request,
+            "Unable to start the M-Pesa payment. "
+            "Please try again."
+        )
+
+    return redirect("membership")
+
+
+@csrf_exempt
+def mpesa_callback(request):
+
+    if request.method != "POST":
+        return JsonResponse(
+            {
+                "ResultCode": 1,
+                "ResultDesc": "Invalid request method.",
+            },
+            status=405,
+        )
+
+    try:
+
+        callback_data = json.loads(
+            request.body.decode("utf-8")
+        )
+
+        stk_callback = (
+            callback_data
+            .get("Body", {})
+            .get("stkCallback", {})
+        )
+
+        checkout_request_id = stk_callback.get(
+            "CheckoutRequestID"
+        )
+
+        result_code = stk_callback.get(
+            "ResultCode"
+        )
+
+        result_description = stk_callback.get(
+            "ResultDesc",
+            "",
+        )
+
+        if not checkout_request_id:
+            return JsonResponse(
+                {
+                    "ResultCode": 1,
+                    "ResultDesc": "Missing CheckoutRequestID.",
+                },
+                status=400,
+            )
+
+        try:
+
+            payment = MpesaPayment.objects.get(
+                checkout_request_id=checkout_request_id
+            )
+
+        except MpesaPayment.DoesNotExist:
+
+            return JsonResponse(
+                {
+                    "ResultCode": 1,
+                    "ResultDesc": "Payment not found.",
+                },
+                status=404,
+            )
+
+        payment.result_code = result_code
+        payment.result_description = result_description
+
+        if result_code == 0:
+
+            callback_items = (
+                stk_callback
+                .get("CallbackMetadata", {})
+                .get("Item", [])
+            )
+
+            receipt_number = None
+
+            for item in callback_items:
+
+                if item.get("Name") == "MpesaReceiptNumber":
+                    receipt_number = item.get("Value")
+                    break
+
+            payment.mpesa_receipt_number = receipt_number
+            payment.status = MpesaPayment.STATUS_SUCCESS
+            payment.save()
+
+            membership = Membership.objects.get(
+                user=payment.user
+            )
+
+            now = timezone.now()
+
+            if (
+                membership.status == Membership.STATUS_ACTIVE
+                and membership.membership_ends_at
+                and membership.membership_ends_at > now
+            ):
+                start_date = membership.membership_ends_at
+            else:
+                start_date = now
+
+            membership.status = Membership.STATUS_ACTIVE
+            membership.membership_started_at = start_date
+            membership.membership_ends_at = (
+                start_date
+                + timedelta(
+                    days=settings.MPESA_MEMBERSHIP_DAYS
+                )
+            )
+
+            membership.save()
+
+        else:
+
+            payment.status = MpesaPayment.STATUS_FAILED
+            payment.save()
+
+        return JsonResponse(
+            {
+                "ResultCode": 0,
+                "ResultDesc": "Accepted",
+            }
+        )
+
+    except Exception:
+
+        return JsonResponse(
+            {
+                "ResultCode": 1,
+                "ResultDesc": "Callback processing failed.",
+            },
+            status=500,
+        )
 
 

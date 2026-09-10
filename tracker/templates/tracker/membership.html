@@ -112,17 +112,53 @@
     font-weight: 700;
 }
 
+.payment-box {
+    max-width: 430px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.payment-box label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.payment-box input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 15px;
+    border: 1px solid rgba(127,127,127,.25);
+    border-radius: 14px;
+    background: transparent;
+    color: inherit;
+    font-size: 15px;
+    outline: none;
+}
+
+.payment-box input:focus {
+    border-color: #111827;
+}
+
+.payment-help {
+    margin-top: 7px;
+    font-size: 12px;
+    opacity: .55;
+}
+
 .membership-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%;
     min-width: 220px;
+    margin-top: 18px;
     padding: 14px 24px;
+    border: none;
     border-radius: 14px;
     background: #111827;
     color: white;
-    text-decoration: none;
     font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
     transition: transform .2s ease, opacity .2s ease;
 }
 
@@ -135,6 +171,18 @@
     margin-top: 18px;
     font-size: 12px;
     opacity: .5;
+}
+
+.price {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 18px;
+}
+
+.price span {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: .55;
 }
 
 @media (max-width: 600px) {
@@ -162,124 +210,184 @@
     <section class="membership-card">
 
         <div class="membership-icon">
-            
+            KSh
         </div>
 
-        {% if membership.status == "trial" %}
-
-            {% if membership.is_active %}
-
-                <div class="membership-status status-trial">
-                    FREE TRIAL
-                </div>
-
-                <h2>Your 7-Day Free Trial</h2>
-
-                <p class="membership-description">
-                    You currently have full access to ISC Pool Tracker.
-                    Your free trial will continue until the date shown below.
-                </p>
-
-            {% else %}
-
-                <div class="membership-status status-expired">
-                    TRIAL EXPIRED
-                </div>
-
-                <h2>Your Free Trial Has Ended</h2>
-
-                <p class="membership-description">
-                    Your 7-day free trial has expired.
-                    Renew your membership to continue using ISC Pool Tracker.
-                </p>
-
-            {% endif %}
-
-        {% elif membership.status == "active" %}
+        {% if request.user.is_superuser %}
 
             <div class="membership-status status-active">
-                ACTIVE MEMBERSHIP
+                OWNER ACCESS
             </div>
 
-            <h2>Your Membership Is Active</h2>
+            <h2>Lifetime Access</h2>
 
             <p class="membership-description">
-                You have full access to ISC Pool Tracker.
+                You are the system owner. You have permanent access
+                to ISC Pool Tracker without a membership payment.
             </p>
-
-        {% else %}
-
-            <div class="membership-status status-expired">
-                MEMBERSHIP EXPIRED
-            </div>
-
-            <h2>Your Membership Has Expired</h2>
-
-            <p class="membership-description">
-                Renew your membership to continue using ISC Pool Tracker.
-            </p>
-
-        {% endif %}
-
-
-        <div class="membership-details">
-
-            {% if membership.status == "trial" %}
-
-                <div class="detail-box">
-                    <div class="detail-label">Plan</div>
-                    <div class="detail-value">
-                        7-Day Free Trial
-                    </div>
-                </div>
-
-                <div class="detail-box">
-                    <div class="detail-label">Expires</div>
-                    <div class="detail-value">
-                        {{ membership.trial_ends_at|date:"d M Y, H:i" }}
-                    </div>
-                </div>
-
-            {% else %}
-
-                <div class="detail-box">
-                    <div class="detail-label">Plan</div>
-                    <div class="detail-value">
-                        Monthly Membership
-                    </div>
-                </div>
-
-                <div class="detail-box">
-                    <div class="detail-label">Expires</div>
-                    <div class="detail-value">
-                        {{ membership.membership_ends_at|date:"d M Y, H:i" }}
-                    </div>
-                </div>
-
-            {% endif %}
-
-        </div>
-
-
-        {% if membership.status != "trial" or not membership.is_active %}
-
-            <a href="#" class="membership-button">
-                Pay with M-Pesa
-            </a>
-
-            <div class="membership-note">
-                M-Pesa payment will be available here.
-            </div>
-
-        {% else %}
 
             <a href="{% url 'dashboard' %}" class="membership-button">
                 Continue to Dashboard
             </a>
 
             <div class="membership-note">
-                Your free trial is currently active.
+                System owner access is not subject to membership expiry.
             </div>
+
+        {% else %}
+
+            {% if membership.status == "trial" %}
+
+                {% if membership.is_active %}
+
+                    <div class="membership-status status-trial">
+                        FREE TRIAL
+                    </div>
+
+                    <h2>Your 7-Day Free Trial</h2>
+
+                    <p class="membership-description">
+                        You currently have full access to ISC Pool Tracker.
+                        Your free trial will continue until the date shown below.
+                    </p>
+
+                {% else %}
+
+                    <div class="membership-status status-expired">
+                        TRIAL EXPIRED
+                    </div>
+
+                    <h2>Your Free Trial Has Ended</h2>
+
+                    <p class="membership-description">
+                        Your 7-day free trial has expired.
+                        Renew your membership to continue using ISC Pool Tracker.
+                    </p>
+
+                {% endif %}
+
+            {% elif membership.status == "active" %}
+
+                <div class="membership-status status-active">
+                    ACTIVE MEMBERSHIP
+                </div>
+
+                <h2>Your Membership Is Active</h2>
+
+                <p class="membership-description">
+                    You have full access to ISC Pool Tracker.
+                </p>
+
+            {% else %}
+
+                <div class="membership-status status-expired">
+                    MEMBERSHIP EXPIRED
+                </div>
+
+                <h2>Your Membership Has Expired</h2>
+
+                <p class="membership-description">
+                    Renew your membership to continue using ISC Pool Tracker.
+                </p>
+
+            {% endif %}
+
+
+            <div class="membership-details">
+
+                {% if membership.status == "trial" %}
+
+                    <div class="detail-box">
+                        <div class="detail-label">Plan</div>
+                        <div class="detail-value">
+                            7-Day Free Trial
+                        </div>
+                    </div>
+
+                    <div class="detail-box">
+                        <div class="detail-label">Expires</div>
+                        <div class="detail-value">
+                            {{ membership.trial_ends_at|date:"d M Y, H:i" }}
+                        </div>
+                    </div>
+
+                {% else %}
+
+                    <div class="detail-box">
+                        <div class="detail-label">Plan</div>
+                        <div class="detail-value">
+                            KSh 500 / 30 Days
+                        </div>
+                    </div>
+
+                    <div class="detail-box">
+                        <div class="detail-label">Expires</div>
+                        <div class="detail-value">
+                            {{ membership.membership_ends_at|date:"d M Y, H:i" }}
+                        </div>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if membership.status != "trial" or not membership.is_active %}
+
+                <div class="payment-box">
+
+                    <div class="price">
+                        KSh 500 <span>/ 30 days</span>
+                    </div>
+
+                    <form method="post" action="{% url 'pay_membership' %}">
+                        {% csrf_token %}
+
+                        <label for="phone_number">
+                            M-Pesa Phone Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="phone_number"
+                            name="phone_number"
+                            placeholder="0712345678"
+                            autocomplete="tel"
+                            required
+                        >
+
+                        <div class="payment-help">
+                            Enter the Safaricom number that should receive
+                            the M-Pesa payment prompt.
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="membership-button"
+                        >
+                            Pay KSh 500 with M-Pesa
+                        </button>
+
+                    </form>
+
+                </div>
+
+                <div class="membership-note">
+                    You will receive an M-Pesa prompt on your phone.
+                    Enter your M-Pesa PIN to complete payment.
+                </div>
+
+            {% else %}
+
+                <a href="{% url 'dashboard' %}" class="membership-button">
+                    Continue to Dashboard
+                </a>
+
+                <div class="membership-note">
+                    Your free trial is currently active.
+                </div>
+
+            {% endif %}
 
         {% endif %}
 
@@ -288,4 +396,3 @@
 </div>
 
 {% endblock %}
-
