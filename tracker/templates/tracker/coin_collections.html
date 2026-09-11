@@ -443,7 +443,7 @@
     <div class="coin-header">
 
         <div class="coin-title-area">
-            <div class="coin-title-icon">ðŸª™</div>
+            <div class="coin-title-icon">🪙</div>
 
             <div>
                 <h1 class="coin-title">Coin Collections</h1>
@@ -454,7 +454,7 @@
         </div>
 
         <a href="{% url 'add_coin_collection' %}" class="coin-add">
-            ðŸª™ Add Coin Collection
+            🪙 Add Coin Collection
         </a>
 
     </div>
@@ -465,7 +465,7 @@
 
         <!-- TODAY'S COINS -->
         <div class="coin-card">
-            <div class="card-icon icon-coins">ðŸª™</div>
+            <div class="card-icon icon-coins">🪙</div>
 
             <div class="coin-label">
                 Today's Coins Collected
@@ -483,7 +483,7 @@
 
         <!-- TODAY'S EARNINGS -->
         <div class="coin-card">
-            <div class="card-icon icon-money">ðŸ’°</div>
+            <div class="card-icon icon-money">💰</div>
 
             <div class="coin-label">
                 Today's Earnings
@@ -501,7 +501,7 @@
 
         <!-- DIFFERENCE -->
         <div class="coin-card">
-            <div class="card-icon icon-difference">ðŸ“Š</div>
+            <div class="card-icon icon-difference">📊</div>
 
             <div class="coin-label">
                 Today's Difference
@@ -535,7 +535,7 @@
 
         <!-- RATE -->
         <div class="coin-card">
-            <div class="card-icon icon-rate">ðŸ“ˆ</div>
+            <div class="card-icon icon-rate">📈</div>
 
             <div class="coin-label">
                 Collection Rate
@@ -600,7 +600,7 @@
 
                                     {% if collection.collection_date == today %}
                                         <span class="today-badge">
-                                            â— Today
+                                            ● Today
                                         </span>
                                     {% endif %}
                                 </td>
@@ -612,7 +612,7 @@
                                     <span class="table-coin">
 
                                         <span class="table-coin-icon">
-                                            ðŸª™
+                                            🪙
                                         </span>
 
                                         {{ collection.coins_collected }}
@@ -658,7 +658,7 @@
                                             class="action-btn edit-btn"
                                             title="Edit"
                                         >
-                                            âœï¸
+                                            ✏️
                                         </a>
 
                                         <a
@@ -666,7 +666,7 @@
                                             class="action-btn delete-btn"
                                             title="Delete"
                                         >
-                                            ðŸ—‘ï¸
+                                            🗑️
                                         </a>
 
                                     </div>
@@ -688,7 +688,7 @@
             <div class="empty-state">
 
                 <div class="empty-icon">
-                    ðŸª™
+                    🪙
                 </div>
 
                 <h3>No Coin Collections Yet</h3>
@@ -701,7 +701,7 @@
                     href="{% url 'add_coin_collection' %}"
                     class="empty-button"
                 >
-                    ðŸª™ Add First Collection
+                    🪙 Add First Collection
                 </a>
 
             </div>
@@ -713,5 +713,6 @@
 </div>
 
 {% endblock %}
+
 
 

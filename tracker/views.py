@@ -1219,6 +1219,7 @@ def generate_report(request):
 # =========================================================
 # COIN COLLECTION SYSTEM
 # =========================================================
+@login_required
 def coin_collection_list(request):
 
     collections = (
