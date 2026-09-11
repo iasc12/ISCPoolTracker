@@ -1,7 +1,15 @@
 ﻿from django.db import models
+from django.contrib.auth.models import User
 
 
 class DailyEarning(models.Model):
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="daily_earnings",
+    )
+
     date = models.DateField()
     amount_collected = models.DecimalField(
         max_digits=10,
@@ -19,6 +27,12 @@ class DailyEarning(models.Model):
 
 
 class Expense(models.Model):
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="expenses",
+    )
 
     EXPENSE_TYPE_CHOICES = [
         ("EMPLOYEE", "Employee Payment"),
@@ -82,6 +96,13 @@ class Notification(models.Model):
 
 
 class CoinCollection(models.Model):
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="coin_collections",
+    )
+
     """
     Records coins physically removed from the pool tables.
 
@@ -152,6 +173,9 @@ class CoinCollection(models.Model):
 
         return (
             CoinCollection.objects
+            .filter(
+                user=self.user,
+            )
             .filter(
                 models.Q(
                     collection_date__lt=self.collection_date
@@ -256,7 +280,6 @@ class CoinCollection(models.Model):
             previous.coins_collected
         )
 from django.db import models
-from django.contrib.auth.models import User
 
 
 class Profile(models.Model):

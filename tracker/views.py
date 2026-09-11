@@ -239,7 +239,10 @@ def dashboard(request):
 
     today_earnings = money(
         DailyEarning.objects
-        .filter(date=today)
+        .filter(
+            user=request.user,
+            date=today,
+        )
         .aggregate(
             total=Sum("amount_collected")
         )["total"]
@@ -247,7 +250,10 @@ def dashboard(request):
 
     today_expenses = money(
         Expense.objects
-        .filter(date=today)
+        .filter(
+            user=request.user,
+            date=today,
+        )
         .aggregate(
             total=Sum("amount")
         )["total"]
@@ -265,6 +271,7 @@ def dashboard(request):
     weekly_earnings = money(
         DailyEarning.objects
         .filter(
+            user=request.user,
             date__range=[
                 week_start,
                 week_end
@@ -278,6 +285,7 @@ def dashboard(request):
     weekly_expenses = money(
         Expense.objects
         .filter(
+            user=request.user,
             date__range=[
                 week_start,
                 week_end
@@ -300,6 +308,7 @@ def dashboard(request):
     monthly_earnings = money(
         DailyEarning.objects
         .filter(
+            user=request.user,
             date__range=[
                 month_start,
                 month_end
@@ -313,6 +322,7 @@ def dashboard(request):
     monthly_expenses = money(
         Expense.objects
         .filter(
+            user=request.user,
             date__range=[
                 month_start,
                 month_end
@@ -371,6 +381,7 @@ def dashboard(request):
 
     earning_days = (
         DailyEarning.objects
+        .filter(user=request.user)
         .values("date")
         .distinct()
         .count()
@@ -378,6 +389,7 @@ def dashboard(request):
 
     total_earnings = money(
         DailyEarning.objects
+        .filter(user=request.user)
         .aggregate(
             total=Sum("amount_collected")
         )["total"]
@@ -385,6 +397,7 @@ def dashboard(request):
 
     total_expenses = money(
         Expense.objects
+        .filter(user=request.user)
         .aggregate(
             total=Sum("amount")
         )["total"]
@@ -432,6 +445,7 @@ def dashboard(request):
 
     best_day = (
         DailyEarning.objects
+        .filter(user=request.user)
         .order_by(
             "-amount_collected",
             "-date"
@@ -441,6 +455,7 @@ def dashboard(request):
 
     lowest_day = (
         DailyEarning.objects
+        .filter(user=request.user)
         .order_by(
             "amount_collected",
             "date"
@@ -466,7 +481,10 @@ def dashboard(request):
 
         daily_earnings = money(
             DailyEarning.objects
-            .filter(date=chart_date)
+            .filter(
+                user=request.user,
+                date=chart_date,
+            )
             .aggregate(
                 total=Sum("amount_collected")
             )["total"]
@@ -474,7 +492,10 @@ def dashboard(request):
 
         daily_expenses = money(
             Expense.objects
-            .filter(date=chart_date)
+            .filter(
+                user=request.user,
+                date=chart_date,
+            )
             .aggregate(
                 total=Sum("amount")
             )["total"]
@@ -532,6 +553,7 @@ def dashboard(request):
 
     latest_coin_collection = (
         CoinCollection.objects
+        .filter(user=request.user)
         .order_by(
             "-collection_date",
             "-created_at"
@@ -619,7 +641,7 @@ def dashboard(request):
         # Recent
         "recent_earnings": (
             DailyEarning.objects
-            .all()
+            .filter(user=request.user)
             .order_by(
                 "-date",
                 "-id"
@@ -628,7 +650,7 @@ def dashboard(request):
 
         "recent_expenses": (
             Expense.objects
-            .all()
+            .filter(user=request.user)
             .order_by(
                 "-date",
                 "-id"
@@ -656,7 +678,9 @@ def add_earning(request):
 
         if form.is_valid():
 
-            earning = form.save()
+            earning = form.save(commit=False)
+            earning.user = request.user
+            earning.save()
 
             messages.success(
                 request,
@@ -690,7 +714,7 @@ def earnings_list(request):
 
     earnings = (
         DailyEarning.objects
-        .all()
+        .filter(user=request.user)
         .order_by(
             "-date",
             "-id"
@@ -733,7 +757,8 @@ def edit_earning(
 
     earning = get_object_or_404(
         DailyEarning,
-        id=earning_id
+        id=earning_id,
+        user=request.user,
     )
 
     if request.method == "POST":
@@ -781,7 +806,8 @@ def delete_earning(
 
     earning = get_object_or_404(
         DailyEarning,
-        id=earning_id
+        id=earning_id,
+        user=request.user,
     )
 
     if request.method == "POST":
@@ -823,7 +849,9 @@ def add_expense(request):
 
         if form.is_valid():
 
-            expense = form.save()
+            expense = form.save(commit=False)
+            expense.user = request.user
+            expense.save()
 
             messages.success(
                 request,
@@ -857,7 +885,7 @@ def expenses_list(request):
 
     expenses = (
         Expense.objects
-        .all()
+        .filter(user=request.user)
         .order_by(
             "-date",
             "-id"
@@ -900,7 +928,8 @@ def edit_expense(
 
     expense = get_object_or_404(
         Expense,
-        id=expense_id
+        id=expense_id,
+        user=request.user,
     )
 
     if request.method == "POST":
@@ -948,7 +977,8 @@ def delete_expense(
 
     expense = get_object_or_404(
         Expense,
-        id=expense_id
+        id=expense_id,
+        user=request.user,
     )
 
     if request.method == "POST":
@@ -989,11 +1019,13 @@ def reports(request):
     )
 
     earnings = (
-        DailyEarning.objects.all()
+        DailyEarning.objects
+        .filter(user=request.user)
     )
 
     expenses = (
-        Expense.objects.all()
+        Expense.objects
+        .filter(user=request.user)
     )
 
     if start_date:
@@ -1191,7 +1223,7 @@ def coin_collection_list(request):
 
     collections = (
         CoinCollection.objects
-        .all()
+        .filter(user=request.user)
         .order_by(
             "-collection_date",
             "-created_at"
@@ -1257,7 +1289,9 @@ def add_coin_collection(request):
 
         if form.is_valid():
 
-            collection = form.save()
+            collection = form.save(commit=False)
+            collection.user = request.user
+            collection.save()
 
             messages.success(
                 request,
@@ -1297,7 +1331,8 @@ def edit_coin_collection(
 
     collection = get_object_or_404(
         CoinCollection,
-        id=collection_id
+        id=collection_id,
+        user=request.user,
     )
 
     if request.method == "POST":
@@ -1309,7 +1344,9 @@ def edit_coin_collection(
 
         if form.is_valid():
 
-            collection = form.save()
+            collection = form.save(commit=False)
+            collection.user = request.user
+            collection.save()
 
             messages.success(
                 request,
@@ -1344,7 +1381,8 @@ def delete_coin_collection(
 
     collection = get_object_or_404(
         CoinCollection,
-        id=collection_id
+        id=collection_id,
+        user=request.user,
     )
 
     if request.method == "POST":
