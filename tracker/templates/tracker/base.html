@@ -1,4 +1,4 @@
-ï»¿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +15,8 @@
         }
 
         html {
-            scroll-behavior: smooth;
+            scroll-behavior: auto;
+            overflow-y: scroll;
         }
 
         body {
@@ -67,8 +68,8 @@
         }
 
         .topbar.compact .topbar-inner {
-            padding-top: 9px;
-            padding-bottom: 9px;
+            padding-top: 15px;
+            padding-bottom: 15px;
         }
 
         .brand {
@@ -91,9 +92,9 @@
         }
 
         .compact .brand-logo {
-            width: 37px;
-            height: 37px;
-            border-radius: 11px;
+            width: 44px;
+            height: 44px;
+            border-radius: 13px;
         }
 
         .brand-text {
@@ -617,29 +618,10 @@
             item.classList.add("active");
         }
     });
-
     /* =========================
-       SHRINK HEADER ON SCROLL
+       STABLE HEADER
+       No resizing while scrolling.
     ========================= */
-
-    let ticking = false;
-
-    function updateHeader() {
-        if (window.scrollY > 35) {
-            topbar.classList.add("compact");
-        } else {
-            topbar.classList.remove("compact");
-        }
-
-        ticking = false;
-    }
-
-    window.addEventListener("scroll", function () {
-        if (!ticking) {
-            window.requestAnimationFrame(updateHeader);
-            ticking = true;
-        }
-    });
 
     /* =========================
        TOUCH FEEDBACK
@@ -687,10 +669,7 @@
 
     z-index: 9999 !important;
 
-    transition:
-        transform .25s ease,
-        width .25s ease,
-        box-shadow .25s ease !important;
+    transition: box-shadow .25s ease !important;
 }
 
 .isc-nav {
@@ -753,7 +732,7 @@
     letter-spacing: .1px !important;
 }
 
-/* Liquid active state â€” NOT black */
+/* Liquid active state — NOT black */
 .isc-nav-item.active {
     color: #111827 !important;
 
@@ -801,7 +780,7 @@
     transform: scale(.94) !important;
 }
 
-/* Dark mode â€” still liquid, never solid black */
+/* Dark mode — still liquid, never solid black */
 body.dark-mode .isc-nav-shell {
     background: rgba(28, 32, 38, .72) !important;
     border-color: rgba(255,255,255,.10) !important;
@@ -836,13 +815,7 @@ body.dark-mode .isc-nav-item:hover {
 }
 
 /* Scroll movement */
-.isc-nav-shell.nav-scrolling-down {
-    transform: translateX(-50%) translateY(5px) !important;
-}
 
-.isc-nav-shell.nav-scrolling-up {
-    transform: translateX(-50%) translateY(0) !important;
-}
 
 /* Mobile */
 
@@ -913,6 +886,22 @@ body.dark-mode .isc-nav-item:hover {
 </style>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

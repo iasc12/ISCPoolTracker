@@ -88,6 +88,7 @@
         width: 100%;
         box-sizing: border-box;
         padding: 13px 15px;
+        min-height: 48px;
         border: 1px solid #d1d5db;
         border-radius: 11px;
         background: #f9fafb;
@@ -95,7 +96,7 @@
         font-size: 15px;
         font-family: inherit;
         outline: none;
-        transition: all 0.2s ease;
+        transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     .form-group input:focus,
@@ -155,11 +156,11 @@
         font-weight: 700;
         font-family: inherit;
         cursor: pointer;
-        transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+        transition: box-shadow 0.15s ease, opacity 0.15s ease;
     }
 
     .button:hover {
-        transform: translateY(-1px);
+        /* Keep button position fixed while interacting. */
     }
 
     .button.danger {
@@ -300,3 +301,5 @@
 </div>
 
 {% endblock %}
+
+
