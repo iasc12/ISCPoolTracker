@@ -1,13 +1,218 @@
-﻿{% extends "tracker/base.html" %}
+{% extends "tracker/base.html" %}
 
 {% block title %}Add Earning - ISC Pool Tracker{% endblock %}
 
 {% block content %}
 
-<div class="form-page">
+<style>
+    .earning-page {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 20px 0 40px;
+    }
 
-    <div class="card">
+    .earning-header {
+        margin-bottom: 24px;
+    }
 
+    .earning-header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .earning-header p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 15px;
+    }
+
+    .earning-card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 32px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+    }
+
+    .earning-card-top {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-bottom: 24px;
+        margin-bottom: 28px;
+        border-bottom: 1px solid #eeeeee;
+    }
+
+    .earning-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: #ecfdf5;
+        color: #059669;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .earning-card-top h2 {
+        margin: 0 0 4px;
+        font-size: 20px;
+        font-weight: 750;
+    }
+
+    .earning-card-top span {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 13px 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 11px;
+        background: #f9fafb;
+        color: #111827;
+        font-size: 15px;
+        font-family: inherit;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: #111827;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+    }
+
+    .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: #9ca3af;
+    }
+
+    .errorlist {
+        list-style: none;
+        margin: 7px 0 0;
+        padding: 0;
+        color: #dc2626;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .non-field-errors {
+        margin-bottom: 20px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: #fef2f2;
+        color: #b91c1c;
+        font-size: 14px;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+        padding-top: 24px;
+        border-top: 1px solid #eeeeee;
+    }
+
+    .button {
+        min-height: 48px;
+        padding: 0 22px;
+        border-radius: 11px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        border: none;
+        font-size: 15px;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+
+    .button:hover {
+        transform: translateY(-1px);
+    }
+
+    .button.success {
+        background: #111827;
+        color: #ffffff;
+        box-shadow: 0 5px 14px rgba(17, 24, 39, 0.18);
+        flex: 1;
+    }
+
+    .button.success:hover {
+        background: #000000;
+        box-shadow: 0 7px 18px rgba(17, 24, 39, 0.24);
+    }
+
+    .button.secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+        min-width: 120px;
+    }
+
+    .button.secondary:hover {
+        background: #e5e7eb;
+    }
+
+    @media (max-width: 640px) {
+        .earning-page {
+            padding: 10px 0 30px;
+        }
+
+        .earning-card {
+            padding: 22px;
+            border-radius: 15px;
+        }
+
+        .earning-header h1 {
+            font-size: 27px;
+        }
+
+        .buttons {
+            flex-direction: column-reverse;
+        }
+
+        .button,
+        .button.secondary {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="earning-page">
+
+    <div class="earning-header">
         <h1>
             {% if editing %}
                 Edit Earning
@@ -17,8 +222,31 @@
         </h1>
 
         <p>
-            Record pool income.
+            Keep track of the money collected from your pool business.
         </p>
+    </div>
+
+    <div class="earning-card">
+
+        <div class="earning-card-top">
+            <div class="earning-icon">
+                KSh
+            </div>
+
+            <div>
+                <h2>
+                    {% if editing %}
+                        Update earning
+                    {% else %}
+                        Record new earning
+                    {% endif %}
+                </h2>
+
+                <span>
+                    Enter the details below to keep your financial records up to date.
+                </span>
+            </div>
+        </div>
 
         <form method="post">
             {% csrf_token %}
@@ -38,7 +266,9 @@
             {% endfor %}
 
             {% if form.non_field_errors %}
-                {{ form.non_field_errors }}
+                <div class="non-field-errors">
+                    {{ form.non_field_errors }}
+                </div>
             {% endif %}
 
             <div class="buttons">
@@ -47,7 +277,11 @@
                     type="submit"
                     class="button success"
                 >
-                    Save Earning
+                    {% if editing %}
+                        Save Changes
+                    {% else %}
+                        Save Earning
+                    {% endif %}
                 </button>
 
                 <a
