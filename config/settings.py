@@ -81,9 +81,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    "cloudinary_storage",
-    "cloudinary",
-
     "tracker",
 ]
 
@@ -217,13 +214,6 @@ USE_TZ = True
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME", ""),
-    "API_KEY": os.getenv("CLOUDINARY_API_KEY", ""),
-    "API_SECRET": os.getenv("CLOUDINARY_API_SECRET", ""),
-    "SECURE": True,
-}
-
 STATIC_URL = "/static/"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -238,8 +228,7 @@ STATICFILES_DIRS = []
 STORAGES = {
 
     "default": {
-        "BACKEND":
-            "cloudinary_storage.storage.MediaCloudinaryStorage",
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
 
     "staticfiles": {
@@ -356,6 +345,7 @@ MPESA_MEMBERSHIP_DAYS = int(
         "30",
     )
 )
+
 
 
 
