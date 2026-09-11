@@ -7,7 +7,7 @@ import json
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, update_session_auth_hash
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
@@ -18,9 +18,6 @@ from django.shortcuts import (
     render,
 )
 from django.utils import timezone
-
-from .decorators import membership_required
-
 from .forms import (
     DailyEarningForm,
     ExpenseForm,
@@ -29,6 +26,7 @@ from .forms import (
     ProfileForm,
 )
 
+from .decorators import membership_required
 from .models import (
     Profile,
     MpesaPayment,
@@ -63,7 +61,7 @@ def register(request):
                 "Account created successfully. Welcome to ISC Pool Tracker!"
             )
 
-            return redirect("dashboard")
+            return redirect("membership")
     else:
         form = RegisterForm()
 
@@ -100,7 +98,10 @@ def profile(request):
     return render(
         request,
         "tracker/profile.html",
-        {"profile_form": form},
+        {
+            "profile": profile,
+            "profile_form": form,
+        },
     )
 
 
@@ -183,8 +184,6 @@ def settings_page(request):
         request,
         "tracker/settings.html",
     )
-
-@membership_required
 def history(request):
     return render(
         request,
@@ -647,9 +646,6 @@ def dashboard(request):
         "tracker/dashboard.html",
         context
     )
-
-
-@membership_required
 def add_earning(request):
 
     if request.method == "POST":
@@ -690,9 +686,6 @@ def add_earning(request):
             "form": form
         }
     )
-
-
-@membership_required
 def earnings_list(request):
 
     earnings = (
@@ -733,9 +726,6 @@ def earnings_list(request):
             "total": total,
         }
     )
-
-
-@membership_required
 def edit_earning(
     request,
     earning_id
@@ -784,9 +774,6 @@ def edit_earning(
             "editing": True,
         }
     )
-
-
-@membership_required
 def delete_earning(
     request,
     earning_id
@@ -826,9 +813,6 @@ def delete_earning(
             "object_type": "earning",
         }
     )
-
-
-@membership_required
 def add_expense(request):
 
     if request.method == "POST":
@@ -869,9 +853,6 @@ def add_expense(request):
             "form": form
         }
     )
-
-
-@membership_required
 def expenses_list(request):
 
     expenses = (
@@ -912,9 +893,6 @@ def expenses_list(request):
             "total": total,
         }
     )
-
-
-@membership_required
 def edit_expense(
     request,
     expense_id
@@ -963,9 +941,6 @@ def edit_expense(
             "editing": True,
         }
     )
-
-
-@membership_required
 def delete_expense(
     request,
     expense_id
@@ -1003,9 +978,6 @@ def delete_expense(
             "object_type": "expense",
         }
     )
-
-
-@membership_required
 def reports(request):
 
     start_date = request.GET.get(
@@ -1205,9 +1177,6 @@ def reports(request):
         "tracker/reports.html",
         context
     )
-
-
-@membership_required
 def generate_report(request):
 
     return redirect(
@@ -1218,9 +1187,6 @@ def generate_report(request):
 # =========================================================
 # COIN COLLECTION SYSTEM
 # =========================================================
-
-
-@membership_required
 def coin_collection_list(request):
 
     collections = (
@@ -1281,9 +1247,6 @@ def coin_collection_list(request):
             "today": today,
         }
     )
-
-
-@membership_required
 def add_coin_collection(request):
 
     if request.method == "POST":
@@ -1327,9 +1290,6 @@ def add_coin_collection(request):
             "form": form,
         }
     )
-
-
-@membership_required
 def edit_coin_collection(
     request,
     collection_id
@@ -1377,9 +1337,6 @@ def edit_coin_collection(
             "collection": collection,
         }
     )
-
-
-@membership_required
 def delete_coin_collection(
     request,
     collection_id
@@ -1434,19 +1391,35 @@ def membership(request):
         },
     )
 
+    latest_payment = (
+        MpesaPayment.objects
+        .filter(user=request.user)
+        .order_by("-created_at")
+        .first()
+    )
+
+    pending_payment = (
+        MpesaPayment.objects
+        .filter(
+            user=request.user,
+            status=MpesaPayment.STATUS_PENDING,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+
     return render(
         request,
         "tracker/membership.html",
         {
             "membership": membership,
+            "latest_payment": latest_payment,
+            "pending_payment": pending_payment,
+            "membership_amount": settings.MPESA_MEMBERSHIP_AMOUNT,
+            "membership_days": settings.MPESA_MEMBERSHIP_DAYS,
+            "mpesa_shortcode": settings.MPESA_SHORTCODE,
         },
     )
-
-
-
-
-
-
 
 
 def _normalize_mpesa_phone(phone_number):
@@ -1487,14 +1460,52 @@ def pay_membership(request):
     if request.method != "POST":
         return redirect("membership")
 
+    membership, created = Membership.objects.get_or_create(
+        user=request.user,
+        defaults={
+            "status": Membership.STATUS_TRIAL,
+            "trial_started_at": timezone.now(),
+            "trial_ends_at": timezone.now() + timedelta(days=7),
+        },
+    )
+
+    if request.user.is_superuser:
+        messages.info(
+            request,
+            "Your administrator account already has permanent access."
+        )
+        return redirect("membership")
+
+    if membership.is_active:
+        messages.info(
+            request,
+            "Your membership is already active."
+        )
+        return redirect("membership")
+
+    existing_pending = (
+        MpesaPayment.objects
+        .filter(
+            user=request.user,
+            status=MpesaPayment.STATUS_PENDING,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+
+    if existing_pending:
+        messages.info(
+            request,
+            "Your payment is already awaiting admin confirmation."
+        )
+        return redirect("membership")
+
     phone_number = request.POST.get(
         "phone_number",
-        ""
+        "",
     ).strip()
 
-    normalized_phone = _normalize_mpesa_phone(
-        phone_number
-    )
+    normalized_phone = _normalize_mpesa_phone(phone_number)
 
     if not normalized_phone:
         messages.error(
@@ -1503,80 +1514,26 @@ def pay_membership(request):
         )
         return redirect("membership")
 
-    amount = settings.MPESA_MEMBERSHIP_AMOUNT
-
-    payment = MpesaPayment.objects.create(
+    MpesaPayment.objects.create(
         user=request.user,
-        amount=amount,
+        amount=settings.MPESA_MEMBERSHIP_AMOUNT,
         phone_number=normalized_phone,
         status=MpesaPayment.STATUS_PENDING,
+        result_description=(
+            "Payment reported by user. "
+            "Awaiting manual admin verification."
+        ),
     )
 
-    try:
-
-        from .mpesa import initiate_stk_push
-
-        response = initiate_stk_push(
-            phone_number=normalized_phone,
-            amount=amount,
-            account_reference=f"ISC-{request.user.id}",
-        )
-
-        payment.merchant_request_id = response.get(
-            "MerchantRequestID"
-        )
-
-        payment.checkout_request_id = response.get(
-            "CheckoutRequestID"
-        )
-
-        payment.result_code = response.get(
-            "ResponseCode"
-        )
-
-        payment.result_description = response.get(
-            "ResponseDescription"
-        )
-
-        if response.get("ResponseCode") != "0":
-            payment.status = MpesaPayment.STATUS_FAILED
-
-            payment.save()
-
-            messages.error(
-                request,
-                response.get(
-                    "ResponseDescription",
-                    "M-Pesa payment request failed."
-                ),
-            )
-
-            return redirect("membership")
-
-        payment.save()
-
-        messages.success(
-            request,
-            "M-Pesa payment request sent. "
-            "Check your phone and enter your M-Pesa PIN."
-        )
-
-    except Exception as exc:
-
-        payment.status = MpesaPayment.STATUS_FAILED
-        payment.result_description = str(exc)
-        payment.save()
-
-        messages.error(
-            request,
-            "Unable to start the M-Pesa payment. "
-            "Please try again."
-        )
+    messages.success(
+        request,
+        "Payment marked as paid. "
+        "Please wait while an admin verifies your M-Pesa payment."
+    )
 
     return redirect("membership")
 
 
-@csrf_exempt
 def mpesa_callback(request):
 
     if request.method != "POST":
@@ -1710,3 +1667,107 @@ def mpesa_callback(request):
         )
 
 
+
+
+
+
+
+
+@login_required
+@user_passes_test(lambda user: user.is_superuser)
+def membership_approvals(request):
+    pending_payments = (
+        MpesaPayment.objects
+        .filter(
+            status=MpesaPayment.STATUS_PENDING,
+        )
+        .select_related("user")
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "tracker/membership_approvals.html",
+        {
+            "pending_payments": pending_payments,
+        },
+    )
+
+
+@login_required
+@user_passes_test(lambda user: user.is_superuser)
+def membership_approval_action(request, payment_id, action):
+
+    if request.method != "POST":
+        return redirect("membership_approvals")
+
+    payment = get_object_or_404(
+        MpesaPayment,
+        id=payment_id,
+    )
+
+    if payment.status != MpesaPayment.STATUS_PENDING:
+        messages.info(
+            request,
+            "This payment has already been processed.",
+        )
+        return redirect("membership_approvals")
+
+    membership, created = Membership.objects.get_or_create(
+        user=payment.user,
+        defaults={
+            "status": Membership.STATUS_TRIAL,
+            "trial_started_at": timezone.now(),
+            "trial_ends_at": timezone.now() + timedelta(days=7),
+        },
+    )
+
+    if action == "approve":
+
+        now = timezone.now()
+
+        if (
+            membership.membership_ends_at
+            and membership.membership_ends_at > now
+        ):
+            start = membership.membership_ends_at
+        else:
+            start = now
+
+        membership.status = Membership.STATUS_ACTIVE
+        membership.membership_started_at = start
+        membership.membership_ends_at = (
+            start
+            + timedelta(
+                days=settings.MPESA_MEMBERSHIP_DAYS,
+            )
+        )
+        membership.save()
+
+        payment.status = MpesaPayment.STATUS_SUCCESS
+        payment.result_description = "Approved by admin."
+        payment.save()
+
+        messages.success(
+            request,
+            f"Membership approved for {payment.user.username}.",
+        )
+
+    elif action == "deny":
+
+        payment.status = MpesaPayment.STATUS_FAILED
+        payment.result_description = "Denied by admin."
+        payment.save()
+
+        messages.warning(
+            request,
+            f"Payment denied for {payment.user.username}.",
+        )
+
+    else:
+        messages.error(
+            request,
+            "Invalid membership action.",
+        )
+
+    return redirect("membership_approvals")

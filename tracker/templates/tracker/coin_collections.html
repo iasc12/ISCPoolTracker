@@ -75,7 +75,7 @@
     /* SUMMARY */
     .coin-summary {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
         gap: 18px;
         margin-bottom: 35px;
     }
@@ -418,6 +418,23 @@
             padding: 18px;
         }
     }
+.coin-change-positive {
+    color: #16a34a;
+}
+
+.coin-change-negative {
+    color: #dc2626;
+}
+
+.coin-change-neutral {
+    color: #6b7280;
+}
+
+.coin-change-positive,
+.coin-change-negative,
+.coin-change-neutral {
+    font-weight: 800;
+}
 </style>
 
 <div class="coin-page">
@@ -696,3 +713,5 @@
 </div>
 
 {% endblock %}
+
+

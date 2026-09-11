@@ -21,5 +21,10 @@ db.sqlite3
 # OS
 .DS_Store
 Thumbs.db
-__pycache__/
-*.pyc
+
+# Django static/media uploads
+media/
+profile_pictures/
+
+# Build/deployment
+staticfiles/

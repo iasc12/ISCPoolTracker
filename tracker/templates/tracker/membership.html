@@ -44,7 +44,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
+    font-size: 22px;
     font-weight: 800;
 }
 
@@ -74,13 +74,23 @@
     color: #dc2626;
 }
 
+.status-pending {
+    background: rgba(245,158,11,.14);
+    color: #b45309;
+}
+
+.status-denied {
+    background: rgba(220,38,38,.12);
+    color: #dc2626;
+}
+
 .membership-card h2 {
     margin: 0 0 10px;
     font-size: 25px;
 }
 
 .membership-description {
-    max-width: 600px;
+    max-width: 620px;
     margin: 0 auto 28px;
     line-height: 1.6;
     opacity: .68;
@@ -113,9 +123,71 @@
 }
 
 .payment-box {
-    max-width: 430px;
+    max-width: 500px;
     margin: 0 auto;
     text-align: left;
+}
+
+.payment-instructions {
+    background: rgba(127,127,127,.08);
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 22px;
+}
+
+.payment-instructions h3 {
+    margin: 0 0 14px;
+    font-size: 17px;
+}
+
+.payment-step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 13px;
+    line-height: 1.5;
+}
+
+.payment-step:last-child {
+    margin-bottom: 0;
+}
+
+.step-number {
+    width: 27px;
+    height: 27px;
+    flex: 0 0 27px;
+    border-radius: 50%;
+    background: #111827;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.payment-step strong {
+    display: block;
+}
+
+.reference-box {
+    margin-top: 15px;
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(59,130,246,.08);
+    text-align: center;
+}
+
+.reference-box .reference-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    opacity: .6;
+    margin-bottom: 5px;
+}
+
+.reference-box .reference-value {
+    font-size: 18px;
+    font-weight: 800;
 }
 
 .payment-box label {
@@ -148,7 +220,9 @@
 }
 
 .membership-button {
+    display: block;
     width: 100%;
+    box-sizing: border-box;
     min-width: 220px;
     margin-top: 18px;
     padding: 14px 24px;
@@ -158,6 +232,8 @@
     color: white;
     font-weight: 700;
     font-size: 15px;
+    text-align: center;
+    text-decoration: none;
     cursor: pointer;
     transition: transform .2s ease, opacity .2s ease;
 }
@@ -170,19 +246,54 @@
 .membership-note {
     margin-top: 18px;
     font-size: 12px;
-    opacity: .5;
+    opacity: .55;
 }
 
 .price {
     font-size: 22px;
     font-weight: 800;
     margin-bottom: 18px;
+    text-align: center;
 }
 
 .price span {
     font-size: 13px;
     font-weight: 500;
     opacity: .55;
+}
+
+.pending-box {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 22px;
+    border-radius: 18px;
+    background: rgba(245,158,11,.08);
+}
+
+.pending-box strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.pending-details {
+    margin-top: 15px;
+    font-size: 13px;
+    line-height: 1.7;
+    opacity: .7;
+}
+
+.denied-box {
+    max-width: 520px;
+    margin: 0 auto 22px;
+    padding: 18px;
+    border-radius: 16px;
+    background: rgba(220,38,38,.07);
+    text-align: left;
+}
+
+.denied-box strong {
+    display: block;
+    margin-bottom: 6px;
 }
 
 @media (max-width: 600px) {
@@ -210,7 +321,7 @@
     <section class="membership-card">
 
         <div class="membership-icon">
-            KSh
+            ISC
         </div>
 
         {% if request.user.is_superuser %}
@@ -236,66 +347,20 @@
 
         {% else %}
 
-            {% if membership.status == "trial" %}
+            {% if membership.status == "trial" and membership.is_active %}
 
-                {% if membership.is_active %}
-
-                    <div class="membership-status status-trial">
-                        FREE TRIAL
-                    </div>
-
-                    <h2>Your 7-Day Free Trial</h2>
-
-                    <p class="membership-description">
-                        You currently have full access to ISC Pool Tracker.
-                        Your free trial will continue until the date shown below.
-                    </p>
-
-                {% else %}
-
-                    <div class="membership-status status-expired">
-                        TRIAL EXPIRED
-                    </div>
-
-                    <h2>Your Free Trial Has Ended</h2>
-
-                    <p class="membership-description">
-                        Your 7-day free trial has expired.
-                        Renew your membership to continue using ISC Pool Tracker.
-                    </p>
-
-                {% endif %}
-
-            {% elif membership.status == "active" %}
-
-                <div class="membership-status status-active">
-                    ACTIVE MEMBERSHIP
+                <div class="membership-status status-trial">
+                    FREE TRIAL
                 </div>
 
-                <h2>Your Membership Is Active</h2>
+                <h2>Your 7-Day Free Trial</h2>
 
                 <p class="membership-description">
-                    You have full access to ISC Pool Tracker.
+                    You currently have full access to ISC Pool Tracker.
+                    Your free trial is active until the date shown below.
                 </p>
 
-            {% else %}
-
-                <div class="membership-status status-expired">
-                    MEMBERSHIP EXPIRED
-                </div>
-
-                <h2>Your Membership Has Expired</h2>
-
-                <p class="membership-description">
-                    Renew your membership to continue using ISC Pool Tracker.
-                </p>
-
-            {% endif %}
-
-
-            <div class="membership-details">
-
-                {% if membership.status == "trial" %}
+                <div class="membership-details">
 
                     <div class="detail-box">
                         <div class="detail-label">Plan</div>
@@ -311,12 +376,35 @@
                         </div>
                     </div>
 
-                {% else %}
+                </div>
+
+                <a href="{% url 'dashboard' %}" class="membership-button">
+                    Continue to Dashboard
+                </a>
+
+                <div class="membership-note">
+                    Your free trial is currently active.
+                </div>
+
+            {% elif membership.status == "active" and membership.is_active %}
+
+                <div class="membership-status status-active">
+                    ACTIVE MEMBERSHIP
+                </div>
+
+                <h2>Your Membership Is Active</h2>
+
+                <p class="membership-description">
+                    Your membership is active and you have full access
+                    to ISC Pool Tracker.
+                </p>
+
+                <div class="membership-details">
 
                     <div class="detail-box">
                         <div class="detail-label">Plan</div>
                         <div class="detail-value">
-                            KSh 500 / 30 Days
+                            KSh {{ membership_amount }} / {{ membership_days }} Days
                         </div>
                     </div>
 
@@ -327,65 +415,206 @@
                         </div>
                     </div>
 
-                {% endif %}
-
-            </div>
-
-
-            {% if membership.status != "trial" or not membership.is_active %}
-
-                <div class="payment-box">
-
-                    <div class="price">
-                        KSh 500 <span>/ 30 days</span>
-                    </div>
-
-                    <form method="post" action="{% url 'pay_membership' %}">
-                        {% csrf_token %}
-
-                        <label for="phone_number">
-                            M-Pesa Phone Number
-                        </label>
-
-                        <input
-                            type="tel"
-                            id="phone_number"
-                            name="phone_number"
-                            placeholder="0712345678"
-                            autocomplete="tel"
-                            required
-                        >
-
-                        <div class="payment-help">
-                            Enter the Safaricom number that should receive
-                            the M-Pesa payment prompt.
-                        </div>
-
-                        <button
-                            type="submit"
-                            class="membership-button"
-                        >
-                            Pay KSh 500 with M-Pesa
-                        </button>
-
-                    </form>
-
                 </div>
-
-                <div class="membership-note">
-                    You will receive an M-Pesa prompt on your phone.
-                    Enter your M-Pesa PIN to complete payment.
-                </div>
-
-            {% else %}
 
                 <a href="{% url 'dashboard' %}" class="membership-button">
                     Continue to Dashboard
                 </a>
 
                 <div class="membership-note">
-                    Your free trial is currently active.
+                    Your membership remains active until the expiry date above.
                 </div>
+
+            {% else %}
+
+                {% if pending_payment %}
+
+                    <div class="membership-status status-pending">
+                        PAYMENT PENDING
+                    </div>
+
+                    <h2>Waiting for Approval</h2>
+
+                    <p class="membership-description">
+                        We have received your payment notification.
+                        An administrator will verify the payment against
+                        the M-Pesa account and approve your membership.
+                    </p>
+
+                    <div class="pending-box">
+
+                        <strong>
+                            Your payment is awaiting admin confirmation.
+                        </strong>
+
+                        <div class="pending-details">
+                            Amount:
+                            <strong>KSh {{ pending_payment.amount }}</strong><br>
+
+                            M-Pesa Number:
+                            {{ pending_payment.phone_number }}<br>
+
+                            Submitted:
+                            {{ pending_payment.created_at|date:"d M Y, H:i" }}
+                        </div>
+
+                    </div>
+
+                    <div class="membership-note">
+                        Please do not submit another payment request while
+                        this one is pending.
+                    </div>
+
+                {% else %}
+
+                    {% if latest_payment and latest_payment.status == "failed" %}
+
+                        <div class="membership-status status-denied">
+                            PAYMENT NOT APPROVED
+                        </div>
+
+                        <h2>Payment Was Not Approved</h2>
+
+                        <div class="denied-box">
+                            <strong>Admin verification was unsuccessful.</strong>
+
+                            {% if latest_payment.result_description %}
+                                {{ latest_payment.result_description }}
+                            {% else %}
+                                Please make the membership payment again and
+                                submit a new payment confirmation.
+                            {% endif %}
+                        </div>
+
+                    {% else %}
+
+                        <div class="membership-status status-expired">
+                            MEMBERSHIP REQUIRED
+                        </div>
+
+                        <h2>Your Membership Has Expired</h2>
+
+                        <p class="membership-description">
+                            Your free trial or previous membership has ended.
+                            Make the membership payment below and notify us
+                            so an administrator can verify it.
+                        </p>
+
+                    {% endif %}
+
+                    <div class="membership-details">
+
+                        <div class="detail-box">
+                            <div class="detail-label">Membership</div>
+                            <div class="detail-value">
+                                KSh {{ membership_amount }}
+                            </div>
+                        </div>
+
+                        <div class="detail-box">
+                            <div class="detail-label">Access Period</div>
+                            <div class="detail-value">
+                                {{ membership_days }} Days
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="payment-box">
+
+                        <div class="price">
+                            KSh {{ membership_amount }}
+                            <span>/ {{ membership_days }} days</span>
+                        </div>
+
+                        <div class="payment-instructions">
+
+                            <h3>How to Pay</h3>
+
+                            <div class="payment-step">
+                                <div class="step-number">1</div>
+                                <div>
+                                    Open <strong>M-Pesa</strong> on your phone.
+                                </div>
+                            </div>
+
+                            <div class="payment-step">
+                                <div class="step-number">2</div>
+                                <div>
+                                    Send <strong>KSh {{ membership_amount }}</strong>
+                                    to the business number
+                                    <strong>0700089811</strong>
+                       <br>
+                       <strong>0111509391</strong>.
+                                </div>
+                            </div>
+
+                            <div class="payment-step">
+                                <div class="step-number">3</div>
+                                <div>
+                                    Use the reference below where applicable,
+                                    so the administrator can identify your payment.
+                                </div>
+                            </div>
+
+                            <div class="reference-box">
+                                <div class="reference-label">
+                                    Payment Reference
+                                </div>
+
+                                <div class="reference-value">
+                                    ISC-{{ request.user.id }}
+                                </div>
+                            </div>
+
+                            <div class="payment-step" style="margin-top:15px;">
+                                <div class="step-number">4</div>
+                                <div>
+                                    After completing the M-Pesa payment,
+                                    enter the number you paid from below and
+                                    click <strong>I Have Paid</strong>.
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <form method="post" action="{% url 'pay_membership' %}">
+                            {% csrf_token %}
+
+                            <label for="phone_number">
+                                M-Pesa Phone Number Used
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="phone_number"
+                                name="phone_number"
+                                placeholder="0712345678"
+                                autocomplete="tel"
+                                required
+                            >
+
+                            <div class="payment-help">
+                                Enter the Kenyan M-Pesa number from which
+                                you made the payment.
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="membership-button"
+                            >
+                                I Have Paid
+                            </button>
+                        </form>
+
+                    </div>
+
+                    <div class="membership-note">
+                        Your membership will remain locked until an administrator
+                        verifies your payment.
+                    </div>
+
+                {% endif %}
 
             {% endif %}
 

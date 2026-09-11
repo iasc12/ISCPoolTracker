@@ -39,6 +39,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "testserver",
+    ".trycloudflare.com",
 ]
 
 render_hostname = os.getenv(
@@ -135,6 +136,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
 
                 "django.contrib.messages.context_processors.messages",
+                "tracker.context_processors.membership_nav",
 
             ],
         },
@@ -208,6 +210,9 @@ USE_TZ = True
 # ============================================================
 # STATIC FILES
 # ============================================================
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 STATIC_URL = "/static/"
 
@@ -291,7 +296,7 @@ DEFAULT_AUTO_FIELD = (
 )
 
 LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "membership"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 # ============================================================
@@ -341,4 +346,6 @@ MPESA_MEMBERSHIP_DAYS = int(
         "30",
     )
 )
+
+
 

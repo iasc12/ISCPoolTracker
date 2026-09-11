@@ -1,0 +1,301 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}Membership Approvals - ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+    .approval-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px 16px 120px;
+    }
+
+    .approval-header {
+        margin-bottom: 24px;
+    }
+
+    .approval-header h1 {
+        margin: 0 0 6px;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+    .approval-header p {
+        margin: 0;
+        color: #777;
+    }
+
+    .approval-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 30px;
+        height: 30px;
+        padding: 0 10px;
+        margin-top: 12px;
+        border-radius: 999px;
+        background: #111;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .approval-list {
+        display: grid;
+        gap: 16px;
+    }
+
+    .approval-card {
+        background: #fff;
+        border: 1px solid #e7e7e7;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .approval-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 18px;
+    }
+
+    .approval-user h2 {
+        margin: 0 0 4px;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .approval-user p {
+        margin: 0;
+        color: #777;
+        font-size: 14px;
+    }
+
+    .approval-amount {
+        text-align: right;
+        font-size: 22px;
+        font-weight: 900;
+        white-space: nowrap;
+    }
+
+    .approval-details {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .approval-detail {
+        padding: 13px;
+        border-radius: 12px;
+        background: #f7f7f7;
+    }
+
+    .approval-detail span {
+        display: block;
+        margin-bottom: 4px;
+        color: #777;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+    }
+
+    .approval-detail strong {
+        font-size: 14px;
+        word-break: break-word;
+    }
+
+    .approval-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .approval-actions form {
+        flex: 1;
+    }
+
+    .approval-button {
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        padding: 13px 16px;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .approve-button {
+        background: #111;
+        color: #fff;
+    }
+
+    .deny-button {
+        background: #f1f1f1;
+        color: #111;
+    }
+
+    .approval-empty {
+        background: #fff;
+        border: 1px solid #e7e7e7;
+        border-radius: 18px;
+        padding: 45px 20px;
+        text-align: center;
+    }
+
+    .approval-empty h2 {
+        margin: 0 0 8px;
+        font-size: 20px;
+    }
+
+    .approval-empty p {
+        margin: 0;
+        color: #777;
+    }
+
+    @media (max-width: 600px) {
+        .approval-page {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        .approval-top {
+            flex-direction: column;
+        }
+
+        .approval-amount {
+            text-align: left;
+        }
+
+        .approval-details {
+            grid-template-columns: 1fr;
+        }
+
+        .approval-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="approval-page">
+
+    <div class="approval-header">
+        <h1>Membership Approvals</h1>
+        <p>Review payments reported by users and approve or deny membership access.</p>
+
+        <div class="approval-count">
+            {{ pending_payments|length }} Pending
+        </div>
+    </div>
+
+    {% if pending_payments %}
+
+        <div class="approval-list">
+
+            {% for payment in pending_payments %}
+
+                <div class="approval-card">
+
+                    <div class="approval-top">
+
+                        <div class="approval-user">
+                            <h2>{{ payment.user.username }}</h2>
+
+                            {% if payment.user.email %}
+                                <p>{{ payment.user.email }}</p>
+                            {% else %}
+                                <p>No email address provided</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="approval-amount">
+                            KSh {{ payment.amount|floatformat:2 }}
+                        </div>
+
+                    </div>
+
+                    <div class="approval-details">
+
+                        <div class="approval-detail">
+                            <span>M-Pesa Number</span>
+                            <strong>{{ payment.phone_number }}</strong>
+                        </div>
+
+                        <div class="approval-detail">
+                            <span>Reference</span>
+                            <strong>ISC-{{ payment.user.id }}</strong>
+                        </div>
+
+                        <div class="approval-detail">
+                            <span>Submitted</span>
+                            <strong>
+                                {{ payment.created_at|date:"d M Y, H:i" }}
+                            </strong>
+                        </div>
+
+                        <div class="approval-detail">
+                            <span>Payment ID</span>
+                            <strong>#{{ payment.id }}</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="approval-actions">
+
+                        <form
+                            method="post"
+                            action="{% url 'membership_approval_action' payment.id 'approve' %}"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="approval-button approve-button"
+                            >
+                                Approve &amp; Activate
+                            </button>
+                        </form>
+
+                        <form
+                            method="post"
+                            action="{% url 'membership_approval_action' payment.id 'deny' %}"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="approval-button deny-button"
+                            >
+                                Deny Payment
+                            </button>
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="approval-empty">
+
+            <h2>No Pending Payments</h2>
+
+            <p>
+                There are currently no membership payments waiting
+                for approval.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
