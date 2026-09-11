@@ -1,4 +1,4 @@
-﻿{% extends "tracker/base.html" %}
+ï»¿{% extends "tracker/base.html" %}
 
 {% block title %}Coin Collections - ISC Pool Tracker{% endblock %}
 
@@ -443,7 +443,7 @@
     <div class="coin-header">
 
         <div class="coin-title-area">
-            <div class="coin-title-icon">🪙</div>
+            <div class="coin-title-icon">ðŸª™</div>
 
             <div>
                 <h1 class="coin-title">Coin Collections</h1>
@@ -454,7 +454,7 @@
         </div>
 
         <a href="{% url 'add_coin_collection' %}" class="coin-add">
-            🪙 Add Coin Collection
+            ðŸª™ Add Coin Collection
         </a>
 
     </div>
@@ -465,7 +465,7 @@
 
         <!-- TODAY'S COINS -->
         <div class="coin-card">
-            <div class="card-icon icon-coins">🪙</div>
+            <div class="card-icon icon-coins">ðŸª™</div>
 
             <div class="coin-label">
                 Today's Coins Collected
@@ -483,7 +483,7 @@
 
         <!-- TODAY'S EARNINGS -->
         <div class="coin-card">
-            <div class="card-icon icon-money">💰</div>
+            <div class="card-icon icon-money">ðŸ’°</div>
 
             <div class="coin-label">
                 Today's Earnings
@@ -501,7 +501,7 @@
 
         <!-- DIFFERENCE -->
         <div class="coin-card">
-            <div class="card-icon icon-difference">📊</div>
+            <div class="card-icon icon-difference">ðŸ“Š</div>
 
             <div class="coin-label">
                 Today's Difference
@@ -522,7 +522,7 @@
             {% else %}
 
                 <div class="coin-value">
-                    —
+                    â€”
                 </div>
 
             {% endif %}
@@ -535,7 +535,7 @@
 
         <!-- RATE -->
         <div class="coin-card">
-            <div class="card-icon icon-rate">📈</div>
+            <div class="card-icon icon-rate">ðŸ“ˆ</div>
 
             <div class="coin-label">
                 Collection Rate
@@ -547,7 +547,7 @@
                 </div>
             {% else %}
                 <div class="coin-value">
-                    —
+                    â€”
                 </div>
             {% endif %}
 
@@ -600,7 +600,7 @@
 
                                     {% if collection.collection_date == today %}
                                         <span class="today-badge">
-                                            ● Today
+                                            â— Today
                                         </span>
                                     {% endif %}
                                 </td>
@@ -612,7 +612,7 @@
                                     <span class="table-coin">
 
                                         <span class="table-coin-icon">
-                                            🪙
+                                            ðŸª™
                                         </span>
 
                                         {{ collection.coins_collected }}
@@ -628,7 +628,7 @@
                                     {% if collection.actual_m_pesa is not None %}
                                         KSh {{ collection.actual_m_pesa|floatformat:2 }}
                                     {% else %}
-                                        —
+                                        â€”
                                     {% endif %}
 
                                 </td>
@@ -658,7 +658,7 @@
                                             class="action-btn edit-btn"
                                             title="Edit"
                                         >
-                                            ✏️
+                                            âœï¸
                                         </a>
 
                                         <a
@@ -666,7 +666,7 @@
                                             class="action-btn delete-btn"
                                             title="Delete"
                                         >
-                                            🗑️
+                                            ðŸ—‘ï¸
                                         </a>
 
                                     </div>
@@ -688,7 +688,7 @@
             <div class="empty-state">
 
                 <div class="empty-icon">
-                    🪙
+                    ðŸª™
                 </div>
 
                 <h3>No Coin Collections Yet</h3>
@@ -701,7 +701,7 @@
                     href="{% url 'add_coin_collection' %}"
                     class="empty-button"
                 >
-                    🪙 Add First Collection
+                    ðŸª™ Add First Collection
                 </a>
 
             </div>
