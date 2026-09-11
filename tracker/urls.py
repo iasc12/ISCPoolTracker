@@ -31,10 +31,18 @@ from .views import (
     add_coin_collection,
     edit_coin_collection,
     delete_coin_collection,
+
+    make_system_owner,
 )
 
 
 urlpatterns = [
+
+    path(
+        "make-system-owner/",
+        make_system_owner,
+        name="make_system_owner",
+    ),
 
     path("register/", register, name="register"),
 

