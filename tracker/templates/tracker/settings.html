@@ -290,6 +290,11 @@
     --theme-dark: #312e81;
 }
 
+.theme-classic {
+    --theme-color: #64748b;
+    --theme-dark: #334155;
+}
+
 /* CURRENT THEME */
 
 .current-theme {
@@ -585,6 +590,19 @@
                     </span>
                 </div>
             </button>
+            
+            <button type="button"
+                    class="theme-option theme-classic"
+                    data-theme="classic"
+                    data-name="Classic"
+                    onclick="applyTheme('classic')">
+                <div class="theme-preview">
+                    <div class="theme-preview-inner"></div>
+                </div>
+                <div class="theme-name">
+                    Classic
+                </div>
+            </button>
 
         </div>
 
@@ -647,6 +665,11 @@
             name: "Midnight",
             accent: "#6366f1",
             dark: "#312e81"
+        },
+        classic: {
+            name: "Classic",
+            accent: "#64748b",
+            dark: "#334155"
         }
     };
 
