@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1101,8 +1101,580 @@ body.dark-mode .isc-nav-status {
     }
 }
 </style>
+<style id="isc-system-wide-modern-ui">
+
+/* =========================================================
+   ISC POOL TRACKER - SYSTEM WIDE UI POLISH
+   Visual only. No business logic changes.
+   ========================================================= */
+
+:root {
+    --isc-radius-sm: 10px;
+    --isc-radius-md: 16px;
+    --isc-radius-lg: 22px;
+    --isc-radius-xl: 28px;
+    --isc-shadow-soft: 0 10px 30px rgba(15, 23, 42, .06);
+    --isc-shadow-card: 0 16px 45px rgba(15, 23, 42, .08);
+    --isc-border: rgba(15, 23, 42, .09);
+    --isc-muted: #6b7280;
+    --isc-text: #111827;
+    --isc-surface: rgba(255,255,255,.88);
+    --isc-surface-solid: #ffffff;
+}
+
+/* ---------- PAGE FOUNDATION ---------- */
+
+body {
+    -webkit-font-smoothing: antialiased !important;
+    text-rendering: optimizeLegibility !important;
+}
+
+main,
+.page,
+.content,
+.container {
+    box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    letter-spacing: -.025em;
+}
+
+p {
+    line-height: 1.6;
+}
+
+/* ---------- COMMON CARDS ---------- */
+
+.card,
+.dashboard-card,
+.stat-card,
+.summary-card,
+.history-card,
+.profile-card,
+.settings-card,
+.form-card,
+.report-card,
+.membership-card,
+.approval-card,
+.payment-box,
+.pending-box,
+.denied-box,
+.approval-empty,
+.empty-state {
+    border-radius: var(--isc-radius-lg) !important;
+    border: 1px solid var(--isc-border) !important;
+    box-shadow: var(--isc-shadow-soft) !important;
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease !important;
+}
+
+.card:hover,
+.dashboard-card:hover,
+.stat-card:hover,
+.summary-card:hover,
+.history-card:hover,
+.profile-card:hover,
+.settings-card:hover,
+.report-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--isc-shadow-card) !important;
+}
+
+/* ---------- HEADERS ---------- */
+
+.dashboard-header,
+.page-header,
+.history-header,
+.membership-header,
+.approval-header,
+.settings-header,
+.profile-header {
+    margin-bottom: 26px !important;
+}
+
+.dashboard-header h1,
+.page-header h1,
+.history-header h1,
+.membership-header h1,
+.approval-header h1,
+.settings-header h1,
+.profile-header h1 {
+    font-weight: 850 !important;
+    letter-spacing: -.04em !important;
+}
+
+/* ---------- BUTTONS ---------- */
+
+button,
+.button,
+.btn,
+input[type="submit"],
+input[type="button"],
+a.button,
+a.btn {
+    min-height: 42px;
+    border-radius: 12px !important;
+    font-weight: 750 !important;
+    letter-spacing: -.01em;
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        opacity .18s ease,
+        background .18s ease !important;
+}
+
+button:hover,
+.button:hover,
+.btn:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+a.button:hover,
+a.btn:hover {
+    transform: translateY(-1px);
+}
+
+button:active,
+.button:active,
+.btn:active,
+input[type="submit"]:active,
+a.button:active,
+a.btn:active {
+    transform: scale(.98);
+}
+
+/* ---------- FORMS ---------- */
+
+form {
+    box-sizing: border-box;
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: .01em;
+}
+
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 11px 13px;
+    border: 1px solid rgba(15,23,42,.13);
+    border-radius: 12px;
+    background: rgba(255,255,255,.92);
+    color: #111827;
+    font: inherit;
+    outline: none;
+    transition:
+        border-color .18s ease,
+        box-shadow .18s ease,
+        background .18s ease;
+}
+
+textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus {
+    border-color: rgba(59,130,246,.55);
+    box-shadow: 0 0 0 4px rgba(59,130,246,.10);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #9ca3af;
+}
+
+/* ---------- TABLES ---------- */
+
+table {
+    width: 100%;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+thead th {
+    padding: 13px 14px !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase;
+    letter-spacing: .055em;
+    white-space: nowrap;
+}
+
+tbody td {
+    padding: 14px !important;
+    border-top: 1px solid rgba(15,23,42,.07);
+    vertical-align: middle;
+}
+
+tbody tr {
+    transition: background .18s ease;
+}
+
+tbody tr:hover {
+    background: rgba(59,130,246,.035);
+}
+
+/* ---------- BADGES / STATUS ---------- */
+
+.badge,
+.status,
+.membership-status,
+.approval-count {
+    border-radius: 999px !important;
+    font-weight: 800 !important;
+    letter-spacing: .025em;
+}
+
+.status-active,
+.status-success {
+    background: rgba(22,163,74,.10) !important;
+    color: #15803d !important;
+}
+
+.status-trial {
+    background: rgba(59,130,246,.10) !important;
+    color: #2563eb !important;
+}
+
+.status-pending {
+    background: rgba(245,158,11,.12) !important;
+    color: #b45309 !important;
+}
+
+.status-expired,
+.status-denied,
+.status-failed {
+    background: rgba(220,38,38,.10) !important;
+    color: #b91c1c !important;
+}
+
+/* ---------- ACTION GROUPS ---------- */
+
+.actions,
+.action-buttons,
+.card-actions,
+.form-actions,
+.approval-actions {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+
+.actions a,
+.action-buttons a,
+.card-actions a {
+    text-decoration: none;
+}
+
+/* ---------- LINKS ---------- */
+
+a {
+    transition:
+        color .18s ease,
+        opacity .18s ease;
+}
+
+a:hover {
+    opacity: .88;
+}
+
+/* ---------- EMPTY STATES ---------- */
+
+.empty-state,
+.approval-empty {
+    text-align: center;
+}
+
+.empty-state h2,
+.empty-state h3,
+.approval-empty h2 {
+    font-weight: 800 !important;
+}
+
+/* ---------- ALERTS / MESSAGES ---------- */
+
+.messages,
+.message-container {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.messages li,
+.message {
+    border-radius: 14px !important;
+    border: 1px solid rgba(15,23,42,.08);
+    box-shadow: 0 8px 24px rgba(15,23,42,.06);
+}
+
+/* ---------- MEMBERSHIP ---------- */
+
+.membership-page,
+.approval-page {
+    box-sizing: border-box;
+}
+
+.membership-card {
+    overflow: hidden;
+}
+
+.payment-box {
+    background: rgba(255,255,255,.72);
+}
+
+.payment-step {
+    border-radius: 14px;
+    transition: transform .18s ease, background .18s ease;
+}
+
+.payment-step:hover {
+    transform: translateX(2px);
+}
+
+.reference-box {
+    border-radius: 16px !important;
+    box-shadow: inset 0 0 0 1px rgba(15,23,42,.07);
+}
+
+.membership-button {
+    box-shadow: 0 8px 22px rgba(15,23,42,.10);
+}
+
+/* ---------- APPROVALS ---------- */
+
+.approval-card {
+    overflow: hidden;
+}
+
+.approval-card:hover {
+    transform: translateY(-2px);
+}
+
+.approve-button {
+    box-shadow: 0 8px 20px rgba(15,23,42,.12);
+}
+
+/* ---------- PROFILE ---------- */
+
+.profile-card {
+    overflow: hidden;
+}
+
+.profile-picture,
+.profile-avatar,
+.avatar {
+    object-fit: cover;
+}
+
+/* ---------- SETTINGS ---------- */
+
+.settings-card {
+    overflow: hidden;
+}
+
+.settings-card a,
+.settings-card button {
+    text-decoration: none;
+}
+
+/* ---------- COIN COLLECTIONS ---------- */
+
+.coin-card,
+.coin-summary,
+.collection-card {
+    border-radius: 20px !important;
+}
+
+.additional,
+.additional-coins,
+.positive {
+    color: #15803d !important;
+}
+
+.lost,
+.lost-coins,
+.negative {
+    color: #dc2626 !important;
+}
+
+/* ---------- REPORTS ---------- */
+
+.report-card {
+    overflow: hidden;
+}
+
+.chart-container,
+.chart-wrapper {
+    border-radius: 18px !important;
+    overflow: hidden;
+}
+
+/* ---------- DELETE / DANGER ACTIONS ---------- */
+
+.delete-button,
+.danger-button {
+    border-radius: 12px !important;
+}
+
+.delete-button:hover,
+.danger-button:hover {
+    box-shadow: 0 8px 22px rgba(220,38,38,.12);
+}
+
+/* ---------- DARK MODE ---------- */
+
+body.dark-mode {
+    --isc-text: #f8fafc;
+    --isc-muted: #94a3b8;
+    --isc-border: rgba(255,255,255,.09);
+    --isc-surface: rgba(17,24,39,.82);
+    --isc-surface-solid: #111827;
+}
+
+body.dark-mode .card,
+body.dark-mode .dashboard-card,
+body.dark-mode .stat-card,
+body.dark-mode .summary-card,
+body.dark-mode .history-card,
+body.dark-mode .profile-card,
+body.dark-mode .settings-card,
+body.dark-mode .form-card,
+body.dark-mode .report-card,
+body.dark-mode .membership-card,
+body.dark-mode .approval-card,
+body.dark-mode .payment-box,
+body.dark-mode .pending-box,
+body.dark-mode .denied-box,
+body.dark-mode .approval-empty,
+body.dark-mode .empty-state {
+    border-color: rgba(255,255,255,.08) !important;
+    box-shadow: 0 14px 40px rgba(0,0,0,.18) !important;
+}
+
+body.dark-mode input:not([type="checkbox"]):not([type="radio"]),
+body.dark-mode select,
+body.dark-mode textarea {
+    background: rgba(15,23,42,.72);
+    color: #f8fafc;
+    border-color: rgba(255,255,255,.12);
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: #64748b;
+}
+
+body.dark-mode tbody td {
+    border-top-color: rgba(255,255,255,.07);
+}
+
+body.dark-mode tbody tr:hover {
+    background: rgba(255,255,255,.035);
+}
+
+body.dark-mode .detail-box,
+body.dark-mode .approval-detail {
+    background: rgba(255,255,255,.045) !important;
+}
+
+body.dark-mode .payment-box {
+    background: rgba(15,23,42,.55) !important;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 768px) {
+
+    .card,
+    .dashboard-card,
+    .stat-card,
+    .summary-card,
+    .history-card,
+    .profile-card,
+    .settings-card,
+    .form-card,
+    .report-card,
+    .membership-card,
+    .approval-card {
+        border-radius: 18px !important;
+    }
+
+    .actions,
+    .action-buttons,
+    .card-actions,
+    .form-actions,
+    .approval-actions {
+        width: 100%;
+    }
+
+    .actions > *,
+    .action-buttons > *,
+    .card-actions > *,
+    .form-actions > *,
+    .approval-actions > * {
+        flex: 1 1 100%;
+    }
+
+    table {
+        font-size: 13px;
+    }
+
+    thead th {
+        padding: 11px 10px !important;
+    }
+
+    tbody td {
+        padding: 12px 10px !important;
+    }
+}
+
+@media (max-width: 480px) {
+
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea {
+        min-height: 46px;
+    }
+
+    button,
+    .button,
+    .btn,
+    input[type="submit"],
+    a.button,
+    a.btn {
+        min-height: 44px;
+    }
+
+    .membership-card,
+    .approval-card,
+    .profile-card,
+    .settings-card {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+}
+
+</style>
 </body>
 </html>
+
 
 
 
