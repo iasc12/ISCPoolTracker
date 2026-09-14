@@ -80,46 +80,64 @@
    ========================================================= */
 
 .coin-title-area .header-silver-coin {
-    flex: 0 0 54px;
-    width: 54px;
-    height: 54px;
-    margin: 0;
-    transform-origin: center center !important;
-    transform-style: preserve-3d !important;
-    -webkit-transform-style: preserve-3d !important;
-    animation: iscHeaderGlobeSpin 2.2s linear infinite !important;
-    will-change: transform;
+
+    animation:
+        iscHeaderCoinWheel
+        4s
+        linear
+        infinite !important;
+
+    transform-origin: 50% 50% !important;
+
+    transform-style: flat !important;
+
+    backface-visibility: visible !important;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+    will-change: transform !important;
+}
+
+@keyframes iscHeaderCoinWheel {
+
+    from {
+        transform: rotateZ(0deg);
+    }
+
+    to {
+        transform: rotateZ(360deg);
+    }
+
 }
 
 
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+body.dark-mode .coin-table .record-coin-svg svg {
+
+    filter:
+        drop-shadow(0 3px 5px rgba(0,0,0,.38)) !important;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
     .coin-table .record-coin-svg,
     .coin-title-area .header-silver-coin {
-    flex: 0 0 54px;
-    width: 54px;
-    height: 54px;
-    margin: 0;
-    transform-origin: center center !important;
-    transform-style: preserve-3d !important;
-    -webkit-transform-style: preserve-3d !important;
-    animation: iscHeaderGlobeSpin 2.2s linear infinite !important;
-    will-change: transform;
-}
 
-}
-
-
-@keyframes iscHeaderGlobeSpin {
-    from {
-        transform: perspective(900px) rotateY(0deg);
+        animation: none !important;
     }
 
-    to {
-        transform: perspective(900px) rotateY(360deg);
-    }
 }
+
 </style>
 {% endblock %}
 
@@ -903,60 +921,15 @@
         100% {
             transform: perspective(600px) rotateY(360deg);
         }
-    }
-@keyframes iscHeaderGlobeSpin {
-    from {
-        transform: perspective(900px) rotateY(0deg);
-    }
+    }</style>
 
-    to {
-        transform: perspective(900px) rotateY(360deg);
-    }
-}
-</style>
-
-<style>
-.coin-title-area {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.coin-title-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.coin-title-area .header-silver-coin {
-    flex: 0 0 54px;
-    width: 54px;
-    height: 54px;
-    margin: 0;
-    transform-origin: center center !important;
-    transform-style: preserve-3d !important;
-    -webkit-transform-style: preserve-3d !important;
-    animation: iscHeaderGlobeSpin 2.2s linear infinite !important;
-    will-change: transform;
-}
-
-@keyframes iscHeaderGlobeSpin {
-    from {
-        transform: perspective(900px) rotateY(0deg);
-    }
-
-    to {
-        transform: perspective(900px) rotateY(360deg);
-    }
-}
-</style>
 <div class="coin-page">
 
     <div class="coin-header">
 
         <div class="coin-title-area">
-    <div class="coin-title-icon">
-        <div class="header-silver-coin" aria-hidden="true">
+            <div class="coin-title-icon">
+    <div class="header-silver-coin" aria-hidden="true">
         <span class="header-coin-rim"></span>
         <span class="header-coin-mark">20</span>
     </div>
@@ -1392,25 +1365,7 @@
         transform: perspective(500px) rotateY(360deg);
     }
 }
-
-@keyframes iscHeaderGlobeSpin {
-    from {
-        transform: perspective(900px) rotateY(0deg);
-    }
-
-    to {
-        transform: perspective(900px) rotateY(360deg);
-    }
-}
 </style>
-
-
-
-
-
-
-
-
 
 
 
