@@ -1222,7 +1222,7 @@ def generate_report(request):
 @login_required
 def coin_collection_list(request):
 
-    collections = (
+    collections = list(
         CoinCollection.objects
         .filter(user=request.user)
         .order_by(
@@ -1233,38 +1233,64 @@ def coin_collection_list(request):
 
     today = date.today()
 
-    todays_collections = collections.filter(
-        collection_date=today
+    todays_collections = [
+        collection
+        for collection in collections
+        if collection.collection_date == today
+    ]
+
+    todays_coins = sum(
+        collection.coins_collected
+        for collection in todays_collections
     )
 
-    todays_coins = (
-        todays_collections.aggregate(
-            total=Sum("coins_collected")
-        )["total"] or 0
+    todays_additional_coins = sum(
+        collection.coin_change
+        for collection in todays_collections
+        if collection.coin_change is not None
+        and collection.coin_change > 0
     )
 
-    todays_money = (
-        todays_collections.aggregate(
-            total=Sum("actual_m_pesa")
-        )["total"] or Decimal("0.00")
+    todays_lost_coins = sum(
+        abs(collection.coin_change)
+        for collection in todays_collections
+        if collection.coin_change is not None
+        and collection.coin_change < 0
+    )
+
+    todays_money = sum(
+        (
+            collection.actual_m_pesa
+            for collection in todays_collections
+            if collection.actual_m_pesa is not None
+        ),
+        Decimal("0.00")
     )
 
     todays_expected = (
-        Decimal(todays_coins) * Decimal("20.00")
+        Decimal(todays_coins) *
+        Decimal("20.00")
     )
 
     todays_difference = (
-        todays_money - todays_expected
+        todays_money -
+        todays_expected
     )
 
     if todays_expected > 0:
         todays_rate = (
-            todays_money / todays_expected
+            todays_money /
+            todays_expected
         ) * Decimal("100")
     else:
         todays_rate = None
 
-    latest = collections.first()
+    tomorrow_expected = (
+        Decimal(todays_coins) *
+        Decimal("20.00")
+    )
+
+    latest = collections[0] if collections else None
 
     return render(
         request,
@@ -1273,14 +1299,33 @@ def coin_collection_list(request):
             "collections": collections,
             "latest": latest,
             "todays_coins": todays_coins,
+            "todays_additional_coins": todays_additional_coins,
+            "todays_lost_coins": todays_lost_coins,
             "todays_money": todays_money,
             "todays_expected": todays_expected,
             "todays_difference": todays_difference,
             "todays_rate": todays_rate,
+            "tomorrow_expected": tomorrow_expected,
             "today": today,
         }
     )
+
+
+@login_required
 def add_coin_collection(request):
+
+    previous_collection = (
+        CoinCollection.objects
+        .filter(user=request.user)
+        .order_by("-collection_date", "-created_at")
+        .first()
+    )
+
+    previous_coins = (
+        previous_collection.coins_collected
+        if previous_collection
+        else 0
+    )
 
     if request.method == "POST":
 
@@ -1323,8 +1368,13 @@ def add_coin_collection(request):
         "tracker/add_coin_collection.html",
         {
             "form": form,
+            "previous_collection": previous_collection,
+            "previous_coins": previous_coins,
         }
     )
+
+
+@login_required
 def edit_coin_collection(
     request,
     collection_id
@@ -1352,7 +1402,8 @@ def edit_coin_collection(
             messages.success(
                 request,
                 (
-                    "Coin collection updated successfully."
+                    "Coin collection updated "
+                    "successfully."
                 )
             )
 
@@ -1375,6 +1426,9 @@ def edit_coin_collection(
             "collection": collection,
         }
     )
+
+
+@login_required
 def delete_coin_collection(
     request,
     collection_id
@@ -1407,16 +1461,6 @@ def delete_coin_collection(
             "object_type": "coin collection",
         }
     )
-
-
-
-
-
-
-
-
-
-
 
 @login_required
 def membership(request):

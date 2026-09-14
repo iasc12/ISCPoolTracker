@@ -1,4 +1,4 @@
-{% extends "tracker/base.html" %}
+﻿{% extends "tracker/base.html" %}
 
 {% block title %}Record Coin Collection - ISC Pool Tracker{% endblock %}
 
@@ -6,79 +6,105 @@
 
 <style>
 .coin-form-page {
-    max-width: 900px;
+    max-width: 920px;
     margin: 0 auto;
-    padding: 25px 0 55px;
+    padding: 24px 0 110px;
 }
 
 .coin-form-header {
-    text-align: center;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
 }
 
-.coin-form-icon {
-    width: 72px;
-    height: 72px;
-    margin: 0 auto 16px;
-    border-radius: 20px;
-    display: flex;
+.coin-form-eyebrow {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    box-shadow: 0 12px 28px rgba(245, 158, 11, 0.22);
+    gap: 8px;
+    margin-bottom: 10px;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
 }
 
-.coin-form-icon svg {
-    width: 40px;
-    height: 40px;
+.coin-form-eyebrow svg {
+    width: 16px;
+    height: 16px;
 }
 
 .coin-form-title {
     margin: 0;
     color: #111827;
-    font-size: 30px;
-    line-height: 1.2;
+    font-size: clamp(27px, 4vw, 36px);
+    line-height: 1.15;
     font-weight: 850;
+    letter-spacing: -.025em;
 }
 
 .coin-form-description {
-    max-width: 650px;
-    margin: 10px auto 0;
+    max-width: 680px;
+    margin: 9px 0 0;
     color: #6b7280;
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.65;
 }
 
 .coin-form-card {
+    overflow: hidden;
     background: #ffffff;
     border: 1px solid #e5e7eb;
-    border-radius: 22px;
-    padding: 32px;
-    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.07);
+    border-radius: 24px;
+    box-shadow: 0 14px 40px rgba(15, 23, 42, .07);
 }
 
-.coin-section {
-    margin-bottom: 24px;
+.coin-form-body {
+    padding: 30px;
+}
+
+.form-section {
+    margin-bottom: 26px;
+}
+
+.form-section-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 0 16px;
+    color: #111827;
+    font-size: 15px;
+    font-weight: 850;
+}
+
+.form-section-title svg {
+    width: 18px;
+    height: 18px;
+    color: #f59e0b;
+}
+
+.field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.field {
+    min-width: 0;
+}
+
+.field-full {
+    grid-column: 1 / -1;
 }
 
 .form-label {
     display: block;
-    margin-bottom: 8px;
-    color: #111827;
-    font-size: 14px;
+    margin-bottom: 7px;
+    color: #374151;
+    font-size: 13px;
     font-weight: 800;
 }
 
-.form-help {
-    margin-top: 7px;
-    color: #9ca3af;
-    font-size: 12px;
-    line-height: 1.5;
-}
-
-.coin-form-card input,
-.coin-form-card textarea,
-.coin-form-card select {
+.form-input,
+.form-textarea {
     width: 100%;
     box-sizing: border-box;
     min-height: 50px;
@@ -90,123 +116,143 @@
     color: #111827;
     font-family: inherit;
     font-size: 15px;
-    transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+    transition:
+        border-color .16s ease,
+        box-shadow .16s ease,
+        background-color .16s ease;
 }
 
-.coin-form-card textarea {
-    min-height: 110px;
+.form-textarea {
+    min-height: 105px;
     resize: vertical;
 }
 
-.coin-form-card input:focus,
-.coin-form-card textarea:focus,
-.coin-form-card select:focus {
+.form-input:focus,
+.form-textarea:focus {
     border-color: #f59e0b;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, .12);
+}
+
+.automatic-value {
+    display: flex;
+    align-items: center;
+    font-weight: 900;
+    background: #f9fafb;
+    color: #16a34a;
+}
+
+.automatic-value.lost-value {
+    color: #dc2626;
+}
+
+body.dark-mode .automatic-value {
+    background: #1f2937;
+}
+
+.form-help {
+    margin-top: 6px;
+    color: #9ca3af;
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 .field-error {
-    margin-top: 7px;
+    margin-top: 6px;
     color: #dc2626;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
 }
 
-.coin-calculation {
-    margin: 28px 0;
-    padding: 22px;
+.calculation-card {
+    margin: 4px 0 28px;
+    padding: 20px;
     border: 1px solid #fde68a;
     border-radius: 18px;
     background: linear-gradient(135deg, #fffbeb, #fef3c7);
 }
 
-.calculation-title {
+.calculation-heading {
     display: flex;
     align-items: center;
     gap: 9px;
-    margin-bottom: 16px;
+    margin-bottom: 15px;
     color: #92400e;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 850;
 }
 
-.calculation-title-icon {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 9px;
-    background: rgba(245, 158, 11, .14);
+.calculation-heading svg {
+    width: 18px;
+    height: 18px;
 }
 
-.calculation-title-icon svg {
-    width: 17px;
-    height: 17px;
+.calculation-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
 }
 
-.calculation-main {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
+.calculation-item {
+    padding: 15px;
+    border: 1px solid rgba(245, 158, 11, .18);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .58);
 }
 
-.calculation-text {
-    color: #78350f;
-    font-size: 14px;
+.calculation-label {
+    margin-bottom: 5px;
+    color: #92400e;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
 }
 
-.calculation-result {
+.calculation-value {
     color: #b45309;
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 900;
 }
 
-.form-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 30px;
-    padding-top: 24px;
+.calculation-note {
+    margin-top: 12px;
+    color: #92400e;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 11px;
+    padding: 20px 30px;
     border-top: 1px solid #f3f4f6;
+    background: #fafafa;
 }
 
 .btn {
-    min-height: 50px;
-    padding: 0 20px;
-    border: none;
+    min-height: 48px;
+    padding: 0 18px;
+    border: 0;
     border-radius: 13px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-    text-decoration: none;
+    gap: 8px;
     font-family: inherit;
     font-size: 14px;
     font-weight: 800;
+    text-decoration: none;
     cursor: pointer;
-    transition: box-shadow .15s ease, opacity .15s ease, background-color .15s ease;
+    transition:
+        transform .16s ease,
+        box-shadow .16s ease,
+        background-color .16s ease;
 }
 
-.btn-primary {
-    background: #111827;
-    color: #ffffff;
-    box-shadow: 0 6px 16px rgba(17, 24, 39, .16);
-}
-
-.btn-primary:hover {
-    background: #000000;
-}
-
-.btn-secondary {
-    background: #f3f4f6;
-    color: #374151;
-}
-
-.btn-secondary:hover {
-    background: #e5e7eb;
-    color: #111827;
+.btn:hover {
+    transform: translateY(-1px);
 }
 
 .btn svg {
@@ -214,36 +260,56 @@
     height: 17px;
 }
 
-body.dark-mode .coin-form-title {
-    color: #f9fafb;
+.btn-primary {
+    background: #111827;
+    color: #ffffff;
+    box-shadow: 0 7px 18px rgba(17, 24, 39, .16);
 }
 
+.btn-primary:hover {
+    background: #000000;
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+body.dark-mode .coin-form-eyebrow,
 body.dark-mode .coin-form-description {
     color: #9ca3af;
+}
+
+body.dark-mode .coin-form-title,
+body.dark-mode .form-section-title,
+body.dark-mode .form-label {
+    color: #f9fafb;
 }
 
 body.dark-mode .coin-form-card {
     background: #111827;
     border-color: #374151;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .22);
 }
 
-body.dark-mode .form-label {
-    color: #f9fafb;
-}
-
-body.dark-mode .coin-form-card input,
-body.dark-mode .coin-form-card textarea,
-body.dark-mode .coin-form-card select {
+body.dark-mode .form-input,
+body.dark-mode .form-textarea {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
 }
 
-body.dark-mode .form-help {
-    color: #9ca3af;
+body.dark-mode .form-input:focus,
+body.dark-mode .form-textarea:focus {
+    border-color: #f59e0b;
 }
 
-body.dark-mode .form-actions {
+body.dark-mode .form-footer {
+    background: #0f172a;
     border-top-color: #374151;
 }
 
@@ -256,248 +322,297 @@ body.dark-mode .btn-secondary:hover {
     background: #4b5563;
 }
 
-@media (max-width: 600px) {
+body.dark-mode .calculation-card {
+    background: linear-gradient(135deg, #29220d, #3b2c0c);
+    border-color: #785b16;
+}
+
+body.dark-mode .calculation-item {
+    background: rgba(17, 24, 39, .38);
+    border-color: rgba(245, 158, 11, .2);
+}
+
+@media (max-width: 700px) {
     .coin-form-page {
-        padding: 12px 0 35px;
+        padding: 12px 0 100px;
     }
 
-    .coin-form-icon {
-        width: 64px;
-        height: 64px;
-        border-radius: 18px;
+    .coin-form-body {
+        padding: 22px 18px;
     }
 
-    .coin-form-icon svg {
-        width: 35px;
-        height: 35px;
+    .field-grid,
+    .calculation-grid {
+        grid-template-columns: 1fr;
     }
 
-    .coin-form-title {
-        font-size: 25px;
+    .field-full {
+        grid-column: auto;
+    }
+
+    .form-footer {
+        padding: 16px 18px;
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .btn {
+        width: 100%;
     }
 
     .coin-form-card {
-        padding: 20px;
-        border-radius: 18px;
-    }
-
-    .calculation-main {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .form-actions {
-        grid-template-columns: 1fr;
+        border-radius: 20px;
     }
 }
-
-/* =========================================================
-   COLLECTION DATE ? PERFECT FIELD ALIGNMENT
-========================================================= */
-
-.coin-section input[type="date"] {
-    display: block;
-    width: 100%;
-    height: 50px;
-    min-height: 50px;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 13px 15px;
-    border: 1px solid #d1d5db;
-    border-radius: 13px;
-    background: #ffffff;
-    color: #111827;
-    font-family: inherit;
-    font-size: 15px;
-    line-height: 1.2;
-    vertical-align: middle;
-}
-
-.coin-section input[type="date"]:focus {
-    border-color: #f59e0b;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
-}
-
-@media (max-width: 600px) {
-    .coin-section input[type="date"] {
-        width: 100%;
-        height: 50px;
-        min-height: 50px;
-        font-size: 16px;
-    }
-}
-
-/* Dark mode */
-body.dark-mode .coin-section input[type="date"] {
-    background: #111827;
-    border-color: #374151;
-    color: #f9fafb;
-}
-
-body.dark-mode .coin-section input[type="date"]:focus {
-    border-color: #f59e0b;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.16);
-}
-
 </style>
 
 <div class="coin-form-page">
 
-    <div class="coin-form-header">
+    <header class="coin-form-header">
 
-        <div class="coin-form-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="none">
-                <circle cx="24" cy="24" r="17" stroke="#ffffff" stroke-width="3"/>
-                <path d="M19 17.5h7.5c3 0 5 1.7 5 4.1 0 2.2-1.8 3.7-4.5 4.1l5.5 5.3"
-                      stroke="#ffffff"
-                      stroke-width="3"
+        <div class="coin-form-eyebrow">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="8.5"
+                        stroke="currentColor"
+                        stroke-width="1.8"/>
+                <path d="M9.2 9.2h3.5c1.3 0 2.2.7 2.2 1.7s-.9 1.6-2.2 1.8l2.6 2.4"
+                      stroke="currentColor"
+                      stroke-width="1.8"
                       stroke-linecap="round"
                       stroke-linejoin="round"/>
-                <path d="M17 22h12M17 26h10"
-                      stroke="#ffffff"
-                      stroke-width="2.5"
+                <path d="M8.8 11.2h5.1M8.8 13h4.2"
+                      stroke="currentColor"
+                      stroke-width="1.5"
                       stroke-linecap="round"/>
             </svg>
+            Coin Collections
         </div>
 
         <h1 class="coin-form-title">Record Coin Collection</h1>
 
         <p class="coin-form-description">
-            Record the coins physically removed from the pool tables
-            and the actual earnings received for the collection.
+            Record the coins removed from the pool tables and the actual earnings received.
+            Additional and lost coins are calculated automatically.
         </p>
 
-    </div>
+    </header>
 
     <div class="coin-form-card">
 
         <form method="post">
-
             {% csrf_token %}
 
-            <div class="coin-section">
-                <label class="form-label" for="{{ form.collection_date.id_for_label }}">
-                    Collection Date
-                </label>
+            <div class="coin-form-body">
 
-                {{ form.collection_date }}
+                <section class="form-section">
 
-                {% if form.collection_date.errors %}
-                    <div class="field-error">{{ form.collection_date.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="coin-section">
-                <label class="form-label" for="{{ form.coins_collected.id_for_label }}">
-                    Coins Collected
-                </label>
-
-                {{ form.coins_collected }}
-
-                <div class="form-help">
-                    Enter the number of coins physically removed from the pool tables.
-                </div>
-
-                {% if form.coins_collected.errors %}
-                    <div class="field-error">{{ form.coins_collected.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="coin-calculation">
-
-                <div class="calculation-title">
-
-                    <span class="calculation-title-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="8"
-                                    stroke="#b45309"
-                                    stroke-width="2"/>
-                            <path d="M9 9.5h3.5c1.3 0 2.2.8 2.2 1.7 0 .9-.8 1.5-2 1.7l2.4 2.2"
-                                  stroke="#b45309"
-                                  stroke-width="1.7"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"/>
-                            <path d="M8.5 11.2h5.2M8.5 13h4.2"
-                                  stroke="#b45309"
-                                  stroke-width="1.5"
+                    <h2 class="form-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <rect x="4" y="5" width="16" height="15" rx="2"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"/>
+                            <path d="M8 3v4M16 3v4M4 9h16"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"
                                   stroke-linecap="round"/>
                         </svg>
-                    </span>
+                        Collection details
+                    </h2>
 
-                    Expected Collection
+                    <div class="field-grid">
 
-                </div>
+                        <div class="field field-full">
+                            <label class="form-label" for="{{ form.collection_date.id_for_label }}">
+                                Collection Date
+                            </label>
 
-                <div class="calculation-main">
-                    <div class="calculation-text">
-                        Coins × KSh 20
+                            {{ form.collection_date }}
+
+                            {% if form.collection_date.errors %}
+                                <div class="field-error">
+                                    {{ form.collection_date.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="field">
+                            <label class="form-label" for="{{ form.coins_collected.id_for_label }}">
+                                Coins Collected
+                            </label>
+
+                            {{ form.coins_collected }}
+
+                            <div class="form-help">
+                                Coins physically removed from the pool tables.
+                            </div>
+
+                            {% if form.coins_collected.errors %}
+                                <div class="field-error">
+                                    {{ form.coins_collected.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="field">
+                            <label class="form-label">
+                                Additional Coins
+                            </label>
+
+                            <div class="form-input automatic-value" id="additionalCoins">
+                                +0
+                            </div>
+
+                            <div class="form-help">
+                                Automatically calculated from the previous collection.
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="form-label">
+                                Lost Coins
+                            </label>
+
+                            <div class="form-input automatic-value lost-value" id="lostCoins">
+                                0
+                            </div>
+
+                            <div class="form-help">
+                                Automatically calculated from the previous collection.
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="calculation-result" id="expectedAmount">
-                        KSh 0.00
+                </section>
+
+                <div class="calculation-card">
+
+                    <div class="calculation-heading">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 3v18M16 7.5c-.8-1-2-1.5-3.7-1.5-2.1 0-3.5 1.1-3.5 2.7 0 4.2 7.2 1.8 7.2 5.6 0 1.7-1.5 2.7-3.7 2.7-1.7 0-3.1-.5-4-1.7"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+                        Earnings forecast
                     </div>
+
+                    <div class="calculation-grid">
+
+                        <div class="calculation-item">
+                            <div class="calculation-label">
+                                Current Collection
+                            </div>
+
+                            <div class="calculation-value" id="expectedAmount">
+                                KSh 0.00
+                            </div>
+                        </div>
+
+                        <div class="calculation-item">
+                            <div class="calculation-label">
+                                Tomorrow's Expected Earnings
+                            </div>
+
+                            <div class="calculation-value" id="tomorrowAmount">
+                                KSh 0.00
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="calculation-note">
+                        Tomorrow's forecast is based on Coins Collected × KSh 20.
+                        Additional and lost coins are tracked separately.
+                    </div>
+
                 </div>
+
+                <section class="form-section">
+
+                    <h2 class="form-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M5 7.5A2.5 2.5 0 0 1 7.5 5h9A2.5 2.5 0 0 1 19 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 5 16.5v-9Z"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"/>
+                            <path d="M8 9h8M8 12h8M8 15h5"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"
+                                  stroke-linecap="round"/>
+                        </svg>
+                        Earnings and notes
+                    </h2>
+
+                    <div class="field-grid">
+
+                        <div class="field field-full">
+                            <label class="form-label" for="{{ form.actual_m_pesa.id_for_label }}">
+                                Today's Earnings
+                            </label>
+
+                            {{ form.actual_m_pesa }}
+
+                            <div class="form-help">
+                                Enter the actual M-Pesa earnings received for this collection.
+                            </div>
+
+                            {% if form.actual_m_pesa.errors %}
+                                <div class="field-error">
+                                    {{ form.actual_m_pesa.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="field field-full">
+                            <label class="form-label" for="{{ form.notes.id_for_label }}">
+                                Notes
+                            </label>
+
+                            {{ form.notes }}
+
+                            <div class="form-help">
+                                Add useful information about this collection.
+                            </div>
+
+                            {% if form.notes.errors %}
+                                <div class="field-error">
+                                    {{ form.notes.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                </section>
 
             </div>
 
-            <div class="coin-section">
-                <label class="form-label" for="{{ form.actual_m_pesa.id_for_label }}">
-                    Today's Earnings
-                </label>
-
-                {{ form.actual_m_pesa }}
-
-                <div class="form-help">
-                    Enter the actual M-Pesa earnings received from today's collection.
-                </div>
-
-                {% if form.actual_m_pesa.errors %}
-                    <div class="field-error">{{ form.actual_m_pesa.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="coin-section">
-                <label class="form-label" for="{{ form.notes.id_for_label }}">
-                    Notes
-                </label>
-
-                {{ form.notes }}
-
-                <div class="form-help">
-                    Add any useful information about this collection.
-                </div>
-
-                {% if form.notes.errors %}
-                    <div class="field-error">{{ form.notes.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="form-actions">
-
-                <button type="submit" class="btn btn-primary">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M5 12.5l4.2 4.2L19 7"
-                              stroke="currentColor"
-                              stroke-width="2.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"/>
-                    </svg>
-                    Record Collection
-                </button>
+            <footer class="form-footer">
 
                 <a href="{% url 'coin_collections' %}" class="btn btn-secondary">
                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M15 18l-6-6 6-6"
+                        <path d="M15 18 9 12l6-6"
                               stroke="currentColor"
-                              stroke-width="2.2"
+                              stroke-width="2"
                               stroke-linecap="round"
                               stroke-linejoin="round"/>
                     </svg>
                     Cancel
                 </a>
 
-            </div>
+                <button type="submit" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M5 12.5 9.2 17 19 7"
+                              stroke="currentColor"
+                              stroke-width="2.3"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"/>
+                    </svg>
+                    Record Collection
+                </button>
+
+            </footer>
 
         </form>
 
@@ -509,26 +624,52 @@ body.dark-mode .coin-section input[type="date"]:focus {
 document.addEventListener("DOMContentLoaded", function () {
     const coinsInput = document.getElementById("id_coins_collected");
     const expectedAmount = document.getElementById("expectedAmount");
-    const COIN_VALUE = 20;
+    const tomorrowAmount = document.getElementById("tomorrowAmount");
 
-    function updateExpectedAmount() {
-        if (!coinsInput || !expectedAmount) {
+    const COIN_VALUE = 20;
+    const previousCoins = Number("{{ previous_coins|default:'0' }}") || 0;
+    const additionalCoins = document.getElementById("additionalCoins");
+    const lostCoins = document.getElementById("lostCoins");
+
+    function formatMoney(amount) {
+        return "KSh " + amount.toLocaleString("en-KE", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    function updateForecast() {
+        if (!coinsInput) {
             return;
         }
 
         const coins = parseInt(coinsInput.value, 10) || 0;
         const expected = coins * COIN_VALUE;
 
-        expectedAmount.textContent =
-            "KSh " + expected.toLocaleString("en-KE", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+        const difference = coins - previousCoins;
+        const additional = difference > 0 ? difference : 0;
+        const lost = difference < 0 ? Math.abs(difference) : 0;
+
+        if (additionalCoins) {
+            additionalCoins.textContent = "+" + additional;
+        }
+
+        if (lostCoins) {
+            lostCoins.textContent = lost;
+        }
+
+        if (expectedAmount) {
+            expectedAmount.textContent = formatMoney(expected);
+        }
+
+        if (tomorrowAmount) {
+            tomorrowAmount.textContent = formatMoney(expected);
+        }
     }
 
     if (coinsInput) {
-        coinsInput.addEventListener("input", updateExpectedAmount);
-        updateExpectedAmount();
+        coinsInput.addEventListener("input", updateForecast);
+        updateForecast();
     }
 });
 </script>

@@ -124,6 +124,16 @@ class CoinCollection(models.Model):
         )
     )
 
+    additional_coins = models.PositiveIntegerField(
+        default=0,
+        help_text="Additional coins found or collected outside the main collection."
+    )
+
+    lost_coins = models.PositiveIntegerField(
+        default=0,
+        help_text="Coins lost, missing, or otherwise unaccounted for."
+    )
+
     coin_value = models.DecimalField(
         max_digits=8,
         decimal_places=2,
