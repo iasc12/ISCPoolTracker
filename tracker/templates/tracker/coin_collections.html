@@ -513,10 +513,10 @@
 
     transform-origin: center center;
     transform-style: preserve-3d;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
 
-    animation: iscRecordCoinWheel 2.8s linear infinite !important;
+    animation: iscSmoothCoinSpin 3.2s linear infinite !important;
 }
 
 .header-silver-coin::before {
@@ -595,8 +595,8 @@
 
     transform-origin: center center;
     transform-style: preserve-3d;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
 }
 
 .summary-silver-coin::before {
@@ -720,6 +720,12 @@
 /* =========================================================
    COLLECTION RECORD COIN
    ========================================================= */
+
+
+@keyframes iscSmoothCoinSpin {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+}
 
 </style>
 
@@ -1589,40 +1595,25 @@
             </div>
 
                 {% if collections.paginator.num_pages > 1 %}
-                <div class="pagination">
+<div class="coin-pagination">
+    {% if collections.has_previous %}
+        <a href="?page={{ collections.previous_page_number }}" class="coin-pager-link">
+            <span class="coin-pager-icon">‹</span> Previous
+        </a>
+    {% endif %}
 
-                    {% if collections.has_previous %}
-                        <a
-                            href="?page={{ collections.previous_page_number }}"
-                            class="page-button"
-                            aria-label="Previous page"
-                        >
-                            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true">
-                                <path d="M12 4.5L6.5 10L12 15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                            Previous
-                        </a>
-                    {% endif %}
+    <span class="coin-pager-status">
+        Page {{ collections.number }} of {{ collections.paginator.num_pages }}
+    </span>
 
-                    <span class="page-number">
-                        Page {{ collections.number }} of {{ collections.paginator.num_pages }}
-                    </span>
-
-                    {% if collections.has_next %}
-                        <a
-                            href="?page={{ collections.next_page_number }}"
-                            class="page-button next"
-                            aria-label="Next page"
-                        >
-                            Next
-                            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true">
-                                <path d="M8 4.5L13.5 10L8 15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </a>
-                    {% endif %}
-
-                </div>
-            {% else %}
+    {% if collections.has_next %}
+        <a href="?page={{ collections.next_page_number }}" class="coin-pager-link">
+            Next <span class="coin-pager-icon">›</span>
+        </a>
+    {% endif %}
+</div>
+{% endif %}
+{% else %}
 
             <div class="empty-state">
 
@@ -1706,4 +1697,254 @@
    COLLECTION RECORD COIN
    ========================================================= */
 
-</style>
+.coin-pagination {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
+    padding: 18px 20px;
+    margin: 0 auto;
+    border-top: 1px solid rgba(15,23,42,.06);
+}
+
+.coin-page-number {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    line-height: 34px;
+    font-weight: 700;
+    color: #64748b;
+    white-space: nowrap;
+}
+
+.coin-page-next {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: auto;
+    min-width: 66px;
+    height: 34px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0 10px;
+    border-radius: 9px;
+    background: #111827;
+    border: 1px solid #111827;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 750;
+}
+
+.coin-page-next svg {
+    width: 14px !important;
+    height: 14px !important;
+    flex: 0 0 14px;
+}
+
+.coin-page-next:hover {
+    background: #1f2937;
+    color: #fff;
+}.coin-pagination {
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    padding:18px 20px;
+    margin:0 auto;
+    box-sizing:border-box;
+    border-top:1px solid rgba(15,23,42,.06);
+}
+
+.coin-page-number {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    height:34px;
+    padding:0 4px;
+    margin:0;
+    font-size:13px;
+    font-weight:700;
+    color:#64748b;
+    white-space:nowrap;
+}
+
+.coin-page-button {
+    height:34px;
+    min-width:82px;
+    padding:0 11px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    box-sizing:border-box;
+    border-radius:9px;
+    background:#111827;
+    border:1px solid #111827;
+    color:#fff;
+    text-decoration:none;
+    font-size:12px;
+    font-weight:750;
+    line-height:1;
+    transition:.2s ease;
+}
+
+.coin-page-button svg {
+    width:14px !important;
+    height:14px !important;
+    flex:0 0 14px;
+}
+
+.coin-page-button:hover {
+    background:#1f2937;
+    border-color:#1f2937;
+    color:#fff;
+    transform:translateY(-1px);
+}/* FINAL COIN PAGINATION */
+.coin-pagination {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    padding: 16px 20px !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+}
+
+.coin-page-number {
+    display: inline-block !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 13px !important;
+    line-height: 34px !important;
+    font-weight: 700 !important;
+    color: #64748b !important;
+    white-space: nowrap !important;
+}
+
+.coin-page-button {
+    width: auto !important;
+    min-width: 72px !important;
+    max-width: 90px !important;
+    height: 34px !important;
+    padding: 0 9px !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    border-radius: 8px !important;
+    background: #111827 !important;
+    border: 1px solid #111827 !important;
+    color: #fff !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+}
+
+.coin-page-button svg,
+.coin-page-button svg *,
+.coin-page-button path {
+    width: 12px !important;
+    height: 12px !important;
+    max-width: 12px !important;
+    max-height: 12px !important;
+    min-width: 12px !important;
+    min-height: 12px !important;
+}
+
+.coin-page-button svg {
+    display: block !important;
+    flex: 0 0 12px !important;
+}
+
+.coin-page-button:hover {
+    background: #1f2937 !important;
+    border-color: #1f2937 !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+}.coin-pagination {
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    padding:16px 20px;
+    box-sizing:border-box;
+    border-top:1px solid rgba(15,23,42,.06);
+}
+
+.coin-pager-link {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    height:32px !important;
+    padding:0 10px !important;
+    min-width:auto !important;
+    border:1px solid #e2e8f0 !important;
+    border-radius:8px !important;
+    background:#fff !important;
+    color:#475569 !important;
+    text-decoration:none !important;
+    font-size:12px !important;
+    font-weight:700 !important;
+    line-height:1 !important;
+    box-shadow:0 1px 3px rgba(15,23,42,.04) !important;
+    transition:all .18s ease !important;
+}
+
+.coin-pager-link:hover {
+    background:#f8fafc !important;
+    border-color:#cbd5e1 !important;
+    color:#111827 !important;
+    transform:translateY(-1px) !important;
+}
+
+.coin-pager-icon {
+    display:inline-block !important;
+    width:auto !important;
+    height:auto !important;
+    font-size:15px !important;
+    line-height:10px !important;
+    font-weight:500 !important;
+}
+
+.coin-pager-status {
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    height:32px !important;
+    padding:0 5px !important;
+    color:#64748b !important;
+    font-size:12px !important;
+    font-weight:700 !important;
+    white-space:nowrap !important;
+}</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
