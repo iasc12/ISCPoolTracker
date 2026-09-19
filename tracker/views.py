@@ -1235,6 +1235,19 @@ def coin_collection_list(request):
         )
     )
 
+    paginator = Paginator(
+        collections,
+        7
+    )
+
+    page_number = request.GET.get(
+        "page"
+    )
+
+    collections_page = paginator.get_page(
+        page_number
+    )
+
     today = date.today()
 
     todays_collections = [
@@ -1918,6 +1931,7 @@ def make_system_owner(request):
             ),
         }
     )
+
 
 
 
