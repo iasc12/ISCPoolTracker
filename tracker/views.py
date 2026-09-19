@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+﻿from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date, timedelta
 from decimal import Decimal
@@ -238,13 +238,13 @@ def dashboard(request):
     # ---------------------------------------------------------
 
     today_earnings = money(
-        DailyEarning.objects
+        CoinCollection.objects
         .filter(
             user=request.user,
-            date=today,
+            collection_date=today,
         )
         .aggregate(
-            total=Sum("amount_collected")
+            total=Sum("actual_m_pesa")
         )["total"]
     )
 
@@ -408,6 +408,7 @@ def dashboard(request):
         total_expenses
     )
 
+    cash_after_expenses = total_profit
     if earning_days > 0:
 
         average_daily_earnings = (
@@ -601,6 +602,7 @@ def dashboard(request):
         "total_earnings": total_earnings,
         "total_expenses": total_expenses,
         "total_profit": total_profit,
+        "cash_after_expenses": cash_after_expenses,
 
         # Expected
         "expected_weekly_earnings": (
@@ -1064,6 +1066,7 @@ def reports(request):
         total_earnings -
         total_expenses
     )
+    cash_after_expenses = total_profit
 
     earning_dates = (
         earnings
@@ -1182,6 +1185,7 @@ def reports(request):
         "total_earnings": total_earnings,
         "total_expenses": total_expenses,
         "total_profit": total_profit,
+        "cash_after_expenses": cash_after_expenses,
 
         "earning_days": earning_dates,
 
@@ -1239,24 +1243,32 @@ def coin_collection_list(request):
         if collection.collection_date == today
     ]
 
+    # -----------------------------------------------------
+    # TODAY'S COIN TOTAL
+    # -----------------------------------------------------
+
     todays_coins = sum(
         collection.coins_collected
         for collection in todays_collections
     )
 
+    # -----------------------------------------------------
+    # TODAY'S ADDITIONAL / LOST COINS
+    # -----------------------------------------------------
+
     todays_additional_coins = sum(
-        collection.coin_change
+        collection.additional_coins
         for collection in todays_collections
-        if collection.coin_change is not None
-        and collection.coin_change > 0
     )
 
     todays_lost_coins = sum(
-        abs(collection.coin_change)
+        collection.lost_coins
         for collection in todays_collections
-        if collection.coin_change is not None
-        and collection.coin_change < 0
     )
+
+    # -----------------------------------------------------
+    # TODAY'S ACTUAL M-PESA
+    # -----------------------------------------------------
 
     todays_money = sum(
         (
@@ -1267,23 +1279,49 @@ def coin_collection_list(request):
         Decimal("0.00")
     )
 
-    todays_expected = (
-        Decimal(todays_coins) *
-        Decimal("20.00")
+    # -----------------------------------------------------
+    # TODAY'S EXPECTED M-PESA
+    #
+    # Every coin is worth KSh 20.
+    # -----------------------------------------------------
+
+    todays_expected = sum(
+        (
+            collection.expected_amount
+            for collection in todays_collections
+        ),
+        Decimal("0.00")
     )
+
+    # -----------------------------------------------------
+    # DIFFERENCE
+    # -----------------------------------------------------
 
     todays_difference = (
         todays_money -
         todays_expected
     )
 
+    # -----------------------------------------------------
+    # COLLECTION RATE
+    # -----------------------------------------------------
+
     if todays_expected > 0:
+
         todays_rate = (
             todays_money /
             todays_expected
         ) * Decimal("100")
+
     else:
+
         todays_rate = None
+
+    # -----------------------------------------------------
+    # NEXT EXPECTED COLLECTION
+    #
+    # Today's coins × KSh 20.
+    # -----------------------------------------------------
 
     tomorrow_expected = (
         Decimal(todays_coins) *
@@ -1296,7 +1334,7 @@ def coin_collection_list(request):
         request,
         "tracker/coin_collections.html",
         {
-            "collections": collections,
+            "collections": collections_page,
             "latest": latest,
             "todays_coins": todays_coins,
             "todays_additional_coins": todays_additional_coins,
@@ -1314,19 +1352,6 @@ def coin_collection_list(request):
 @login_required
 def add_coin_collection(request):
 
-    previous_collection = (
-        CoinCollection.objects
-        .filter(user=request.user)
-        .order_by("-collection_date", "-created_at")
-        .first()
-    )
-
-    previous_coins = (
-        previous_collection.coins_collected
-        if previous_collection
-        else 0
-    )
-
     if request.method == "POST":
 
         form = CoinCollectionForm(
@@ -1336,7 +1361,12 @@ def add_coin_collection(request):
         if form.is_valid():
 
             collection = form.save(commit=False)
+
             collection.user = request.user
+
+            # Every ISC coin is worth KSh 20.
+            collection.coin_value = Decimal("20.00")
+
             collection.save()
 
             messages.success(
@@ -1344,9 +1374,15 @@ def add_coin_collection(request):
                 (
                     f"{collection.coins_collected} "
                     f"coins recorded successfully. "
-                    f"Next expected amount: "
+                    f"Expected M-Pesa: "
                     f"KSh "
-                    f"{collection.next_expected_amount:.2f}"
+                    f"{collection.expected_amount:.2f}. "
+                    f"Actual M-Pesa: "
+                    f"KSh "
+                    f"{collection.actual_m_pesa or Decimal('0.00'):.2f}. "
+                    f"Difference: "
+                    f"KSh "
+                    f"{collection.difference or Decimal('0.00'):.2f}."
                 )
             )
 
@@ -1359,7 +1395,6 @@ def add_coin_collection(request):
         form = CoinCollectionForm(
             initial={
                 "collection_date": date.today(),
-                "coin_value": Decimal("20.00"),
             }
         )
 
@@ -1368,8 +1403,6 @@ def add_coin_collection(request):
         "tracker/add_coin_collection.html",
         {
             "form": form,
-            "previous_collection": previous_collection,
-            "previous_coins": previous_coins,
         }
     )
 
@@ -1396,15 +1429,17 @@ def edit_coin_collection(
         if form.is_valid():
 
             collection = form.save(commit=False)
+
             collection.user = request.user
+
+            # Every ISC coin is worth KSh 20.
+            collection.coin_value = Decimal("20.00")
+
             collection.save()
 
             messages.success(
                 request,
-                (
-                    "Coin collection updated "
-                    "successfully."
-                )
+                "Coin collection updated successfully."
             )
 
             return redirect(
@@ -1883,3 +1918,14 @@ def make_system_owner(request):
             ),
         }
     )
+
+
+
+
+
+
+
+
+
+
+
