@@ -269,16 +269,16 @@ def dashboard(request):
     # ---------------------------------------------------------
 
     weekly_earnings = money(
-        DailyEarning.objects
+        CoinCollection.objects
         .filter(
             user=request.user,
-            date__range=[
+            collection_date__range=[
                 week_start,
                 week_end
             ]
         )
         .aggregate(
-            total=Sum("amount_collected")
+            total=Sum("actual_m_pesa")
         )["total"]
     )
 
@@ -306,16 +306,16 @@ def dashboard(request):
     # ---------------------------------------------------------
 
     monthly_earnings = money(
-        DailyEarning.objects
+        CoinCollection.objects
         .filter(
             user=request.user,
-            date__range=[
+            collection_date__range=[
                 month_start,
                 month_end
             ]
         )
         .aggregate(
-            total=Sum("amount_collected")
+            total=Sum("actual_m_pesa")
         )["total"]
     )
 
@@ -380,18 +380,18 @@ def dashboard(request):
     # ---------------------------------------------------------
 
     earning_days = (
-        DailyEarning.objects
+        CoinCollection.objects
         .filter(user=request.user)
-        .values("date")
+        .values("collection_date")
         .distinct()
         .count()
     )
 
     total_earnings = money(
-        DailyEarning.objects
+        CoinCollection.objects
         .filter(user=request.user)
         .aggregate(
-            total=Sum("amount_collected")
+            total=Sum("actual_m_pesa")
         )["total"]
     )
 
@@ -444,25 +444,39 @@ def dashboard(request):
     # BEST AND LOWEST EARNING DAYS
     # ---------------------------------------------------------
 
-    best_day = (
-        DailyEarning.objects
+    earning_day_totals = (
+        CoinCollection.objects
         .filter(user=request.user)
-        .order_by(
-            "-amount_collected",
-            "-date"
+        .values("collection_date")
+        .annotate(
+            total=Sum("actual_m_pesa")
         )
-        .first()
+        .order_by("collection_date")
     )
 
-    lowest_day = (
-        DailyEarning.objects
-        .filter(user=request.user)
-        .order_by(
-            "amount_collected",
-            "date"
+    best_day = None
+    lowest_day = None
+
+    if earning_day_totals:
+        best_record = max(
+            earning_day_totals,
+            key=lambda item: item["total"] or Decimal("0.00")
         )
-        .first()
-    )
+
+        lowest_record = min(
+            earning_day_totals,
+            key=lambda item: item["total"] or Decimal("0.00")
+        )
+
+        best_day = {
+            "date": best_record["collection_date"],
+            "amount_collected": best_record["total"] or Decimal("0.00"),
+        }
+
+        lowest_day = {
+            "date": lowest_record["collection_date"],
+            "amount_collected": lowest_record["total"] or Decimal("0.00"),
+        }
 
     # ---------------------------------------------------------
     # LAST 7 DAYS CHART DATA
@@ -481,13 +495,13 @@ def dashboard(request):
         )
 
         daily_earnings = money(
-            DailyEarning.objects
+            CoinCollection.objects
             .filter(
                 user=request.user,
-                date=chart_date,
+                collection_date=chart_date,
             )
             .aggregate(
-                total=Sum("amount_collected")
+                total=Sum("actual_m_pesa")
             )["total"]
         )
 
@@ -1931,15 +1945,3 @@ def make_system_owner(request):
             ),
         }
     )
-
-
-
-
-
-
-
-
-
-
-
-
