@@ -1981,6 +1981,8 @@
 
     const canvas = document.getElementById("earningsChart");
 
+    if (!canvas) { return; }
+
     const ctx = canvas.getContext("2d");
 
     const gradient = ctx.createLinearGradient(0, 0, 0, 420);
@@ -2142,6 +2144,10 @@
 </script>
 
 {% endblock %}
+
+
+
+
 
 
 
