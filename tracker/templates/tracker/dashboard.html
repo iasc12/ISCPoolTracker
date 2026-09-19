@@ -1964,6 +1964,13 @@
         return;
     }
 
+    const ctx = canvas.getContext("2d");
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 420);
+    gradient.addColorStop(0, "#4ade80");
+    gradient.addColorStop(0.5, "#22c55e");
+    gradient.addColorStop(1, "#15803d");
+
     new Chart(canvas, {
         type: "bar",
         data: {
@@ -1971,23 +1978,54 @@
             datasets: [{
                 label: "Daily Earnings",
                 data: earningsValues,
-                backgroundColor: "#22c55e",
-                borderRadius: 10,
-                borderSkipped: false
+                backgroundColor: gradient,
+                hoverBackgroundColor: "#16a34a",
+                borderRadius: 16,
+                borderSkipped: false,
+                barPercentage: 0.42,
+                categoryPercentage: 0.65
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false }
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: "#111827",
+                    titleColor: "#ffffff",
+                    bodyColor: "#ffffff",
+                    padding: 14,
+                    cornerRadius: 12
+                }
             },
             scales: {
                 x: {
-                    grid: { display: false }
+                    grid: {
+                        display: false,
+                        drawTicks: false
+                    },
+                    border: {
+                        display: false
+                    },
+                    ticks: {
+                        color: "#6b7280"
+                    }
                 },
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    grid: {
+                        display: false,
+                        drawTicks: false
+                    },
+                    border: {
+                        display: false
+                    },
+                    ticks: {
+                        color: "#6b7280"
+                    }
                 }
             }
         }
