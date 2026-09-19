@@ -1,126 +1,9 @@
 ﻿{% extends "tracker/base.html" %}
 
-{% block title %}Coin Collections - ISC Pool Tracker
-<style id="isc-real-coin-system">
+{% block title %}Coin Collections - ISC Pool Tracker{% endblock %}
 
-/* =========================================================
-   COIN RECORD LAYOUT
-   ========================================================= */
+{% block extra_css %}
 
-.coin-table .table-coin {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 9px !important;
-    white-space: nowrap !important;
-}
-
-.coin-table .table-coin strong {
-    display: inline-block !important;
-    line-height: 1 !important;
-}
-
-
-/* =========================================================
-   REAL SILVER COIN
-   ========================================================= */
-
-.coin-table .record-coin-svg {
-    position: relative !important;
-
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    width: 32px !important;
-    height: 32px !important;
-
-    flex: 0 0 32px !important;
-
-    transform-origin: 50% 50% !important;
-    transform-style: flat !important;
-
-    will-change: transform !important;
-
-    animation: iscRecordCoinWheel 2.8s linear infinite !important;
-}
-
-.coin-table .record-coin-svg svg {
-    display: block !important;
-
-    width: 32px !important;
-    height: 32px !important;
-
-    overflow: visible !important;
-
-    filter:
-        drop-shadow(0 2px 2px rgba(0,0,0,.20)) !important;
-}
-
-
-/* =========================================================
-   RECORD COIN WHEEL
-   ========================================================= */
-
-@keyframes iscRecordCoinWheel {
-
-    from {
-        transform: rotateZ(0deg);
-    }
-
-    to {
-        transform: rotateZ(360deg);
-    }
-
-}
-
-
-/* =========================================================
-   HEADER COIN
-   ========================================================= */
-
-.coin-title-area .header-silver-coin {
-    flex: 0 0 54px;
-    width: 54px;
-    height: 54px;
-    margin: 0;
-    transform-origin: center center !important;
-    transform-style: preserve-3d !important;
-    -webkit-transform-style: preserve-3d !important;
-    animation: iscHeaderGlobeSpin 2.2s linear infinite !important;
-    will-change: transform;
-}
-
-
-
-@media (prefers-reduced-motion: reduce) {
-
-    .coin-table .record-coin-svg,
-    .coin-title-area .header-silver-coin {
-    flex: 0 0 54px;
-    width: 54px;
-    height: 54px;
-    margin: 0;
-    transform-origin: center center !important;
-    transform-style: preserve-3d !important;
-    -webkit-transform-style: preserve-3d !important;
-    animation: iscHeaderGlobeSpin 2.2s linear infinite !important;
-    will-change: transform;
-}
-
-}
-
-
-@keyframes iscHeaderGlobeSpin {
-    from {
-        transform: perspective(900px) rotateY(0deg);
-    }
-
-    to {
-        transform: perspective(900px) rotateY(360deg);
-    }
-}
-</style>
 {% endblock %}
 
 {% block content %}
@@ -202,6 +85,26 @@
         width: 18px;
         height: 18px;
     }
+
+    /* ADD EXPENSE RED ACTION */
+    .coin-add.expense-action {
+        background: #dc2626 !important;
+        background-color: #dc2626 !important;
+        border-color: #dc2626 !important;
+        color: #ffffff !important;
+    }
+
+    .coin-add.expense-action:hover {
+        background: #b91c1c !important;
+        background-color: #b91c1c !important;
+        border-color: #b91c1c !important;
+        color: #ffffff !important;
+    }
+
+    .coin-add.expense-action svg {
+        stroke: #ffffff !important;
+    }
+
 
     .coin-summary {
         display: grid;
@@ -388,106 +291,10 @@
         font-weight: 850;
     }
 
-    .table-coin-icon {
-    position: relative;
-    flex: 0 0 28px;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background:
-        radial-gradient(circle at 30% 25%, #ffffff 0%, #eef2f5 20%, #aeb7c0 48%, #f8fafb 70%, #737f8a 100%);
-    border: 2px solid #78848f;
-    box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,.7),
-        0 3px 6px rgba(15,23,42,.20);
-    transform-origin: center;
-    animation: silverCoinTurn 10s linear infinite;
-}
-
-.table-coin-icon::before {
-    content: "";
-    position: absolute;
-    inset: 4px;
-    border-radius: 50%;
-    border: 1px solid rgba(104,116,127,.65);
-}
-
-.table-coin-icon::after {
-    content: "20";
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Arial, sans-serif;
-    font-size: 9px;
-    font-weight: 800;
-    color: #68747f;
-    text-shadow: 0 1px 0 #ffffff;
-}
-
-.table-coin {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-.table-coin {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        font-weight: 850;
-        color: #b45309;
-    }
-
-    .table-coin-icon {
-        width: 29px;
-        height: 29px;
-        border-radius: 9px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: #fef3c7;
-        color: #b45309;
-    }
-
-    .table-coin-icon svg {
-        width: 16px;
-        height: 16px;
-    }
-
     .earnings-cell {
         font-weight: 850;
         color: #059669;
         white-space: nowrap;
-    }
-
-    .change-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 6px 9px;
-        border-radius: 9px;
-        font-size: 12px;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-
-    .additional-badge {
-        background: #ecfdf5;
-        color: #15803d;
-    }
-
-    .lost-badge {
-        background: #fef2f2;
-        color: #dc2626;
-    }
-
-    .neutral-badge {
-        background: #f1f5f9;
-        color: #64748b;
     }
 
     .notes-cell {
@@ -616,11 +423,6 @@
 
     body.dark-mode .coin-table tr:hover td {
         background: #172033;
-    }
-
-    body.dark-mode .neutral-badge {
-        background: #273449;
-        color: #94a3b8;
     }
 
     @media (max-width: 1100px) {
@@ -913,6 +715,12 @@
         transform: perspective(900px) rotateY(360deg);
     }
 }
+
+
+/* =========================================================
+   COLLECTION RECORD COIN
+   ========================================================= */
+
 </style>
 
 <style>
@@ -949,6 +757,12 @@
         transform: perspective(900px) rotateY(360deg);
     }
 }
+
+
+/* =========================================================
+   COLLECTION RECORD COIN
+   ========================================================= */
+
 </style>
 <div class="coin-page">
 
@@ -967,12 +781,19 @@
             </div>
         </div>
 
+        <a href="{% url 'add_expense' %}" class="coin-add expense-action">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <path d="M5 12h14"></path>
+            </svg>
+            Add Expense
+        </a>
+
         <a href="{% url 'add_coin_collection' %}" class="coin-add">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="9"></circle>
                 <path d="M12 8v8M8 12h8"></path>
             </svg>
-            Add Collection
+            Record Collection
         </a>
 
     </div>
@@ -982,23 +803,20 @@
 
         <div class="coin-card">
             <div class="card-icon icon-coins">
-    <div class="summary-silver-coin" aria-hidden="true">
-        <span class="summary-coin-rim"></span>
-        <span class="summary-coin-mark">20</span>
-    </div>
+                <div class="summary-silver-coin" aria-hidden="true">
+                    <span class="summary-coin-rim"></span>
+                    <span class="summary-coin-mark">20</span>
+                </div>
+            </div>
+            <div class="coin-label">Today's Coins</div>
+            <div class="coin-value coins-count-value">
+    <span class="count-silver-coin" aria-hidden="true">
+        <span class="count-coin-mark">20</span>
+    </span>
+    <span>{{ todays_coins|default:"0" }}</span>
 </div>
-
-            <div class="coin-label">Today's Coins Collected</div>
-
-            <div class="coin-value">
-                {{ todays_coins|default:"0" }}
-            </div>
-
-            <div class="coin-small">
-                {{ today|date:"d M Y" }}
-            </div>
+            <div class="coin-small">Coins collected today</div>
         </div>
-
 
         <div class="coin-card">
             <div class="card-icon icon-money">
@@ -1007,43 +825,573 @@
                     <path d="M7 12h10M9 9.5v5M15 9.5v5"></path>
                 </svg>
             </div>
+            <div class="coin-label">Expected M-Pesa</div>
+            <div class="coin-value money-blue">
+                KSh {{ todays_expected|default:"0.00"|floatformat:2 }}
+            </div>
+            <div class="coin-small">Today's coins x KSh 20</div>
+        </div>
 
-            <div class="coin-label">Today's Earnings</div>
-
+        <div class="coin-card">
+            <div class="card-icon icon-money">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="3" y="6" width="18" height="12" rx="2"></rect>
+                    <path d="M7 12h10M9 9.5v5M15 9.5v5"></path>
+                </svg>
+            </div>
+            <div class="coin-label">Actual M-Pesa</div>
             <div class="coin-value money-green">
                 KSh {{ todays_money|default:"0.00"|floatformat:2 }}
             </div>
-
-            <div class="coin-small">Actual M-Pesa received</div>
+            <div class="coin-small">Actual amount received</div>
         </div>
 
-<div class="coin-card">
-            <div class="card-icon icon-tomorrow">
+        <div class="coin-card">
+            <div class="card-icon icon-money">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M7 3v4M17 3v4M4 9h16"></path>
-                    <rect x="4" y="5" width="16" height="15" rx="2"></rect>
-                    <path d="M9 14l2 2 4-4"></path>
+                    <path d="M4 7h16M7 12h10M9 17h6"></path>
                 </svg>
             </div>
-
-            <div class="coin-label">Tomorrow's Expected Earnings</div>
-
-            <div class="coin-value money-blue">
-                KSh {{ tomorrow_expected|default:"0.00"|floatformat:2 }}
+            <div class="coin-label">Difference</div>
+            <div class="coin-value {% if todays_difference < 0 %}money-red{% else %}money-green{% endif %}">
+                KSh {{ todays_difference|default:"0.00"|floatformat:2 }}
             </div>
-
-            <div class="coin-small">
-                Today's coins × KSh 20
-            </div>
+            <div class="coin-small">Actual - Expected</div>
         </div>
 
-
-
+        <div class="coin-card">
+            <div class="card-icon icon-tomorrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="8"></circle>
+                    <path d="M12 8v4l3 2"></path>
+                </svg>
+            </div>
+            <div class="coin-label">Collection Rate</div>
+            <div class="coin-value money-blue">
+                {{ todays_rate|default:"0"|floatformat:1 }}%
+            </div>
+            <div class="coin-small">Actual / Expected</div>
+        </div>
 
     </div>
 
+    <style id="clean-collection-records">
 
-    <div class="history-section">
+/* =========================================================
+   MODERN COLLECTION RECORDS
+   ========================================================= */
+
+.collection-records-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: auto;
+}
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.collection-records-table thead {
+    position: relative;
+}
+
+.collection-records-table th {
+    height: 50px;
+    padding: 0 15px;
+    text-align: left;
+    vertical-align: middle;
+
+    background: rgba(248,250,252,.88);
+    color: #64748b;
+
+    border-bottom: 1px solid rgba(148,163,184,.18);
+
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: .075em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.collection-records-table th:first-child {
+    padding-left: 18px;
+}
+
+.collection-records-table th:last-child {
+    padding-right: 18px;
+}
+
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+.collection-records-table tbody tr {
+    position: relative;
+    height: 60px;
+
+    background: transparent;
+
+    transition:
+        background .18s ease,
+        box-shadow .18s ease;
+}
+
+.collection-records-table tbody tr:hover {
+    background: rgba(248,250,252,.72);
+}
+
+.collection-records-table td {
+    height: 60px;
+    padding: 8px 15px;
+    vertical-align: middle;
+
+    border-bottom: 1px solid rgba(148,163,184,.10);
+
+    font-size: 13px;
+}
+
+.collection-records-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.collection-records-table tbody tr:hover td:first-child {
+    box-shadow: inset 3px 0 0 rgba(59,130,246,.65);
+}
+
+/* =========================================================
+   DATE
+   ========================================================= */
+
+.collection-records-table td:first-child strong {
+    display: inline-flex;
+    align-items: center;
+
+    font-size: 13px;
+    font-weight: 750;
+    letter-spacing: -.01em;
+}
+
+.record-today-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 19px;
+    margin-left: 7px;
+    padding: 0 7px;
+
+    border-radius: 999px;
+
+    background: rgba(59,130,246,.08);
+    border: 1px solid rgba(59,130,246,.15);
+
+    color: #3b82f6;
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+
+    box-shadow: 0 1px 2px rgba(59,130,246,.06);
+}
+
+/* =========================================================
+   COINS COLLECTED
+   ========================================================= */
+
+.coins-collected-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tiny-silver-coin {
+    position: relative;
+
+    width: 23px;
+    height: 23px;
+    flex: 0 0 23px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 31% 25%,
+            #ffffff 0%,
+            #f3f5f7 17%,
+            #d6dce1 40%,
+            #aab3bc 67%,
+            #7b858f 100%
+        );
+
+    border: 1px solid rgba(93,103,113,.42);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.95),
+        inset 0 -1px 2px rgba(51,65,85,.28),
+        0 2px 5px rgba(15,23,42,.15);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.tiny-silver-coin::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(77,87,97,.38);
+
+    pointer-events: none;
+}
+
+.tiny-silver-coin svg {
+    position: relative;
+    z-index: 1;
+
+    width: 15px;
+    height: 15px;
+
+    fill: none;
+    stroke: #59636d;
+    stroke-width: 1.05;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.collection-records-table tbody tr:hover .tiny-silver-coin {
+    transform: rotate(-8deg) scale(1.06);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.95),
+        inset 0 -1px 2px rgba(51,65,85,.28),
+        0 4px 8px rgba(15,23,42,.18);
+}
+
+.coins-collected-value > strong {
+    font-size: 14px;
+    font-weight: 850;
+    letter-spacing: -.025em;
+}
+
+/* =========================================================
+   LOST / NEW COINS
+   ========================================================= */
+
+.record-number {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 39px;
+    height: 28px;
+    padding: 0 9px;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+    font-weight: 850;
+
+    transition:
+        transform .16s ease,
+        box-shadow .16s ease;
+}
+
+.record-number::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+
+    margin-right: 6px;
+
+    border-radius: 50%;
+}
+
+.record-number.lost {
+    color: #dc2626;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(254,242,242,.95),
+            rgba(254,226,226,.62)
+        );
+
+    border: 1px solid rgba(239,68,68,.14);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.75),
+        0 2px 5px rgba(239,68,68,.05);
+}
+
+.record-number.lost::before {
+    background: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239,68,68,.08);
+}
+
+.record-number.new {
+    color: #16a34a;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(240,253,244,.95),
+            rgba(220,252,231,.62)
+        );
+
+    border: 1px solid rgba(34,197,94,.14);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.75),
+        0 2px 5px rgba(34,197,94,.05);
+}
+
+.record-number.new::before {
+    background: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34,197,94,.08);
+}
+
+.collection-records-table tbody tr:hover .record-number {
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   EARNINGS
+   ========================================================= */
+
+.record-earnings-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    color: #172033;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+.record-earnings-value small {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 29px;
+    height: 20px;
+    padding: 0 5px;
+
+    border-radius: 6px;
+
+    background: rgba(34,197,94,.09);
+    border: 1px solid rgba(34,197,94,.13);
+
+    color: #16a34a;
+
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: .02em;
+}
+
+.record-not-recorded {
+    display: inline-flex;
+    align-items: center;
+
+    height: 22px;
+    padding: 0 8px;
+
+    border-radius: 6px;
+
+    background: rgba(148,163,184,.07);
+    border: 1px solid rgba(148,163,184,.11);
+
+    color: #94a3b8;
+
+    font-size: 10px;
+    font-style: italic;
+}
+
+/* =========================================================
+   NOTES
+   ========================================================= */
+
+.record-note {
+    display: block;
+
+    max-width: 155px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #64748b;
+
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.record-no-note {
+    color: #a8b1bd;
+
+    font-size: 10px;
+    font-style: italic;
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.record-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.record-action {
+    position: relative;
+
+    width: 31px;
+    height: 31px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    transition:
+        transform .17s cubic-bezier(.2,.8,.2,1),
+        background .17s ease,
+        border-color .17s ease,
+        box-shadow .17s ease;
+}
+
+.record-action svg {
+    width: 15px;
+    height: 15px;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    transition: transform .17s ease;
+}
+
+.record-action.edit {
+    color: #3b82f6;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(239,246,255,.95),
+            rgba(219,234,254,.65)
+        );
+
+    border: 1px solid rgba(59,130,246,.13);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.85),
+        0 2px 5px rgba(59,130,246,.06);
+}
+
+.record-action.delete {
+    color: #ef4444;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(254,242,242,.95),
+            rgba(254,226,226,.65)
+        );
+
+    border: 1px solid rgba(239,68,68,.13);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.85),
+        0 2px 5px rgba(239,68,68,.06);
+}
+
+.record-action:hover {
+    transform: translateY(-2px) scale(1.035);
+}
+
+.record-action:hover svg {
+    transform: scale(1.06);
+}
+
+.record-action.edit:hover {
+    background:
+        linear-gradient(
+            145deg,
+            #eff6ff,
+            #dbeafe
+        );
+
+    border-color: rgba(59,130,246,.25);
+
+    box-shadow:
+        0 7px 15px rgba(59,130,246,.13),
+        inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.record-action.delete:hover {
+    background:
+        linear-gradient(
+            145deg,
+            #fef2f2,
+            #fee2e2
+        );
+
+    border-color: rgba(239,68,68,.25);
+
+    box-shadow:
+        0 7px 15px rgba(239,68,68,.13),
+        inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.record-action:active {
+    transform: translateY(0) scale(.92);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .collection-records-table {
+        min-width: 850px;
+    }
+
+    .collection-records-table th,
+    .collection-records-table td {
+        padding-left: 11px;
+        padding-right: 11px;
+    }
+
+    .record-note {
+        max-width: 120px;
+    }
+}
+
+</style>
+<div class="history-section">
+
 
         <div class="history-heading">
             <div>
@@ -1057,209 +1405,235 @@
 
             <div class="coin-table-wrap">
 
-                <table class="coin-table">
+                
+<table class="coin-table collection-records-table">
 
-                    <thead>
-                        <tr>
-                            <th>Collection Date</th>
-                            <th><span class="records-header-coin" aria-hidden="true"><span class="records-header-coin-mark">20</span></span> Coins Collected</th>
-                            <th>Additional</th>
-                            <th>Lost</th>
-                            <th>Today's Earnings</th>
-                            <th>Notes</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
+    <thead>
+        <tr>
+            <th>Collection Date</th>
+            <th>Coins Collected</th>
+            <th>Lost Coins</th>
+            <th>New Coins</th>
+            <th>Today's Earnings</th>
+            <th>Notes</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
 
-                    <tbody>
+    <tbody>
+        {% for collection in collections %}
+        <tr>
 
-                        {% for collection in collections %}
+            <td>
+                <strong>{{ collection.collection_date|date:"d M Y" }}</strong>
+                {% if collection.collection_date == today %}
+                    <span class="record-today-badge">Today</span>
+                {% endif %}
+            </td>
 
-                            <tr>
+            <td>
+                <span class="coins-collected-value">
+                    <span class="tiny-silver-coin" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="8.5"></circle>
+                            <circle cx="12" cy="12" r="6.2"></circle>
+                            <path d="M10 8.5h3a1.5 1.5 0 0 1 0 3h-2a1.5 1.5 0 0 0 0 3h3"></path>
+                            <path d="M12 7v10"></path>
+                        </svg>
+                    </span>
+                    <strong>{{ collection.coins_collected }}</strong>
+                </span>
+            </td>
 
-                                <td class="date-cell">
-                                    {{ collection.collection_date|date:"d M Y" }}
+            <td>
+                <span class="record-number lost">
+                    {{ collection.lost_coins }}
+                </span>
+            </td>
 
-                                    {% if collection.collection_date == today %}
-                                        <span class="today-badge">Today</span>
-                                    {% endif %}
-                                </td>
+            <td>
+                <span class="record-number new">
+                    {{ collection.additional_coins }}
+                </span>
+            </td>
 
+            <td>
+                {% if collection.actual_m_pesa is not None %}
+                    <span class="record-earnings-value">
+                        <small>KSh</small>
+                        {{ collection.actual_m_pesa|floatformat:2 }}
+                    </span>
+                {% else %}
+                    <span class="record-not-recorded">Not recorded</span>
+                {% endif %}
+            </td>
 
-                                <td>
-    <span class="table-coin">
-    <svg
-        class="record-coin-svg"
-        viewBox="0 0 48 48"
-        aria-hidden="true"
-        focusable="false"
-    >
-        <defs>
-            <radialGradient id="recordCoinMetal" cx="30%" cy="25%">
-                <stop offset="0%" stop-color="#ffffff"/>
-                <stop offset="22%" stop-color="#f4f6f8"/>
-                <stop offset="48%" stop-color="#c7cdd3"/>
-                <stop offset="72%" stop-color="#eef1f3"/>
-                <stop offset="100%" stop-color="#737d87"/>
-            </radialGradient>
+            <td>
+                {% if collection.notes %}
+                    <span class="record-note" title="{{ collection.notes }}">
+                        {{ collection.notes }}
+                    </span>
+                {% else %}
+                    <span class="record-no-note">No notes</span>
+                {% endif %}
+            </td>
 
-            <linearGradient id="recordCoinRim" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffffff"/>
-                <stop offset="45%" stop-color="#aeb6be"/>
-                <stop offset="100%" stop-color="#68737d"/>
-            </linearGradient>
-        </defs>
+            <td>
+                <div class="record-actions">
 
-        <circle
-            cx="24"
-            cy="24"
-            r="21"
-            fill="url(#recordCoinMetal)"
-            stroke="url(#recordCoinRim)"
-            stroke-width="2"
-        />
+                    <a href="{% url 'edit_coin_collection' collection.id %}"
+                       class="record-action edit"
+                       title="Edit collection"
+                       aria-label="Edit collection">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+    <!-- pen tip -->
+    <path d="M4.2 19.8 5.7 15.1l3.1 3.1-4.6 1.6Z"
+          fill="#f59e0b"
+          stroke="#b45309"
+          stroke-width=".7"
+          stroke-linejoin="round"></path>
 
-        <circle
-            cx="24"
-            cy="24"
-            r="16"
-            fill="none"
-            stroke="#ffffff"
-            stroke-opacity=".8"
-            stroke-width="1"
-        />
+    <!-- yellow pen body -->
+    <path d="m6 14.8 9.65-9.65a2.15 2.15 0 0 1 3.05 3.05L9.05 17.85 6 14.8Z"
+          fill="#facc15"
+          stroke="#ca8a04"
+          stroke-width=".8"
+          stroke-linejoin="round"></path>
 
-        <circle
-            cx="24"
-            cy="24"
-            r="12"
-            fill="none"
-            stroke="#69747d"
-            stroke-opacity=".45"
-            stroke-width="1"
-        />
+    <!-- red rear end -->
+    <path d="m15.65 5.15 1.25-1.25a2.15 2.15 0 0 1 3.05 3.05L18.7 8.2l-3.05-3.05Z"
+          fill="#ef4444"
+          stroke="#b91c1c"
+          stroke-width=".8"
+          stroke-linejoin="round"></path>
 
-        <text
-            x="24"
-            y="28"
-            text-anchor="middle"
-            font-family="Georgia, serif"
-            font-size="10"
-            font-weight="800"
-            fill="#65717a"
-        >20</text>
-    </svg>
+    <!-- pen separation -->
+    <path d="m14.45 6.35 3.2 3.2"
+          fill="none"
+          stroke="#a16207"
+          stroke-width=".75"
+          stroke-linecap="round"></path>
 
-    <strong>{{ collection.coins_collected }}</strong>
-</span>
-</td>
+    <!-- highlight -->
+    <path d="m8.05 14.35 6.55-6.55"
+          fill="none"
+          stroke="#fff7ae"
+          stroke-width="1"
+          stroke-linecap="round"
+          opacity=".9"></path>
+</svg>
+                    </a>
 
+                    <a href="{% url 'delete_coin_collection' collection.id %}"
+                       class="record-action delete"
+                       title="Delete collection"
+                       aria-label="Delete collection">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+    <!-- yellow lid -->
+    <path d="M4.5 6.5h15"
+          fill="none"
+          stroke="#eab308"
+          stroke-width="1.8"
+          stroke-linecap="round"></path>
 
-                                <td>
+    <path d="M8.5 6.5V4.5h7v2"
+          fill="none"
+          stroke="#ca8a04"
+          stroke-width="1.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
 
-                                    {% if collection.coin_change is not None and collection.coin_change > 0 %}
+    <!-- green bin -->
+    <path d="M6.7 7.5h10.6l-.75 12H7.45l-.75-12Z"
+          fill="#22c55e"
+          stroke="#15803d"
+          stroke-width=".9"
+          stroke-linejoin="round"></path>
 
-                                        <span class="change-badge additional-badge">
-                                            +{{ collection.coin_change }}
-                                        </span>
+    <!-- yellow rim -->
+    <path d="M6.7 7.5h10.6"
+          fill="none"
+          stroke="#fde047"
+          stroke-width="1.2"
+          stroke-linecap="round"></path>
 
-                                    {% else %}
+    <!-- perforations -->
+    <circle cx="9.4" cy="10.5" r=".75" fill="#facc15"></circle>
+    <circle cx="12" cy="10.5" r=".75" fill="#facc15"></circle>
+    <circle cx="14.6" cy="10.5" r=".75" fill="#facc15"></circle>
 
-                                        <span class="change-badge neutral-badge">
-                                            0
-                                        </span>
+    <circle cx="9.4" cy="13.3" r=".75" fill="#facc15"></circle>
+    <circle cx="12" cy="13.3" r=".75" fill="#facc15"></circle>
+    <circle cx="14.6" cy="13.3" r=".75" fill="#facc15"></circle>
 
-                                    {% endif %}
+    <circle cx="9.4" cy="16.1" r=".75" fill="#facc15"></circle>
+    <circle cx="12" cy="16.1" r=".75" fill="#facc15"></circle>
+    <circle cx="14.6" cy="16.1" r=".75" fill="#facc15"></circle>
 
-                                </td>
+    <!-- subtle green highlight -->
+    <path d="M8.4 9v8.5"
+          fill="none"
+          stroke="#86efac"
+          stroke-width=".8"
+          stroke-linecap="round"
+          opacity=".65"></path>
+</svg>
+                    </a>
 
+                </div>
+            </td>
 
-                                <td>
+        </tr>
+        {% endfor %}
+    </tbody>
 
-                                    {% if collection.coin_change is not None and collection.coin_change < 0 %}
-
-                                        <span class="change-badge lost-badge">
-                                            {{ collection.coin_change|stringformat:"s"|cut:"-" }}
-                                        </span>
-
-                                    {% else %}
-
-                                        <span class="change-badge neutral-badge">
-                                            0
-                                        </span>
-
-                                    {% endif %}
-
-                                </td>
-
-
-                                <td class="earnings-cell">
-
-                                    {% if collection.actual_m_pesa is not None %}
-                                        KSh {{ collection.actual_m_pesa|floatformat:2 }}
-                                    {% else %}
-                                        ?
-                                    {% endif %}
-
-                                </td>
-
-
-                                <td class="notes-cell">
-
-                                    {% if collection.notes %}
-                                        {{ collection.notes }}
-                                    {% else %}
-                                        No notes
-                                    {% endif %}
-
-                                </td>
-
-
-                                <td>
-
-                                    <div class="coin-actions">
-
-                                        <a
-                                            href="{% url 'edit_coin_collection' collection.id %}"
-                                            class="action-btn edit-btn"
-                                            title="Edit"
-                                            aria-label="Edit collection"
-                                        >
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M12 20h9"></path>
-                                                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
-                                            </svg>
-                                        </a>
-
-                                        <a
-                                            href="{% url 'delete_coin_collection' collection.id %}"
-                                            class="action-btn delete-btn"
-                                            title="Delete"
-                                            aria-label="Delete collection"
-                                        >
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M4 7h16"></path>
-                                                <path d="M10 11v6M14 11v6"></path>
-                                                <path d="M6 7l1 13h10l1-13"></path>
-                                                <path d="M9 7V4h6v3"></path>
-                                            </svg>
-                                        </a>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
+</table>
 
             </div>
 
-        {% else %}
+                {% if collections.paginator.num_pages > 1 %}
+                <nav class="coin-pagination" aria-label="Coin collection pages">
+
+                    {% if collections.has_previous %}
+                        <a
+                            href="?page={{ collections.previous_page_number }}"
+                            class="pagination-btn pagination-prev"
+                            aria-label="Previous page"
+                        >
+                            <span class="pagination-icon" aria-hidden="true">
+                                <svg viewBox="0 0 20 20" fill="none">
+                                    <path d="M12 4.5L6.5 10L12 15.5"></path>
+                                </svg>
+                            </span>
+                            <span class="pagination-label">Previous</span>
+                        </a>
+                    {% endif %}
+
+                    <div class="pagination-info" aria-current="page">
+                        <span class="pagination-page-label">Page</span>
+                        <strong>{{ collections.number }}</strong>
+                        <span class="pagination-page-label">of</span>
+                        <strong>{{ collections.paginator.num_pages }}</strong>
+                    </div>
+
+                    {% if collections.has_next %}
+                        <a
+                            href="?page={{ collections.next_page_number }}"
+                            class="pagination-btn pagination-next"
+                            aria-label="Next page"
+                        >
+                            <span class="pagination-label">Next</span>
+                            <span class="pagination-icon" aria-hidden="true">
+                                <svg viewBox="0 0 20 20" fill="none">
+                                    <path d="M8 4.5L13.5 10L8 15.5"></path>
+                                </svg>
+                            </span>
+                        </a>
+                    {% endif %}
+
+                </nav>
+            {% endif %}
+            {% else %}
 
             <div class="empty-state">
 
@@ -1273,7 +1647,7 @@
                 <h3>No Coin Collections Yet</h3>
 
                 <p>
-                    Start recording the coins collected from the pool tables.
+                    Record the coins collected and the actual M-Pesa received.
                 </p>
 
                 <a
@@ -1284,7 +1658,7 @@
                         <circle cx="12" cy="12" r="9"></circle>
                         <path d="M12 8v8M8 12h8"></path>
                     </svg>
-                    Add First Collection
+                    Record First Collection
                 </a>
 
             </div>
@@ -1318,71 +1692,6 @@
 
 
 <style>
-.table-coin {
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 9px;
-    white-space: nowrap;
-}
-
-.table-coin-icon {
-    position: relative;
-    width: 30px;
-    height: 30px;
-    flex: 0 0 30px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    background: radial-gradient(
-        circle at 30% 25%,
-        #ffffff 0%,
-        #f1f3f5 20%,
-        #c3c9ce 45%,
-        #eef0f2 68%,
-        #858f98 100%
-    );
-
-    border: 2px solid #737e87;
-
-    box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,.8),
-        inset 0 0 0 4px rgba(100,110,120,.22),
-        0 3px 7px rgba(15,23,42,.18);
-
-    transform-style: preserve-3d;
-    animation: recordsSilverCoin 6s linear infinite;
-}
-
-.table-coin-icon::before {
-    content: "";
-    position: absolute;
-    inset: 4px;
-    border-radius: 50%;
-    border: 1px solid rgba(95,105,115,.55);
-    box-shadow: inset 0 0 4px rgba(255,255,255,.85);
-}
-
-.table-coin-icon::after {
-    content: "20";
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-family: Georgia, serif;
-    font-size: 9px;
-    font-weight: 800;
-    color: #69747d;
-
-    text-shadow:
-        1px 1px 0 #ffffff,
-        -1px -1px 0 rgba(80,90,100,.18);
-}
-
 @keyframes recordsSilverCoin {
     0% {
         transform: perspective(500px) rotateY(0deg);
@@ -1402,7 +1711,31 @@
         transform: perspective(900px) rotateY(360deg);
     }
 }
+
+
+/* =========================================================
+   COLLECTION RECORD COIN
+   ========================================================= */
+
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

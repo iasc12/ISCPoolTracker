@@ -104,15 +104,18 @@ class CoinCollection(models.Model):
     )
 
     """
-    Records coins physically removed from the pool tables.
+    Records the physical coins collected from the pool tables.
 
     Business logic:
 
-    Current coins collected determine the expected amount
-    for the NEXT collection.
+    One coin is worth KSh 20.
 
-    The previous collection's coins determine the expected
-    amount for the CURRENT collection.
+    Expected M-Pesa for a collection is calculated directly
+    from the number of coins collected:
+
+        coins_collected × coin_value
+
+    The actual M-Pesa amount is entered by the collector.
     """
 
     collection_date = models.DateField()
@@ -126,12 +129,18 @@ class CoinCollection(models.Model):
 
     additional_coins = models.PositiveIntegerField(
         default=0,
-        help_text="Additional coins found or collected outside the main collection."
+        help_text=(
+            "Additional coins found or collected "
+            "outside the main collection."
+        )
     )
 
     lost_coins = models.PositiveIntegerField(
         default=0,
-        help_text="Coins lost, missing, or otherwise unaccounted for."
+        help_text=(
+            "Coins lost, missing, or otherwise "
+            "unaccounted for."
+        )
     )
 
     coin_value = models.DecimalField(
@@ -173,68 +182,10 @@ class CoinCollection(models.Model):
         )
 
     @property
-    def previous_collection(self):
+    def coin_amount(self):
         """
-        Finds the collection immediately before this one.
-        """
-
-        if not self.pk:
-            return None
-
-        return (
-            CoinCollection.objects
-            .filter(
-                user=self.user,
-            )
-            .filter(
-                models.Q(
-                    collection_date__lt=self.collection_date
-                )
-                |
-                models.Q(
-                    collection_date=self.collection_date,
-                    created_at__lt=self.created_at
-                )
-            )
-            .order_by(
-                "-collection_date",
-                "-created_at"
-            )
-            .first()
-        )
-
-    @property
-    def expected_amount(self):
-        """
-        Expected money for THIS collection.
-
-        This comes from the previous collection.
-
-        Example:
-
-        Previous collection = 100 coins
-        Coin value = KSh 20
-
-        Expected current collection =
-        100 × 20 = KSh 2,000
-        """
-
-        previous = self.previous_collection
-
-        if not previous:
-            return 0
-
-        return (
-            previous.coins_collected *
-            previous.coin_value
-        )
-
-    @property
-    def next_expected_amount(self):
-        """
-        Expected money for the NEXT collection.
-
-        Current coins × current coin value.
+        Expected M-Pesa amount based on the coins
+        physically collected.
         """
 
         return (
@@ -243,9 +194,35 @@ class CoinCollection(models.Model):
         )
 
     @property
+    def expected_amount(self):
+        """
+        Expected M-Pesa for THIS collection.
+
+        This is based directly on the current
+        collection's coins.
+        """
+
+        return self.coin_amount
+
+    @property
+    def next_expected_amount(self):
+        """
+        Compatibility property.
+
+        The current collection's coins determine
+        the calculated amount.
+        """
+
+        return self.coin_amount
+
+    @property
     def difference(self):
         """
-        Actual M-Pesa minus expected money.
+        Actual M-Pesa minus the expected coin amount.
+
+        Positive = more M-Pesa than expected.
+        Negative = less M-Pesa than expected.
+        Zero = exact collection.
         """
 
         if self.actual_m_pesa is None:
@@ -259,7 +236,8 @@ class CoinCollection(models.Model):
     @property
     def collection_rate(self):
         """
-        Percentage of expected money actually received.
+        Percentage of the expected coin amount
+        that was actually received through M-Pesa.
         """
 
         if (
@@ -276,21 +254,19 @@ class CoinCollection(models.Model):
     @property
     def coin_change(self):
         """
-        Difference between current coins and
-        previous collection's coins.
+        Net coin adjustment.
+
+        Additional coins increase the count while
+        lost coins reduce it.
+
+        Retained for compatibility with existing
+        dashboard/template code.
         """
 
-        previous = self.previous_collection
-
-        if not previous:
-            return None
-
         return (
-            self.coins_collected -
-            previous.coins_collected
+            self.additional_coins -
+            self.lost_coins
         )
-from django.db import models
-
 
 class Profile(models.Model):
     user = models.OneToOneField(

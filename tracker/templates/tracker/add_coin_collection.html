@@ -104,7 +104,10 @@
 }
 
 .form-input,
-.form-textarea {
+.form-textarea,
+#id_collection_date,
+#id_coins_collected,
+#id_actual_m_pesa {
     width: 100%;
     box-sizing: border-box;
     min-height: 50px;
@@ -122,31 +125,30 @@
         background-color .16s ease;
 }
 
-.form-textarea {
+.form-textarea,
+#id_notes {
+    width: 100%;
+    box-sizing: border-box;
     min-height: 105px;
+    padding: 13px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 13px;
+    outline: none;
+    background: #ffffff;
+    color: #111827;
+    font-family: inherit;
+    font-size: 15px;
     resize: vertical;
 }
 
 .form-input:focus,
-.form-textarea:focus {
+.form-textarea:focus,
+#id_collection_date:focus,
+#id_coins_collected:focus,
+#id_actual_m_pesa:focus,
+#id_notes:focus {
     border-color: #f59e0b;
     box-shadow: 0 0 0 3px rgba(245, 158, 11, .12);
-}
-
-.automatic-value {
-    display: flex;
-    align-items: center;
-    font-weight: 900;
-    background: #f9fafb;
-    color: #16a34a;
-}
-
-.automatic-value.lost-value {
-    color: #dc2626;
-}
-
-body.dark-mode .automatic-value {
-    background: #1f2937;
 }
 
 .form-help {
@@ -162,6 +164,89 @@ body.dark-mode .automatic-value {
     font-size: 12px;
     font-weight: 700;
 }
+
+/* =========================================================
+   SILVER COIN
+   ========================================================= */
+
+.coin-display {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 9px;
+}
+
+.form-coin {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 50%;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            #ffffff 0%,
+            #f1f3f5 20%,
+            #c3c9ce 45%,
+            #eef0f2 68%,
+            #858f98 100%
+        );
+
+    border: 2px solid #737e87;
+
+    box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,.8),
+        inset 0 0 0 4px rgba(100,110,120,.22),
+        0 4px 9px rgba(15,23,42,.20);
+
+    animation: formSilverCoin 4s linear infinite;
+}
+
+.form-coin::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    border: 1px solid rgba(95,105,115,.55);
+    box-shadow: inset 0 0 4px rgba(255,255,255,.85);
+}
+
+.form-coin::after {
+    content: "20";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: Georgia, serif;
+    font-size: 11px;
+    font-weight: 800;
+    color: #69747d;
+
+    text-shadow:
+        1px 1px 0 #ffffff,
+        -1px -1px 0 rgba(80,90,100,.18);
+}
+
+@keyframes formSilverCoin {
+    from {
+        transform: rotateY(0deg);
+    }
+
+    to {
+        transform: rotateY(360deg);
+    }
+}
+
+/* =========================================================
+   LIVE CALCULATION
+   ========================================================= */
 
 .calculation-card {
     margin: 4px 0 28px;
@@ -188,7 +273,7 @@ body.dark-mode .automatic-value {
 
 .calculation-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
 }
 
@@ -210,8 +295,20 @@ body.dark-mode .automatic-value {
 
 .calculation-value {
     color: #b45309;
-    font-size: 22px;
+    font-size: 21px;
     font-weight: 900;
+}
+
+.calculation-value.actual {
+    color: #047857;
+}
+
+.calculation-value.positive {
+    color: #047857;
+}
+
+.calculation-value.negative {
+    color: #dc2626;
 }
 
 .calculation-note {
@@ -220,6 +317,10 @@ body.dark-mode .automatic-value {
     font-size: 12px;
     line-height: 1.5;
 }
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
 
 .form-footer {
     display: flex;
@@ -236,15 +337,18 @@ body.dark-mode .automatic-value {
     padding: 0 18px;
     border: 0;
     border-radius: 13px;
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+
     font-family: inherit;
     font-size: 14px;
     font-weight: 800;
     text-decoration: none;
     cursor: pointer;
+
     transition:
         transform .16s ease,
         box-shadow .16s ease,
@@ -253,6 +357,10 @@ body.dark-mode .automatic-value {
 
 .btn:hover {
     transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(1px);
 }
 
 .btn svg {
@@ -279,8 +387,13 @@ body.dark-mode .automatic-value {
     background: #d1d5db;
 }
 
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
 body.dark-mode .coin-form-eyebrow,
-body.dark-mode .coin-form-description {
+body.dark-mode .coin-form-description,
+body.dark-mode .form-help {
     color: #9ca3af;
 }
 
@@ -296,15 +409,19 @@ body.dark-mode .coin-form-card {
     box-shadow: 0 16px 40px rgba(0, 0, 0, .22);
 }
 
-body.dark-mode .form-input,
-body.dark-mode .form-textarea {
+body.dark-mode #id_collection_date,
+body.dark-mode #id_coins_collected,
+body.dark-mode #id_actual_m_pesa,
+body.dark-mode #id_notes {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
 }
 
-body.dark-mode .form-input:focus,
-body.dark-mode .form-textarea:focus {
+body.dark-mode #id_collection_date:focus,
+body.dark-mode #id_coins_collected:focus,
+body.dark-mode #id_actual_m_pesa:focus,
+body.dark-mode #id_notes:focus {
     border-color: #f59e0b;
 }
 
@@ -332,7 +449,12 @@ body.dark-mode .calculation-item {
     border-color: rgba(245, 158, 11, .2);
 }
 
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (max-width: 700px) {
+
     .coin-form-page {
         padding: 12px 0 100px;
     }
@@ -375,7 +497,7 @@ body.dark-mode .calculation-item {
                 <circle cx="12" cy="12" r="8.5"
                         stroke="currentColor"
                         stroke-width="1.8"/>
-                <path d="M9.2 9.2h3.5c1.3 0 2.2.7 2.2 1.7s-.9 1.6-2.2 1.8l2.6 2.4"
+                <path d="M9.2 9.2h3.5c1.3 0 2.2.7 2.2 1.8s-.9 1.6-2.2 1.8l2.6 2.4"
                       stroke="currentColor"
                       stroke-width="1.8"
                       stroke-linecap="round"
@@ -391,8 +513,8 @@ body.dark-mode .calculation-item {
         <h1 class="coin-form-title">Record Coin Collection</h1>
 
         <p class="coin-form-description">
-            Record the coins removed from the pool tables and the actual earnings received.
-            Additional and lost coins are calculated automatically.
+            Record how many coins were collected and the actual M-Pesa amount received.
+            The expected amount is calculated automatically at KSh 20 per coin.
         </p>
 
     </header>
@@ -435,15 +557,23 @@ body.dark-mode .calculation-item {
                             {% endif %}
                         </div>
 
-                        <div class="field">
+                        <div class="field field-full">
+
                             <label class="form-label" for="{{ form.coins_collected.id_for_label }}">
                                 Coins Collected
                             </label>
 
+                            <div class="coin-display">
+                                <span class="form-coin" aria-hidden="true"></span>
+                                <span style="font-size:13px;font-weight:800;color:#64748b;">
+                                    KSh 20 per coin
+                                </span>
+                            </div>
+
                             {{ form.coins_collected }}
 
                             <div class="form-help">
-                                Coins physically removed from the pool tables.
+                                Enter the total number of coins physically collected from the pool tables.
                             </div>
 
                             {% if form.coins_collected.errors %}
@@ -451,6 +581,7 @@ body.dark-mode .calculation-item {
                                     {{ form.coins_collected.errors }}
                                 </div>
                             {% endif %}
+
                         </div>
 
                     </div>
@@ -467,14 +598,14 @@ body.dark-mode .calculation-item {
                                   stroke-linecap="round"
                                   stroke-linejoin="round"/>
                         </svg>
-                        Earnings forecast
+                        Collection calculation
                     </div>
 
                     <div class="calculation-grid">
 
                         <div class="calculation-item">
                             <div class="calculation-label">
-                                Current Collection
+                                Expected M-Pesa
                             </div>
 
                             <div class="calculation-value" id="expectedAmount">
@@ -484,10 +615,20 @@ body.dark-mode .calculation-item {
 
                         <div class="calculation-item">
                             <div class="calculation-label">
-                                Tomorrow's Expected Earnings
+                                Actual M-Pesa
                             </div>
 
-                            <div class="calculation-value" id="tomorrowAmount">
+                            <div class="calculation-value actual" id="actualAmount">
+                                KSh 0.00
+                            </div>
+                        </div>
+
+                        <div class="calculation-item">
+                            <div class="calculation-label">
+                                Difference
+                            </div>
+
+                            <div class="calculation-value" id="differenceAmount">
                                 KSh 0.00
                             </div>
                         </div>
@@ -495,8 +636,8 @@ body.dark-mode .calculation-item {
                     </div>
 
                     <div class="calculation-note">
-                        Tomorrow's forecast is based on Coins Collected × KSh 20.
-                        Additional and lost coins are tracked separately.
+                        Expected M-Pesa is calculated automatically from Coins Collected × KSh 20.
+                        Enter the actual amount below to see the collection difference.
                     </div>
 
                 </div>
@@ -519,14 +660,15 @@ body.dark-mode .calculation-item {
                     <div class="field-grid">
 
                         <div class="field field-full">
+
                             <label class="form-label" for="{{ form.actual_m_pesa.id_for_label }}">
-                                Today's Earnings
+                                Actual M-Pesa Collected
                             </label>
 
                             {{ form.actual_m_pesa }}
 
                             <div class="form-help">
-                                Enter the actual M-Pesa earnings received for this collection.
+                                Enter the actual M-Pesa amount received for this collection.
                             </div>
 
                             {% if form.actual_m_pesa.errors %}
@@ -534,9 +676,11 @@ body.dark-mode .calculation-item {
                                     {{ form.actual_m_pesa.errors }}
                                 </div>
                             {% endif %}
+
                         </div>
 
                         <div class="field field-full">
+
                             <label class="form-label" for="{{ form.notes.id_for_label }}">
                                 Notes
                             </label>
@@ -544,7 +688,7 @@ body.dark-mode .calculation-item {
                             {{ form.notes }}
 
                             <div class="form-help">
-                                Add useful information about this collection.
+                                Add any useful information about this collection.
                             </div>
 
                             {% if form.notes.errors %}
@@ -552,6 +696,7 @@ body.dark-mode .calculation-item {
                                     {{ form.notes.errors }}
                                 </div>
                             {% endif %}
+
                         </div>
 
                     </div>
@@ -594,57 +739,68 @@ body.dark-mode .calculation-item {
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
     const coinsInput = document.getElementById("id_coins_collected");
+    const actualInput = document.getElementById("id_actual_m_pesa");
+
     const expectedAmount = document.getElementById("expectedAmount");
-    const tomorrowAmount = document.getElementById("tomorrowAmount");
+    const actualAmount = document.getElementById("actualAmount");
+    const differenceAmount = document.getElementById("differenceAmount");
 
     const COIN_VALUE = 20;
-    const previousCoins = Number("{{ previous_coins|default:'0' }}") || 0;
-    const additionalCoins = document.getElementById("additionalCoins");
-    const lostCoins = document.getElementById("lostCoins");
 
     function formatMoney(amount) {
-        return "KSh " + amount.toLocaleString("en-KE", {
+        const value = Number(amount) || 0;
+
+        return "KSh " + value.toLocaleString("en-KE", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
     }
 
-    function updateForecast() {
-        if (!coinsInput) {
-            return;
-        }
+    function updateCalculation() {
 
-        const coins = parseInt(coinsInput.value, 10) || 0;
+        const coins = parseInt(coinsInput?.value, 10) || 0;
+        const actual = parseFloat(actualInput?.value) || 0;
+
         const expected = coins * COIN_VALUE;
-
-        const difference = coins - previousCoins;
-        const additional = difference > 0 ? difference : 0;
-        const lost = difference < 0 ? Math.abs(difference) : 0;
-
-        if (additionalCoins) {
-            additionalCoins.textContent = "+" + additional;
-        }
-
-        if (lostCoins) {
-            lostCoins.textContent = lost;
-        }
+        const difference = actual - expected;
 
         if (expectedAmount) {
             expectedAmount.textContent = formatMoney(expected);
         }
 
-        if (tomorrowAmount) {
-            tomorrowAmount.textContent = formatMoney(expected);
+        if (actualAmount) {
+            actualAmount.textContent = formatMoney(actual);
+        }
+
+        if (differenceAmount) {
+
+            differenceAmount.textContent = formatMoney(difference);
+
+            differenceAmount.classList.remove(
+                "positive",
+                "negative"
+            );
+
+            if (difference > 0) {
+                differenceAmount.classList.add("positive");
+            } else if (difference < 0) {
+                differenceAmount.classList.add("negative");
+            }
         }
     }
 
     if (coinsInput) {
-        coinsInput.addEventListener("input", updateForecast);
-        updateForecast();
+        coinsInput.addEventListener("input", updateCalculation);
     }
+
+    if (actualInput) {
+        actualInput.addEventListener("input", updateCalculation);
+    }
+
+    updateCalculation();
 });
 </script>
 
 {% endblock %}
-
