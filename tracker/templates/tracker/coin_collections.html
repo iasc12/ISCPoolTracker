@@ -1,4 +1,4 @@
-﻿{% extends "tracker/base.html" %}
+{% extends "tracker/base.html" %}
 
 {% block title %}Coin Collections - ISC Pool Tracker{% endblock %}
 
@@ -810,9 +810,6 @@
             </div>
             <div class="coin-label">Today's Coins</div>
             <div class="coin-value coins-count-value">
-    <span class="count-silver-coin" aria-hidden="true">
-        <span class="count-coin-mark">20</span>
-    </span>
     <span>{{ todays_coins|default:"0" }}</span>
 </div>
             <div class="coin-small">Coins collected today</div>
@@ -1718,42 +1715,3 @@
    ========================================================= */
 
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
