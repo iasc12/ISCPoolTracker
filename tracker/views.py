@@ -1309,6 +1309,9 @@ def coin_collection_list(request):
     # -----------------------------------------------------
     # TODAY'S EXPECTED M-PESA
     #
+    # Only collections with actual M-Pesa recorded are
+    # included in today's comparison.
+    #
     # Every coin is worth KSh 20.
     # -----------------------------------------------------
 
@@ -1945,3 +1948,6 @@ def make_system_owner(request):
             ),
         }
     )
+
+
+

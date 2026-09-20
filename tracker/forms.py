@@ -102,7 +102,7 @@ class CoinCollectionForm(forms.ModelForm):
                     "inputmode": "numeric",
                 }
             ),
-            "actual_m_pesa": forms.NumberInput(
+"actual_m_pesa": forms.NumberInput(
                 attrs={
                     "min": "0",
                     "step": "0.01",
@@ -178,3 +178,10 @@ class ProfileForm(forms.ModelForm):
                 }
             ),
         }
+
+
+
+
+
+
+

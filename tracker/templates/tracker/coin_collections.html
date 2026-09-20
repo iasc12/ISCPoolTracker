@@ -1449,15 +1449,23 @@
             </td>
 
             <td>
-                <span class="record-number lost">
-                    {{ collection.lost_coins }}
-                </span>
+                {% if collection.actual_m_pesa is not None %}
+                    <span class="record-number lost">
+                        {{ collection.lost_coins }}
+                    </span>
+                {% else %}
+                    <span class="record-number">—</span>
+                {% endif %}
             </td>
 
             <td>
-                <span class="record-number new">
-                    {{ collection.additional_coins }}
-                </span>
+                {% if collection.actual_m_pesa is not None %}
+                    <span class="record-number new">
+                        {{ collection.additional_coins }}
+                    </span>
+                {% else %}
+                    <span class="record-number">—</span>
+                {% endif %}
             </td>
 
             <td>
@@ -1934,6 +1942,11 @@
     font-weight:700 !important;
     white-space:nowrap !important;
 }</style>
+
+
+
+
+
 
 
 

@@ -1,4 +1,5 @@
-﻿from django.db import models
+﻿from decimal import Decimal
+from django.db import models
 from django.contrib.auth.models import User
 
 
@@ -175,6 +176,77 @@ class CoinCollection(models.Model):
             "-created_at"
         ]
 
+    def save(self, *args, **kwargs):
+        self.coin_value = Decimal("20.00")
+
+        if self.pk and self.created_at:
+            previous_collection = (
+                CoinCollection.objects
+                .filter(
+                    user=self.user,
+                )
+                .exclude(
+                    pk=self.pk,
+                )
+                .filter(
+                    models.Q(
+                        collection_date__lt=self.collection_date
+                    )
+                    |
+                    models.Q(
+                        collection_date=self.collection_date,
+                        created_at__lt=self.created_at,
+                    )
+                )
+                .order_by(
+                    "-collection_date",
+                    "-created_at",
+                    "-id",
+                )
+                .first()
+            )
+        else:
+            previous_collection = (
+                CoinCollection.objects
+                .filter(
+                    user=self.user,
+                    collection_date__lte=self.collection_date,
+                )
+                .exclude(
+                    pk=self.pk,
+                )
+                .order_by(
+                    "-collection_date",
+                    "-created_at",
+                    "-id",
+                )
+                .first()
+            )
+
+        if previous_collection is not None:
+            difference = (
+                self.coins_collected -
+                previous_collection.coins_collected
+            )
+
+            if difference > 0:
+                self.additional_coins = difference
+                self.lost_coins = 0
+
+            elif difference < 0:
+                self.additional_coins = 0
+                self.lost_coins = abs(difference)
+
+            else:
+                self.additional_coins = 0
+                self.lost_coins = 0
+
+        else:
+            self.additional_coins = 0
+            self.lost_coins = 0
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return (
             f"{self.collection_date} - "
@@ -281,6 +353,7 @@ class Profile(models.Model):
         null=True
     )
 
+
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
@@ -335,6 +408,7 @@ class Membership(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True,
     )
+
 
     def __str__(self):
         return f"{self.user.username} - {self.get_status_display()}"
@@ -429,9 +503,20 @@ class MpesaPayment(models.Model):
         auto_now=True,
     )
 
+
     def __str__(self):
         return (
             f"{self.user.username} - "
             f"KSh {self.amount} - "
             f"{self.get_status_display()}"
         )
+
+
+
+
+
+
+
+
+
+
