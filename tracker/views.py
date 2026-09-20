@@ -707,9 +707,7 @@ def add_earning(request):
                 )
             )
 
-            return redirect(
-                "dashboard"
-            )
+            return redirect("earnings_list")
 
     else:
 
@@ -729,17 +727,21 @@ def add_earning(request):
 def earnings_list(request):
 
     earnings = (
-        DailyEarning.objects
-        .filter(user=request.user)
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            actual_m_pesa__isnull=False,
+        )
         .order_by(
-            "-date",
-            "-id"
+            "-collection_date",
+            "-created_at",
+            "-id",
         )
     )
 
     total = money(
         earnings.aggregate(
-            total=Sum("amount_collected")
+            total=Sum("actual_m_pesa")
         )["total"]
     )
 
@@ -766,6 +768,7 @@ def earnings_list(request):
             "total": total,
         }
     )
+
 def edit_earning(
     request,
     earning_id
@@ -878,9 +881,7 @@ def add_expense(request):
                 )
             )
 
-            return redirect(
-                "dashboard"
-            )
+            return redirect("earnings_list")
 
     else:
 
@@ -1948,6 +1949,8 @@ def make_system_owner(request):
             ),
         }
     )
+
+
 
 
 

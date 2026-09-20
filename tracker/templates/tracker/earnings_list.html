@@ -1,4 +1,4 @@
-{% extends "tracker/base.html" %}
+﻿{% extends "tracker/base.html" %}
 
 {% block title %}Earnings History - ISC Pool Tracker{% endblock %}
 
@@ -862,7 +862,7 @@
 
                             <td>
                                 <div class="date-main">
-                                    {{ earning.date|date:"d M Y" }}
+                                    {{ earning.collection_date|date:"d M Y" }}
                                 </div>
                             </td>
 
@@ -870,7 +870,7 @@
                             <td>
 
                                 <div class="earning-amount">
-                                    + KSh {{ earning.amount_collected|floatformat:2 }}
+                                    + KSh {{ earning.actual_m_pesa|floatformat:2 }}
                                 </div>
 
                             </td>
@@ -900,14 +900,14 @@
                                 <div class="actions">
 
                                     <a
-                                        href="{% url 'edit_earning' earning.id %}"
+                                        href="{% url 'edit_coin_collection' earning.id %}"
                                         class="action-button edit-button"
                                     >
                                         Edit
                                     </a>
 
                                     <a
-                                        href="{% url 'delete_earning' earning.id %}"
+                                        href="{% url 'delete_coin_collection' earning.id %}"
                                         class="action-button delete-button"
                                     >
                                         Delete
@@ -978,7 +978,7 @@
                         href="?page={{ earnings.previous_page_number }}"
                         class="page-button"
                     >
-                        ← Previous
+                        â† Previous
                     </a>
 
                 {% endif %}
@@ -997,7 +997,7 @@
                         href="?page={{ earnings.next_page_number }}"
                         class="page-button next"
                     >
-                        Next →
+                        Next â†’
                     </a>
 
                 {% endif %}
@@ -1039,3 +1039,4 @@
 </div>
 
 {% endblock %}
+
