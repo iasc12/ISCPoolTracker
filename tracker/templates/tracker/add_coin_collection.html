@@ -486,7 +486,95 @@ body.dark-mode .calculation-item {
         border-radius: 20px;
     }
 }
-</style>
+.coin-adjustments {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-top:16px;
+}
+
+.adjustment-field {
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+    background:#f8fafc;
+}
+
+.adjustment-field.additional {
+    border-color:#bbf7d0;
+    background:#f0fdf4;
+}
+
+.adjustment-field.lost {
+    border-color:#fecaca;
+    background:#fef2f2;
+}
+
+.adjustment-field.additional input {
+    border-color:#86efac;
+}
+
+.adjustment-field.lost input {
+    border-color:#fca5a5;
+}
+
+.adjustment-field.additional .form-label {
+    color:#15803d;
+}
+
+.adjustment-field.lost .form-label {
+    color:#dc2626;
+}
+
+@media (max-width: 650px) {
+    .coin-adjustments {
+        grid-template-columns:1fr;
+    }
+}.coin-adjustments {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-top:16px;
+}
+
+.adjustment-field {
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+    background:#f8fafc;
+}
+
+.adjustment-field.additional {
+    border-color:#bbf7d0;
+    background:#f0fdf4;
+}
+
+.adjustment-field.lost {
+    border-color:#fecaca;
+    background:#fef2f2;
+}
+
+.adjustment-field.additional input {
+    border-color:#86efac;
+}
+
+.adjustment-field.lost input {
+    border-color:#fca5a5;
+}
+
+.adjustment-field.additional .form-label {
+    color:#15803d;
+}
+
+.adjustment-field.lost .form-label {
+    color:#dc2626;
+}
+
+@media (max-width: 650px) {
+    .coin-adjustments {
+        grid-template-columns:1fr;
+    }
+}</style>
 
 <div class="coin-form-page">
 
@@ -571,6 +659,12 @@ body.dark-mode .calculation-item {
                             </div>
 
                             {{ form.coins_collected }}
+
+<div class="coin-adjustments">
+    
+
+    
+</div>
 
                             <div class="form-help">
                                 Enter the total number of coins physically collected from the pool tables.
@@ -804,3 +898,11 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 {% endblock %}
+
+
+
+
+
+
+
+
