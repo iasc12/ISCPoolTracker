@@ -522,7 +522,7 @@ def dashboard(request):
         )
 
         chart_labels.append(
-            chart_date.strftime("%d %b")
+            chart_date.strftime("%a %d %b")
         )
 
         earnings_chart_values.append(
