@@ -1036,19 +1036,24 @@ def reports(request):
     )
 
     earnings = (
-        DailyEarning.objects
-        .filter(user=request.user)
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            actual_m_pesa__isnull=False,
+        )
     )
 
     expenses = (
         Expense.objects
-        .filter(user=request.user)
+        .filter(
+            user=request.user
+        )
     )
 
     if start_date:
 
         earnings = earnings.filter(
-            date__gte=start_date
+            collection_date__gte=start_date
         )
 
         expenses = expenses.filter(
@@ -1058,7 +1063,7 @@ def reports(request):
     if end_date:
 
         earnings = earnings.filter(
-            date__lte=end_date
+            collection_date__lte=end_date
         )
 
         expenses = expenses.filter(
@@ -1067,7 +1072,7 @@ def reports(request):
 
     total_earnings = money(
         earnings.aggregate(
-            total=Sum("amount_collected")
+            total=Sum("actual_m_pesa")
         )["total"]
     )
 
@@ -1081,11 +1086,12 @@ def reports(request):
         total_earnings -
         total_expenses
     )
+
     cash_after_expenses = total_profit
 
     earning_dates = (
         earnings
-        .values("date")
+        .values("collection_date")
         .distinct()
         .count()
     )
@@ -1181,14 +1187,16 @@ def reports(request):
     best_day = (
         earnings
         .order_by(
-            "-amount_collected"
+            "-actual_m_pesa"
         )
         .first()
     )
 
     highest_expense = (
         expenses
-        .order_by("-amount")
+        .order_by(
+            "-amount"
+        )
         .first()
     )
 
@@ -1202,25 +1210,15 @@ def reports(request):
         "total_profit": total_profit,
         "cash_after_expenses": cash_after_expenses,
 
-        "earning_days": earning_dates,
-
-        "average_daily_earnings": (
-            average_daily_earnings
-        ),
-
-        "forecast_monthly": (
-            forecast_monthly
-        ),
-
+        "earning_dates": earning_dates,
+        "average_daily_earnings": average_daily_earnings,
         "profit_margin": profit_margin,
+        "forecast_monthly": forecast_monthly,
 
-        "expense_breakdown": breakdown,
+        "breakdown": breakdown,
 
         "best_day": best_day,
-
-        "highest_expense": (
-            highest_expense
-        ),
+        "highest_expense": highest_expense,
     }
 
     return render(
@@ -1228,6 +1226,8 @@ def reports(request):
         "tracker/reports.html",
         context
     )
+
+
 def generate_report(request):
 
     return redirect(
