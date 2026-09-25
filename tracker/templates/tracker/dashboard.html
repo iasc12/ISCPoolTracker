@@ -493,6 +493,87 @@
             Keep pushing. Every game counts. Every shilling matters.
         </div>
 
+<!-- CASH AFTER EXPENSES -->
+
+<div class="cash-position-card">
+
+    <div class="cash-position-top">
+
+        <div>
+
+            <span class="cash-position-eyebrow">
+                CASH POSITION
+            </span>
+
+            <h3>
+                Cash After Expenses
+            </h3>
+
+            <p>
+                Expected money remaining after all recorded expenses
+            </p>
+
+        </div>
+
+        <div class="cash-position-icon">
+
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                <path
+                    d="M4 7.5h16v11H4z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linejoin="round">
+                </path>
+
+                <path
+                    d="M4 9.5h16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7">
+                </path>
+
+                <path
+                    d="M15.5 14h2.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round">
+                </path>
+
+                <circle
+                    cx="12"
+                    cy="14"
+                    r="1.8"
+                    fill="currentColor">
+                </circle>
+
+            </svg>
+
+        </div>
+
+    </div>
+
+
+    <div class="cash-position-amount
+        {% if cash_after_expenses < 0 %}
+            cash-negative
+        {% else %}
+            cash-positive
+        {% endif %}">
+
+        KSh {{ cash_after_expenses|floatformat:2 }}
+
+    </div>
+
+
+    
+
+</div>
+
+
+
     </div>
 
 
@@ -999,110 +1080,7 @@
 
     <h2>Financial Overview</h2>
 
-    <!-- CASH AFTER EXPENSES -->
-
-<div class="cash-position-card">
-
-    <div class="cash-position-top">
-
-        <div>
-
-            <span class="cash-position-eyebrow">
-                CASH POSITION
-            </span>
-
-            <h3>
-                Cash After Expenses
-            </h3>
-
-            <p>
-                Expected money remaining after all recorded expenses
-            </p>
-
-        </div>
-
-        <div class="cash-position-icon">
-
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-
-                <path
-                    d="M4 7.5h16v11H4z"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.7"
-                    stroke-linejoin="round">
-                </path>
-
-                <path
-                    d="M4 9.5h16"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.7">
-                </path>
-
-                <path
-                    d="M15.5 14h2.5"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.7"
-                    stroke-linecap="round">
-                </path>
-
-                <circle
-                    cx="12"
-                    cy="14"
-                    r="1.8"
-                    fill="currentColor">
-                </circle>
-
-            </svg>
-
-        </div>
-
-    </div>
-
-
-    <div class="cash-position-amount
-        {% if cash_after_expenses < 0 %}
-            cash-negative
-        {% else %}
-            cash-positive
-        {% endif %}">
-
-        KSh {{ cash_after_expenses|floatformat:2 }}
-
-    </div>
-
-
-    <div class="cash-position-breakdown">
-
-        <div>
-
-            <span>Total Earnings</span>
-
-            <strong>
-                KSh {{ total_earnings|floatformat:2 }}
-            </strong>
-
-        </div>
-
-
-        <div class="cash-minus">
-
-            <span>Total Expenses</span>
-
-            <strong>
-                − KSh {{ total_expenses|floatformat:2 }}
-            </strong>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<div class="cards">
+    <div class="cards">
 
 
         <div class="financial-card today-card">
@@ -1399,48 +1377,6 @@
     .cash-position-amount {
         font-size: 29px;
     }
-}
-
-</style>
-<style id="cash-position-compact">
-.cash-position-card {
-    width: 100% !important;
-    margin: 0 0 24px 0 !important;
-    padding: 14px 22px !important;
-    border-radius: 16px !important;
-    background: linear-gradient(135deg, #0f766e, #14b8a6) !important;
-    box-shadow: 0 8px 22px rgba(15,118,110,.20) !important;
-}
-
-.cash-position-card .cash-position-top {
-    display: block !important;
-}
-
-.cash-position-card .cash-position-top > div:first-child {
-    display: block !important;
-}
-
-.cash-position-card .cash-position-eyebrow {
-    display: block !important;
-    font-size: 10px !important;
-    letter-spacing: .12em !important;
-}
-
-.cash-position-card h3 {
-    margin: 2px 0 0 !important;
-    font-size: 18px !important;
-}
-
-.cash-position-card p,
-.cash-position-card .cash-position-icon,
-.cash-position-card .cash-position-breakdown {
-    display: none !important;
-}
-
-.cash-position-card .cash-position-amount {
-    margin-top: 6px !important;
-    font-size: 28px !important;
-    line-height: 1 !important;
 }
 
 </style>
@@ -1859,7 +1795,125 @@
     border: none !important;
     outline: none !important;
 }
-</style><div class="analytics-section">
+
+.cash-position-card {
+    margin-top: 28px !important;
+}
+.cash-position-card {
+    background: #eef2ff !important;
+    border: 1px solid #c7d2fe !important;
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.10) !important;
+}
+
+.cash-position-card * {
+    background: transparent !important;
+}
+
+.cash-position-amount {
+    color: #3730a3 !important;
+}
+.cash-position-card {
+    background: #fff1f2 !important;
+    border: 1px solid #fecdd3 !important;
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.10) !important;
+}
+
+.cash-position-card * {
+    background: transparent !important;
+}
+
+.cash-position-amount {
+    color: #b91c1c !important;
+}
+.cash-position-card {
+    background: #fff1f2 !important;
+    border: 1px solid #fecdd3 !important;
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.10) !important;
+}
+
+.cash-position-card * {
+    background: transparent !important;
+}
+
+.cash-position-amount {
+    color: #b91c1c !important;
+}
+.cash-position-card {
+    background: #fff1f2 !important;
+    border: 1px solid #fda4af !important;
+    color: #450a0a !important;
+    box-shadow: 0 8px 24px rgba(185, 28, 28, 0.10) !important;
+}
+
+.cash-position-card * {
+    background: transparent !important;
+}
+
+.cash-position-card .cash-position-eyebrow {
+    color: #991b1b !important;
+}
+
+.cash-position-card h3 {
+    color: #450a0a !important;
+}
+
+.cash-position-card p {
+    color: #7f1d1d !important;
+}
+
+.cash-position-card .cash-position-breakdown span {
+    color: #7f1d1d !important;
+}
+
+.cash-position-card .cash-position-breakdown strong {
+    color: #450a0a !important;
+}
+
+.cash-position-card .cash-position-amount {
+    color: #991b1b !important;
+}
+
+.cash-position-card .cash-position-icon {
+    color: #991b1b !important;
+}
+.cash-position-card {
+    background: #fff1f2 !important;
+    border: 1px solid #fda4af !important;
+    color: #450a0a !important;
+    box-shadow: 0 8px 24px rgba(185, 28, 28, 0.10) !important;
+}
+
+.cash-position-card * {
+    background: transparent !important;
+}
+
+.cash-position-card .cash-position-eyebrow {
+    color: #991b1b !important;
+}
+
+.cash-position-card h3 {
+    color: #450a0a !important;
+}
+
+.cash-position-card p {
+    color: #7f1d1d !important;
+}
+
+.cash-position-card .cash-position-breakdown span {
+    color: #7f1d1d !important;
+}
+
+.cash-position-card .cash-position-breakdown strong {
+    color: #450a0a !important;
+}
+
+.cash-position-card .cash-position-amount {
+    color: #991b1b !important;
+}
+
+.cash-position-card .cash-position-icon {
+    color: #991b1b !important;
+}</style><div class="analytics-section">
 
     <h2>Performance Analytics</h2>
 
@@ -2185,6 +2239,12 @@
 </script>
 
 {% endblock %}
+
+
+
+
+
+
 
 
 
