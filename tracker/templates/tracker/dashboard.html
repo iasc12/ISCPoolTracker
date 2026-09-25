@@ -2244,62 +2244,77 @@
         <div>
             <span class="recent-activity-eyebrow">ACTIVITY</span>
             <h2>Recent Activity</h2>
-            <p>Your latest earnings and expenses.</p>
+            <p>Your latest collection and expense activity.</p>
         </div>
     </div>
 
     <div class="recent-activity-card">
 
-        {% if recent_earnings or recent_expenses %}
+        {% if recent_earnings %}
+        <div class="activity-row">
 
-            {% for earning in recent_earnings %}
-            <div class="activity-row">
-
-                <div class="activity-icon activity-earning">
-                    +
-                </div>
-
-                <div class="activity-details">
-                    <strong>Coin Collection</strong>
-                    <span>
-                        {{ earning.collection_date|date:"d M Y" }}
-                    </span>
-                </div>
-
-                <div class="activity-amount activity-income">
-                    + KSh {{ earning.actual_m_pesa|floatformat:2 }}
-                </div>
-
-            </div>
-            {% endfor %}
-
-            {% for expense in recent_expenses %}
-            <div class="activity-row">
-
-                <div class="activity-icon activity-expense">
-                    -
-                </div>
-
-                <div class="activity-details">
-                    <strong>{{ expense.category }}</strong>
-                    <span>
-                        {{ expense.date|date:"d M Y" }}
-                    </span>
-                </div>
-
-                <div class="activity-amount activity-cost">
-                    - KSh {{ expense.amount|floatformat:2 }}
-                </div>
-
-            </div>
-            {% endfor %}
-
-        {% else %}
-
-            <div class="activity-empty">
-                No recent activity yet.
+            <div class="activity-icon activity-earning">
+                +
             </div>
 
+            <div class="activity-details">
+                <strong>Coins Collected</strong>
+                <span>
+                    {{ recent_earnings.0.collection_date|date:"d M Y" }}
+                </span>
+            </div>
+
+            <div class="activity-amount activity-income">
+                {{ recent_earnings.0.coins_collected }} coins
+            </div>
+
+        </div>
+
+        <div class="activity-row">
+
+            <div class="activity-icon activity-earning">
+                KSh
+            </div>
+
+            <div class="activity-details">
+                <strong>Amount Collected</strong>
+                <span>
+                    {{ recent_earnings.0.collection_date|date:"d M Y" }}
+                </span>
+            </div>
+
+            <div class="activity-amount activity-income">
+                KSh {{ recent_earnings.0.actual_m_pesa|floatformat:2 }}
+            </div>
+
+        </div>
+        {% endif %}
+
+        {% if recent_expenses %}
+        <div class="activity-row">
+
+            <div class="activity-icon activity-expense">
+                -
+            </div>
+
+            <div class="activity-details">
+                <strong>Expense Recorded</strong>
+                <span>
+                    {{ recent_expenses.0.date|date:"d M Y" }}
+                </span>
+            </div>
+
+            <div class="activity-amount activity-cost">
+                KSh {{ recent_expenses.0.amount|floatformat:2 }}
+            </div>
+
+        </div>
+        {% endif %}
+
+        {% if not recent_earnings and not recent_expenses %}
+        <div class="activity-empty">
+            No recent activity yet.
+        </div>
         {% endif %}
 
     </div>
@@ -2366,7 +2381,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 12px;
-    font-size: 20px;
+    font-size: 12px;
     font-weight: 800;
 }
 
