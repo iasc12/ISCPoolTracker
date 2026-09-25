@@ -2500,3 +2500,52 @@
     }
 }
 </style>
+
+<style>
+/* =========================================================
+   DASHBOARD - UNIFIED DEFAULT CARD COLOR
+   ========================================================= */
+
+.financial-card,
+.cash-position-card,
+.performance-analytics-card,
+.recent-activity-card {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Keep all dashboard card surfaces consistent */
+.financial-card *,
+.cash-position-card *,
+.performance-analytics-card *,
+.recent-activity-card * {
+    box-sizing: border-box;
+}
+
+/* Unified card heading/text base */
+.financial-card h2,
+.cash-position-card h3,
+.performance-analytics-card h2,
+.recent-activity-header h2 {
+    color: #111827;
+}
+
+/* Preserve readable secondary text */
+.financial-card p,
+.cash-position-card p,
+.recent-activity-header p {
+    color: #6b7280;
+}
+
+/* Performance analytics inner cards also use the same default surface */
+.performance-analytics-card .analytics-card {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+/* Recent activity remains one unified card */
+.recent-activity-card .activity-row {
+    background: #ffffff !important;
+}
+</style>
