@@ -2248,7 +2248,7 @@
         </div>
     </div>
 
-    <div class="recent-activity-card">
+    <div class="recent-activity-card" style="background:#14532d !important; border:1px solid #166534 !important; box-shadow:0 12px 30px rgba(20,83,45,.20) !important;">
 
         {% if recent_earnings %}
         <div class="activity-row">
@@ -2263,13 +2263,13 @@
 </div>
 
             <div class="activity-details">
-                <strong>Coins Collected</strong>
-                <span>
+                <strong style="color:#ffffff !important;">Coins Collected</strong>
+                <span style="color:#ffffff !important;">
                     {{ recent_earnings.0.collection_date|date:"d M Y" }}
                 </span>
             </div>
 
-            <div class="activity-amount activity-income">
+            <div class="activity-amount activity-income" style="color:#ffffff !important;">
                 {{ recent_earnings.0.coins_collected }} coins
             </div>
 
@@ -2282,13 +2282,13 @@
             </div>
 
             <div class="activity-details">
-                <strong>Amount Collected</strong>
-                <span>
+                <strong style="color:#ffffff !important;">Amount Collected</strong>
+                <span style="color:#ffffff !important;">
                     {{ recent_earnings.0.collection_date|date:"d M Y" }}
                 </span>
             </div>
 
-            <div class="activity-amount activity-income">
+            <div class="activity-amount activity-income" style="color:#ffffff !important;">
                 KSh {{ recent_earnings.0.actual_m_pesa|floatformat:2 }}
             </div>
 
@@ -2307,13 +2307,13 @@
 </div>
 
             <div class="activity-details">
-                <strong>Expense Recorded</strong>
-                <span>
+                <strong style="color:#ffffff !important;">Expense Recorded</strong>
+                <span style="color:#ffffff !important;">
                     {{ recent_expenses.0.date|date:"d M Y" }}
                 </span>
             </div>
 
-            <div class="activity-amount activity-cost">
+            <div class="activity-amount activity-cost" style="color:#ffffff !important;">
                 KSh {{ recent_expenses.0.amount|floatformat:2 }}
             </div>
 
@@ -2517,11 +2517,17 @@
 
 .financial-card,
 .cash-position-card,
-.performance-analytics-card,
-.recent-activity-card {
+.performance-analytics-card {
     background: #ffffff !important;
     border: 1px solid #e5e7eb !important;
     box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08) !important;
+}
+
+.recent-activity-card {
+    background: #14532d !important;
+    border: 1px solid #166534 !important;
+    box-shadow: 0 12px 30px rgba(20, 83, 45, 0.20) !important;
+    color: #ffffff !important;
 }
 
 /* Keep all dashboard card surfaces consistent */
@@ -2559,7 +2565,7 @@
 }
 
 /* =========================================================
-   RECENT ACTIONS Ã¢â‚¬â€ FOREST GREEN CARD
+   RECENT ACTIONS ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â FOREST GREEN CARD
    ========================================================= */
 
 .recent-activity-card {
@@ -2587,6 +2593,26 @@
 
 .recent-activity-card .activity-icon {
     background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   RECENT ACTIVITY - FOREST GREEN TEXT VISIBILITY
+   ========================================================= */
+
+.recent-activity-card .activity-details strong,
+.recent-activity-card .activity-details span,
+.recent-activity-card .activity-amount,
+.recent-activity-card .activity-income,
+.recent-activity-card .activity-cost {
+    color: #ffffff !important;
+}
+
+.recent-activity-card .activity-icon {
+    color: #ffffff !important;
+}
+
+.recent-activity-card .activity-row {
     color: #ffffff !important;
 }
 </style>
