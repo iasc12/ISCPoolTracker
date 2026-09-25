@@ -999,7 +999,110 @@
 
     <h2>Financial Overview</h2>
 
-    <div class="cards">
+    <!-- CASH AFTER EXPENSES -->
+
+<div class="cash-position-card">
+
+    <div class="cash-position-top">
+
+        <div>
+
+            <span class="cash-position-eyebrow">
+                CASH POSITION
+            </span>
+
+            <h3>
+                Cash After Expenses
+            </h3>
+
+            <p>
+                Expected money remaining after all recorded expenses
+            </p>
+
+        </div>
+
+        <div class="cash-position-icon">
+
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                <path
+                    d="M4 7.5h16v11H4z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linejoin="round">
+                </path>
+
+                <path
+                    d="M4 9.5h16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7">
+                </path>
+
+                <path
+                    d="M15.5 14h2.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round">
+                </path>
+
+                <circle
+                    cx="12"
+                    cy="14"
+                    r="1.8"
+                    fill="currentColor">
+                </circle>
+
+            </svg>
+
+        </div>
+
+    </div>
+
+
+    <div class="cash-position-amount
+        {% if cash_after_expenses < 0 %}
+            cash-negative
+        {% else %}
+            cash-positive
+        {% endif %}">
+
+        KSh {{ cash_after_expenses|floatformat:2 }}
+
+    </div>
+
+
+    <div class="cash-position-breakdown">
+
+        <div>
+
+            <span>Total Earnings</span>
+
+            <strong>
+                KSh {{ total_earnings|floatformat:2 }}
+            </strong>
+
+        </div>
+
+
+        <div class="cash-minus">
+
+            <span>Total Expenses</span>
+
+            <strong>
+                − KSh {{ total_expenses|floatformat:2 }}
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="cards">
 
 
         <div class="financial-card today-card">
@@ -1299,108 +1402,48 @@
 }
 
 </style>
-<!-- CASH AFTER EXPENSES -->
+<style id="cash-position-compact">
+.cash-position-card {
+    width: 100% !important;
+    margin: 0 0 24px 0 !important;
+    padding: 14px 22px !important;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, #0f766e, #14b8a6) !important;
+    box-shadow: 0 8px 22px rgba(15,118,110,.20) !important;
+}
 
-<div class="cash-position-card">
+.cash-position-card .cash-position-top {
+    display: block !important;
+}
 
-    <div class="cash-position-top">
+.cash-position-card .cash-position-top > div:first-child {
+    display: block !important;
+}
 
-        <div>
+.cash-position-card .cash-position-eyebrow {
+    display: block !important;
+    font-size: 10px !important;
+    letter-spacing: .12em !important;
+}
 
-            <span class="cash-position-eyebrow">
-                CASH POSITION
-            </span>
+.cash-position-card h3 {
+    margin: 2px 0 0 !important;
+    font-size: 18px !important;
+}
 
-            <h3>
-                Cash After Expenses
-            </h3>
+.cash-position-card p,
+.cash-position-card .cash-position-icon,
+.cash-position-card .cash-position-breakdown {
+    display: none !important;
+}
 
-            <p>
-                Expected money remaining after all recorded expenses
-            </p>
+.cash-position-card .cash-position-amount {
+    margin-top: 6px !important;
+    font-size: 28px !important;
+    line-height: 1 !important;
+}
 
-        </div>
-
-        <div class="cash-position-icon">
-
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-
-                <path
-                    d="M4 7.5h16v11H4z"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.7"
-                    stroke-linejoin="round">
-                </path>
-
-                <path
-                    d="M4 9.5h16"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.7">
-                </path>
-
-                <path
-                    d="M15.5 14h2.5"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.7"
-                    stroke-linecap="round">
-                </path>
-
-                <circle
-                    cx="12"
-                    cy="14"
-                    r="1.8"
-                    fill="currentColor">
-                </circle>
-
-            </svg>
-
-        </div>
-
-    </div>
-
-
-    <div class="cash-position-amount
-        {% if cash_after_expenses < 0 %}
-            cash-negative
-        {% else %}
-            cash-positive
-        {% endif %}">
-
-        KSh {{ cash_after_expenses|floatformat:2 }}
-
-    </div>
-
-
-    <div class="cash-position-breakdown">
-
-        <div>
-
-            <span>Total Earnings</span>
-
-            <strong>
-                KSh {{ total_earnings|floatformat:2 }}
-            </strong>
-
-        </div>
-
-
-        <div class="cash-minus">
-
-            <span>Total Expenses</span>
-
-            <strong>
-                − KSh {{ total_expenses|floatformat:2 }}
-            </strong>
-
-        </div>
-
-    </div>
-
-</div>
-
+</style>
 <!-- ANALYTICS -->
 
 <style>
@@ -2142,6 +2185,8 @@
 </script>
 
 {% endblock %}
+
+
 
 
 
