@@ -1,4 +1,4 @@
-﻿{% extends "tracker/base.html" %}
+{% extends "tracker/base.html" %}
 
 {% block title %}Dashboard - ISC Pool Tracker{% endblock %}
 
@@ -6,7 +6,7 @@
 
 <style>
 /* =========================================================
-   ISC POOL TRACKER — DASHBOARD
+   ISC POOL TRACKER - DASHBOARD
    Clean, responsive dashboard styling
    ========================================================= */
 
@@ -1913,11 +1913,7 @@
 
 .cash-position-card .cash-position-icon {
     color: #991b1b !important;
-}</style><div class="analytics-section">
-
-    <h2>Performance Analytics</h2>
-
-    <div class="analytics-grid">
+}</style><div class="analytics-section"><div class="performance-analytics-card"><h2>Performance Analytics</h2><div class="analytics-grid">
 
         <div class="analytics-card analytics-earnings">
 
@@ -2011,6 +2007,8 @@
         </div>
 
     </div>
+
+</div>
 
 </div>
 
@@ -2238,6 +2236,202 @@
 })();
 </script>
 
+<!-- RECENT ACTIVITY -->
+
+<section class="recent-activity-section">
+
+    <div class="recent-activity-header">
+        <div>
+            <span class="recent-activity-eyebrow">ACTIVITY</span>
+            <h2>Recent Activity</h2>
+            <p>Your latest earnings and expenses.</p>
+        </div>
+    </div>
+
+    <div class="recent-activity-card">
+
+        {% if recent_earnings or recent_expenses %}
+
+            {% for earning in recent_earnings %}
+            <div class="activity-row">
+
+                <div class="activity-icon activity-earning">
+                    +
+                </div>
+
+                <div class="activity-details">
+                    <strong>Coin Collection</strong>
+                    <span>
+                        {{ earning.collection_date|date:"d M Y" }}
+                    </span>
+                </div>
+
+                <div class="activity-amount activity-income">
+                    + KSh {{ earning.actual_m_pesa|floatformat:2 }}
+                </div>
+
+            </div>
+            {% endfor %}
+
+            {% for expense in recent_expenses %}
+            <div class="activity-row">
+
+                <div class="activity-icon activity-expense">
+                    -
+                </div>
+
+                <div class="activity-details">
+                    <strong>{{ expense.category }}</strong>
+                    <span>
+                        {{ expense.date|date:"d M Y" }}
+                    </span>
+                </div>
+
+                <div class="activity-amount activity-cost">
+                    - KSh {{ expense.amount|floatformat:2 }}
+                </div>
+
+            </div>
+            {% endfor %}
+
+        {% else %}
+
+            <div class="activity-empty">
+                No recent activity yet.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+<style>
+.recent-activity-section {
+    width: 100%;
+    margin-top: 28px;
+}
+
+.recent-activity-header {
+    margin-bottom: 14px;
+}
+
+.recent-activity-eyebrow {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    color: #6b7280;
+}
+
+.recent-activity-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.recent-activity-header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.recent-activity-card {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 20px;
+    background: rgba(255,255,255,.92);
+    border: 1px solid rgba(148,163,184,.20);
+    box-shadow: 0 10px 28px rgba(15,23,42,.08);
+}
+
+.activity-row {
+    display: grid;
+    grid-template-columns: 42px minmax(0,1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(148,163,184,.14);
+}
+
+.activity-row:last-child {
+    border-bottom: 0;
+}
+
+.activity-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.activity-earning {
+    color: #15803d;
+    background: #dcfce7;
+}
+
+.activity-expense {
+    color: #b91c1c;
+    background: #fee2e2;
+}
+
+.activity-details {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.activity-details strong {
+    font-size: 14px;
+    color: #111827;
+}
+
+.activity-details span {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.activity-amount {
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.activity-income {
+    color: #15803d;
+}
+
+.activity-cost {
+    color: #b91c1c;
+}
+
+.activity-empty {
+    padding: 30px 20px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .activity-row {
+        grid-template-columns: 38px minmax(0,1fr);
+        gap: 12px;
+        padding: 14px 16px;
+    }
+
+    .activity-amount {
+        grid-column: 2;
+        font-size: 13px;
+    }
+}
+</style>
+
 {% endblock %}
 
 
@@ -2250,3 +2444,44 @@
 
 
 
+
+
+
+
+<style>
+.performance-analytics-card {
+    width: 100%;
+    padding: 24px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    box-sizing: border-box;
+}
+
+.performance-analytics-card h2 {
+    margin: 0 0 20px;
+}
+
+.performance-analytics-card .analytics-grid {
+    width: 100%;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 950px) {
+    .performance-analytics-card .analytics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .performance-analytics-card {
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .performance-analytics-card .analytics-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+</style>

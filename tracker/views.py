@@ -1,4 +1,4 @@
-﻿from django.http import JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date, timedelta
 from decimal import Decimal
@@ -656,11 +656,15 @@ def dashboard(request):
 
         # Recent
         "recent_earnings": (
-            DailyEarning.objects
-            .filter(user=request.user)
+            CoinCollection.objects
+            .filter(
+                user=request.user,
+                actual_m_pesa__isnull=False,
+            )
             .order_by(
-                "-date",
-                "-id"
+                "-collection_date",
+                "-created_at",
+                "-id",
             )[:5]
         ),
 
@@ -1351,7 +1355,7 @@ def coin_collection_list(request):
     # -----------------------------------------------------
     # NEXT EXPECTED COLLECTION
     #
-    # Today's coins × KSh 20.
+    # Today's coins [20 KSh per coin].
     # -----------------------------------------------------
 
     tomorrow_expected = (
@@ -1949,8 +1953,3 @@ def make_system_owner(request):
             ),
         }
     )
-
-
-
-
-
