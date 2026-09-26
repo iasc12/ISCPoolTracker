@@ -1,4 +1,4 @@
-﻿{% extends "tracker/base.html" %}
+{% extends "tracker/base.html" %}
 
 {% block title %}Coin Collections - ISC Pool Tracker{% endblock %}
 
@@ -1474,7 +1474,7 @@
 <div class="coin-pagination">
     {% if collections.has_previous %}
         <a href="?page={{ collections.previous_page_number }}" class="coin-pager-link">
-            <span class="coin-pager-icon">‹</span> Previous
+            Previous
         </a>
     {% endif %}
 
@@ -1484,7 +1484,7 @@
 
     {% if collections.has_next %}
         <a href="?page={{ collections.next_page_number }}" class="coin-pager-link">
-            Next <span class="coin-pager-icon">›</span>
+            Next
         </a>
     {% endif %}
 </div>
