@@ -155,6 +155,42 @@
             height: 19px;
         }
 
+        .profile-topbar-link {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 13px;
+            text-decoration: none;
+            color: var(--accent-dark);
+            background: rgba(127, 127, 127, .08);
+            border: 1px solid rgba(127, 127, 127, .12);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+            transition: transform .2s ease, box-shadow .2s ease;
+            font-size: 15px;
+            font-weight: 850;
+        }
+
+        .profile-topbar-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, .12);
+        }
+
+        .profile-topbar-link img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        body.dark-mode .profile-topbar-link {
+            background: #151b23;
+            border-color: rgba(255, 255, 255, .08);
+            color: #f9fafb;
+        }
+
         .sun-icon {
             display: none;
         }
@@ -558,6 +594,24 @@ select {
                 <path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/>
             </svg>
         </button>
+
+        <a
+            href="{% url 'profile' %}"
+            class="profile-topbar-link"
+            aria-label="Open profile"
+            title="Profile"
+        >
+            {% with topbar_profile=request.user.profile %}
+                {% if topbar_profile.profile_picture %}
+                    <img
+                        src="{{ topbar_profile.profile_picture.url }}"
+                        alt="{{ request.user.username }} profile picture"
+                    >
+                {% else %}
+                    {{ request.user.username|first|upper }}
+                {% endif %}
+            {% endwith %}
+        </a>
 
     </div>
 </header>
