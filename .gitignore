@@ -28,3 +28,11 @@ profile_pictures/
 
 # Build/deployment
 staticfiles/
+
+# Local database/data migration backups
+backup_tracker/auth_users_before_postgres.json
+backup_tracker/isc_pool_tracker_before_koyeb.sqlite3
+backup_tracker/isc_pool_tracker_business_data.json
+backup_tracker/isc_pool_tracker_data_before_postgres.json
+backup_tracker/isc_pool_tracker_data_before_postgres_utf8.json
+backup_tracker/isc_pool_tracker_data_to_import.json
