@@ -36,3 +36,6 @@ backup_tracker/isc_pool_tracker_business_data.json
 backup_tracker/isc_pool_tracker_data_before_postgres.json
 backup_tracker/isc_pool_tracker_data_before_postgres_utf8.json
 backup_tracker/isc_pool_tracker_data_to_import.json
+
+backup_tracker/current_supabase_backup.json
+backup_tracker/neon_production_backup.json
