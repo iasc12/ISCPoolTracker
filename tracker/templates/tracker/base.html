@@ -1,4 +1,4 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -457,6 +457,46 @@ select {
 })();
 </script>
 
+<link rel="manifest" href="{% static 'tracker/manifest.json' %}">
+<meta name="theme-color" content="#2563eb">
+
+<script>
+(function () {
+    let deferredInstallPrompt = null;
+
+    window.addEventListener("beforeinstallprompt", function (event) {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+
+        {% if user.is_authenticated %}
+        setTimeout(function () {
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+
+                deferredInstallPrompt.userChoice.then(function () {
+                    deferredInstallPrompt = null;
+                }).catch(function () {
+                    deferredInstallPrompt = null;
+                });
+            }
+        }, 1000);
+        {% endif %}
+    });
+
+    window.addEventListener("appinstalled", function () {
+        deferredInstallPrompt = null;
+    });
+
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+            navigator.serviceWorker.register("{% static 'tracker/sw.js' %}")
+                .catch(function (error) {
+                    console.error("ISC Pool Tracker service worker registration failed:", error);
+                });
+        });
+    }
+})();
+</script>
 </head>
 
 <body>
