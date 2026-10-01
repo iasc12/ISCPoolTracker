@@ -1170,6 +1170,211 @@ body.dark-mode .breakdown-row:hover {
 body.dark-mode .monthly-report-form {
     background: #111827;
 }
+/* =========================================================
+   REPORTS — RESPONSIVE MOBILE POLISH
+========================================================= */
+
+.monthly-report-form form {
+    min-width: 0;
+}
+
+.report-input-group,
+.report-input-group select,
+.report-input-group input {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.monthly-financial-item,
+.all-time-item {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.monthly-financial-amount,
+.all-time-item strong {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+@media (max-width: 850px) {
+
+    .monthly-financial-grid,
+    .all-time-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .monthly-financial-divider {
+        display: none;
+    }
+
+    .monthly-financial-item,
+    .all-time-item {
+        width: 100%;
+    }
+}
+
+@media (max-width: 700px) {
+
+    .monthly-performance-card,
+    .all-time-card,
+    .margin-card,
+    .breakdown-card {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .monthly-performance-card .monthly-card-heading,
+    .all-time-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .monthly-report-trigger {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .monthly-report-form {
+        padding: 18px;
+    }
+
+    .monthly-report-form form {
+        grid-template-columns: 1fr;
+        gap: 13px;
+    }
+
+    .report-input-group {
+        width: 100%;
+    }
+
+    .report-input-group select,
+    .report-input-group input,
+    .generate-report-button {
+        width: 100%;
+        min-width: 0;
+        min-height: 46px;
+        box-sizing: border-box;
+    }
+
+    .monthly-selected-period {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 18px;
+    }
+
+    .monthly-date-range {
+        width: 100%;
+        text-align: left;
+        white-space: normal;
+    }
+
+    .monthly-financial-grid,
+    .all-time-grid {
+        grid-template-columns: 1fr;
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .monthly-financial-item,
+    .all-time-item {
+        padding: 18px 17px;
+    }
+
+    .monthly-financial-amount {
+        font-size: clamp(18px, 7vw, 24px);
+        line-height: 1.25;
+    }
+
+    .all-time-item strong {
+        font-size: clamp(19px, 7vw, 24px);
+        line-height: 1.25;
+    }
+
+    .margin-card {
+        padding: 18px;
+    }
+
+    .margin-top {
+        align-items: flex-start;
+    }
+
+    .margin-value {
+        font-size: 19px;
+        white-space: nowrap;
+    }
+
+    .breakdown-header {
+        padding: 18px;
+    }
+
+    .breakdown-list {
+        padding: 4px 14px;
+    }
+
+    .breakdown-row {
+        gap: 12px;
+        padding: 14px 2px;
+    }
+
+    .breakdown-name {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .breakdown-amount {
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .monthly-performance-card .monthly-card-heading,
+    .all-time-header {
+        padding: 17px;
+    }
+
+    .monthly-performance-card .monthly-card-heading h2,
+    .all-time-header h2 {
+        font-size: 16px;
+    }
+
+    .monthly-performance-card .monthly-card-heading p {
+        font-size: 11px;
+    }
+
+    .monthly-financial-grid,
+    .all-time-grid {
+        padding: 11px;
+    }
+
+    .monthly-financial-item,
+    .all-time-item {
+        padding: 16px 15px;
+        border-radius: 12px;
+    }
+
+    .monthly-financial-label,
+    .all-time-item span {
+        font-size: 11px;
+    }
+
+    .monthly-financial-amount,
+    .all-time-item strong {
+        font-size: 20px;
+    }
+
+    .monthly-financial-item small {
+        font-size: 10px;
+    }
+
+    .breakdown-row {
+        align-items: flex-start;
+    }
+}
 </style>
 
 
