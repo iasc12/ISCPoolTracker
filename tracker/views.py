@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+﻿from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date, timedelta
 from decimal import Decimal
@@ -1029,17 +1029,95 @@ def delete_expense(
             "object_type": "expense",
         }
     )
+@login_required
 def reports(request):
 
-    start_date = request.GET.get(
-        "start_date"
+    today = timezone.localdate()
+
+    # ---------------------------------------------------------
+    # SELECTED MONTH
+    # ---------------------------------------------------------
+
+    selected_year = request.GET.get("year")
+    selected_month = request.GET.get("month")
+
+    try:
+        selected_year = int(selected_year)
+        selected_month = int(selected_month)
+
+        if selected_month < 1 or selected_month > 12:
+            raise ValueError
+
+    except (TypeError, ValueError):
+        selected_year = today.year
+        selected_month = today.month
+
+    month_start = date(
+        selected_year,
+        selected_month,
+        1,
     )
 
-    end_date = request.GET.get(
-        "end_date"
+    if selected_month == 12:
+        next_month = date(
+            selected_year + 1,
+            1,
+            1,
+        )
+    else:
+        next_month = date(
+            selected_year,
+            selected_month + 1,
+            1,
+        )
+
+    month_end = next_month - timedelta(days=1)
+
+    # ---------------------------------------------------------
+    # MONTHLY EARNINGS
+    # ---------------------------------------------------------
+
+    monthly_earnings_qs = (
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            collection_date__gte=month_start,
+            collection_date__lte=month_end,
+            actual_m_pesa__isnull=False,
+        )
     )
 
-    earnings = (
+    monthly_expenses_qs = (
+        Expense.objects
+        .filter(
+            user=request.user,
+            date__gte=month_start,
+            date__lte=month_end,
+        )
+    )
+
+    monthly_earnings = money(
+        monthly_earnings_qs.aggregate(
+            total=Sum("actual_m_pesa")
+        )["total"]
+    )
+
+    monthly_expenses = money(
+        monthly_expenses_qs.aggregate(
+            total=Sum("amount")
+        )["total"]
+    )
+
+    monthly_profit = (
+        monthly_earnings -
+        monthly_expenses
+    )
+
+    # ---------------------------------------------------------
+    # ALL TIME
+    # ---------------------------------------------------------
+
+    all_earnings_qs = (
         CoinCollection.objects
         .filter(
             user=request.user,
@@ -1047,106 +1125,76 @@ def reports(request):
         )
     )
 
-    expenses = (
+    all_expenses_qs = (
         Expense.objects
         .filter(
-            user=request.user
+            user=request.user,
         )
     )
 
-    if start_date:
-
-        earnings = earnings.filter(
-            collection_date__gte=start_date
-        )
-
-        expenses = expenses.filter(
-            date__gte=start_date
-        )
-
-    if end_date:
-
-        earnings = earnings.filter(
-            collection_date__lte=end_date
-        )
-
-        expenses = expenses.filter(
-            date__lte=end_date
-        )
-
-    total_earnings = money(
-        earnings.aggregate(
+    all_time_earnings = money(
+        all_earnings_qs.aggregate(
             total=Sum("actual_m_pesa")
         )["total"]
     )
 
-    total_expenses = money(
-        expenses.aggregate(
+    all_time_expenses = money(
+        all_expenses_qs.aggregate(
             total=Sum("amount")
         )["total"]
     )
 
-    total_profit = (
-        total_earnings -
-        total_expenses
+    all_time_profit = (
+        all_time_earnings -
+        all_time_expenses
     )
 
-    cash_after_expenses = total_profit
+    # ---------------------------------------------------------
+    # PROFIT MARGIN
+    # ---------------------------------------------------------
 
-    earning_dates = (
-        earnings
-        .values("collection_date")
-        .distinct()
-        .count()
-    )
-
-    if earning_dates:
-
-        average_daily_earnings = (
-            total_earnings /
-            Decimal(earning_dates)
-        )
-
-    else:
-
-        average_daily_earnings = (
-            Decimal("0.00")
-        )
-
-    if total_earnings:
+    if all_time_earnings > 0:
 
         profit_margin = (
-            total_profit /
-            total_earnings
+            all_time_profit /
+            all_time_earnings
         ) * Decimal("100")
 
     else:
 
-        profit_margin = Decimal(
-            "0.00"
-        )
+        profit_margin = Decimal("0.00")
 
-    forecast_monthly = (
-        average_daily_earnings *
-        Decimal("30")
+    if profit_margin < 0:
+        margin_width = Decimal("0.00")
+
+    elif profit_margin > 100:
+        margin_width = Decimal("100.00")
+
+    else:
+        margin_width = profit_margin
+
+    # ---------------------------------------------------------
+    # EXPENSE BREAKDOWN
+    # ---------------------------------------------------------
+
+    expense_breakdown = []
+
+    expense_labels = dict(
+        Expense.EXPENSE_TYPE_CHOICES
     )
 
-    breakdown = []
-
     expense_types = (
-        expenses
+        all_expenses_qs
         .values("expense_type")
         .distinct()
     )
 
     for row in expense_types:
 
-        expense_type = (
-            row["expense_type"]
-        )
+        expense_type = row["expense_type"]
 
         amount = money(
-            expenses
+            all_expenses_qs
             .filter(
                 expense_type=expense_type
             )
@@ -1155,93 +1203,76 @@ def reports(request):
             )["total"]
         )
 
-        if total_expenses:
+        expense_breakdown.append({
+            "type": expense_labels.get(
+                expense_type,
+                expense_type,
+            ),
+            "amount": amount,
+        })
 
-            percentage = (
-                amount /
-                total_expenses
-            ) * Decimal("100")
-
-        else:
-
-            percentage = Decimal(
-                "0.00"
-            )
-
-        display_name = dict(
-            Expense.EXPENSE_TYPE_CHOICES
-        ).get(
-            expense_type,
-            expense_type
-        )
-
-        breakdown.append(
-            {
-                "type": display_name,
-                "amount": amount,
-                "percentage": percentage,
-            }
-        )
-
-    breakdown.sort(
+    expense_breakdown.sort(
         key=lambda item: item["amount"],
-        reverse=True
+        reverse=True,
     )
 
-    best_day = (
-        earnings
-        .order_by(
-            "-actual_m_pesa"
-        )
-        .first()
+    # ---------------------------------------------------------
+    # MONTH SELECTOR
+    # ---------------------------------------------------------
+
+    months = [
+        (1, "January"),
+        (2, "February"),
+        (3, "March"),
+        (4, "April"),
+        (5, "May"),
+        (6, "June"),
+        (7, "July"),
+        (8, "August"),
+        (9, "September"),
+        (10, "October"),
+        (11, "November"),
+        (12, "December"),
+    ]
+
+    years = range(
+        today.year - 5,
+        today.year + 1,
     )
 
-    highest_expense = (
-        expenses
-        .order_by(
-            "-amount"
-        )
-        .first()
-    )
+    # ---------------------------------------------------------
+    # CONTEXT
+    # ---------------------------------------------------------
 
     context = {
+        "month_start": month_start,
+        "month_end": month_end,
 
-        "start_date": start_date,
-        "end_date": end_date,
+        "selected_month": selected_month,
+        "selected_year": selected_year,
 
-        "total_earnings": total_earnings,
-        "total_expenses": total_expenses,
-        "total_profit": total_profit,
-        "cash_after_expenses": cash_after_expenses,
+        "months": months,
+        "years": years,
 
-        "earning_dates": earning_dates,
-        "average_daily_earnings": average_daily_earnings,
+        "monthly_earnings": monthly_earnings,
+        "monthly_expenses": monthly_expenses,
+        "monthly_profit": monthly_profit,
+
+        "all_time_earnings": all_time_earnings,
+        "all_time_expenses": all_time_expenses,
+        "all_time_profit": all_time_profit,
+
         "profit_margin": profit_margin,
-        "forecast_monthly": forecast_monthly,
+        "margin_width": margin_width,
 
-        "breakdown": breakdown,
-
-        "best_day": best_day,
-        "highest_expense": highest_expense,
+        "expense_breakdown": expense_breakdown,
     }
 
     return render(
         request,
         "tracker/reports.html",
-        context
+        context,
     )
-
-
-def generate_report(request):
-
-    return redirect(
-        "reports"
-    )
-
-
-# =========================================================
-# COIN COLLECTION SYSTEM
-# =========================================================
 @login_required
 def coin_collection_list(request):
 
@@ -1953,3 +1984,9 @@ def make_system_owner(request):
             ),
         }
     )
+
+
+
+@login_required
+def generate_report(request):
+    return redirect("reports")

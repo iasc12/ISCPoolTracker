@@ -1713,6 +1713,395 @@ body.dark-mode .payment-box {
     }
 }
 
+/* =========================================================
+   ISC POOL TRACKER — GLOBAL PREMIUM UI POLISH
+   Visual layer only — no business logic changes
+========================================================= */
+
+:root {
+    --isc-blue: #2563eb;
+    --isc-blue-dark: #1d4ed8;
+    --isc-blue-soft: #eff6ff;
+    --isc-green: #16a34a;
+    --isc-green-soft: #f0fdf4;
+    --isc-red: #dc2626;
+    --isc-red-soft: #fef2f2;
+    --isc-orange: #d97706;
+    --isc-orange-soft: #fffbeb;
+    --isc-border: #dbe3ec;
+    --isc-text: #0f172a;
+    --isc-muted: #64748b;
+    --isc-radius: 16px;
+    --isc-shadow: 0 10px 28px rgba(15,23,42,.07);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    color: var(--isc-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- GLOBAL CARDS ---------- */
+
+.card,
+.dashboard-card,
+.summary-card,
+.stat-card,
+.info-card,
+.form-card,
+.content-card,
+.section-card,
+.panel,
+.settings-card {
+    border-color: var(--isc-border);
+    border-radius: var(--isc-radius);
+    box-shadow: var(--isc-shadow);
+}
+
+.card:hover,
+.dashboard-card:hover,
+.summary-card:hover,
+.stat-card:hover,
+.info-card:hover {
+    box-shadow: 0 14px 34px rgba(15,23,42,.09);
+}
+
+/* ---------- GLOBAL HEADINGS ---------- */
+
+h1,
+h2,
+h3 {
+    letter-spacing: -.35px;
+}
+
+h1 {
+    font-weight: 850;
+}
+
+h2 {
+    font-weight: 800;
+}
+
+p {
+    line-height: 1.55;
+}
+
+/* ---------- BUTTONS ---------- */
+
+button,
+.btn,
+.button,
+.primary-button,
+.submit-button,
+.save-button,
+.add-button,
+.generate-button {
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        background .18s ease,
+        border-color .18s ease;
+}
+
+button:hover,
+.btn:hover,
+.button:hover,
+.primary-button:hover,
+.submit-button:hover,
+.save-button:hover,
+.add-button:hover,
+.generate-button:hover {
+    transform: translateY(-1px);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid rgba(37,99,235,.18);
+    outline-offset: 2px;
+}
+
+/* ---------- FORMS ---------- */
+
+input,
+select,
+textarea {
+    border-color: #cbd5e1;
+    border-radius: 11px;
+    transition:
+        border-color .18s ease,
+        box-shadow .18s ease,
+        background .18s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.11);
+    outline: none;
+}
+
+label {
+    color: #334155;
+    font-weight: 700;
+}
+
+/* ---------- TABLES ---------- */
+
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+thead th {
+    font-weight: 800;
+    letter-spacing: .02em;
+}
+
+tbody tr {
+    transition: background .16s ease;
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+td,
+th {
+    vertical-align: middle;
+}
+
+/* ---------- FINANCIAL COLORS ---------- */
+
+.earnings-color,
+.income-color,
+.success-color,
+.money-green {
+    color: var(--isc-green) !important;
+}
+
+.expenses-color,
+.expense-color,
+.money-red {
+    color: var(--isc-red) !important;
+}
+
+.profit-positive {
+    color: var(--isc-green) !important;
+}
+
+.profit-negative {
+    color: var(--isc-red) !important;
+}
+
+/* ---------- BADGES ---------- */
+
+.badge,
+.status-badge,
+.section-badge,
+.period-badge {
+    border-radius: 999px;
+    font-weight: 800;
+}
+
+/* ---------- ALERTS / MESSAGES ---------- */
+
+.messages,
+.alert,
+.message {
+    border-radius: 13px;
+}
+
+.success,
+.alert-success {
+    border-color: #bbf7d0;
+    background: var(--isc-green-soft);
+}
+
+.error,
+.alert-error,
+.alert-danger {
+    border-color: #fecaca;
+    background: var(--isc-red-soft);
+}
+
+.warning,
+.alert-warning {
+    border-color: #fde68a;
+    background: var(--isc-orange-soft);
+}
+
+/* ---------- EMPTY STATES ---------- */
+
+.empty-state {
+    padding: 42px 24px;
+    text-align: center;
+    border: 1px dashed #cbd5e1;
+    border-radius: 16px;
+    background: #f8fafc;
+}
+
+.empty-state h3 {
+    margin-bottom: 7px;
+}
+
+/* ---------- DIVIDERS ---------- */
+
+hr {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* ---------- LINKS ---------- */
+
+main a:not(.btn):not(.button) {
+    transition: color .16s ease;
+}
+
+/* ---------- SCROLLBAR ---------- */
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 700px) {
+    .card,
+    .dashboard-card,
+    .summary-card,
+    .stat-card,
+    .info-card,
+    .form-card,
+    .content-card,
+    .section-card,
+    .panel,
+    .settings-card {
+        border-radius: 14px;
+    }
+
+    table {
+        min-width: 620px;
+    }
+
+    .table-responsive,
+    .table-container,
+    .responsive-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+/* ---------- DARK MODE ---------- */
+
+body.dark-mode {
+    --isc-border: #273449;
+    --isc-text: #f8fafc;
+    --isc-muted: #94a3b8;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background: #111827;
+    color: #f8fafc;
+    border-color: #334155;
+}
+
+body.dark-mode label {
+    color: #cbd5e1;
+}
+
+body.dark-mode tbody tr:hover {
+    background: #172033;
+}
+
+body.dark-mode thead th {
+    color: #cbd5e1;
+}
+
+body.dark-mode hr {
+    border-top-color: #273449;
+}
+
+body.dark-mode .empty-state {
+    background: #111827;
+    border-color: #334155;
+}
+
+body.dark-mode .success,
+body.dark-mode .alert-success {
+    background: #0d2417;
+    border-color: #166534;
+}
+
+body.dark-mode .error,
+body.dark-mode .alert-error,
+body.dark-mode .alert-danger {
+    background: #2a1215;
+    border-color: #7f1d1d;
+}
+
+body.dark-mode .warning,
+body.dark-mode .alert-warning {
+    background: #2a2110;
+    border-color: #854d0e;
+}
+
+/* ---------- REDUCE MOTION ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+    }
+}
 </style>
 </body>
 </html>
