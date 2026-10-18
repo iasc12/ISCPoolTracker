@@ -1,4 +1,4 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -456,6 +456,28 @@ select {
         height: 32px !important;
     }
 }
+
+/* ISC navigation dropdown arrow */
+#isc-dropdown-navigation .isc-menu-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#isc-dropdown-navigation .isc-menu-arrow {
+    display: block;
+    flex: 0 0 20px;
+    opacity: 1;
+    visibility: visible;
+    transition: transform 180ms ease;
+}
+
+#isc-dropdown-navigation .isc-menu-trigger[aria-expanded="true"]
+.isc-menu-arrow {
+    transform: rotate(180deg);
+}
+
 </style>
 
 <script id="isc-global-theme-loader">
@@ -532,6 +554,292 @@ select {
     }
 })();
 </script>
+
+<style>
+/* ISC MODERN NAVIGATION PANEL */
+/* ISC MODERN NAVIGATION PANEL */
+
+#isc-dropdown-navigation .isc-dropdown-menu {
+    position: absolute !important;
+    top: calc(100% + 12px) !important;
+    bottom: auto !important;
+    right: 0 !important;
+    z-index: 12001 !important;
+    width: min(330px, calc(100vw - 24px)) !important;
+    max-height: min(75vh, 620px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    padding: 12px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, .18) !important;
+    scrollbar-width: thin;
+    overscroll-behavior: contain;
+}
+
+#isc-dropdown-navigation .isc-dropdown-menu[hidden] {
+    display: none !important;
+}
+
+#isc-dropdown-navigation .isc-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    width: 100%;
+}
+
+#isc-dropdown-navigation .isc-nav-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 13px !important;
+    width: 100% !important;
+    min-height: 49px !important;
+    padding: 10px 12px !important;
+    box-sizing: border-box !important;
+    border: 1px solid transparent !important;
+    border-radius: 13px !important;
+    background: transparent !important;
+    color: #334155 !important;
+    font-family: inherit !important;
+    font-size: 14px !important;
+    font-weight: 550 !important;
+    line-height: 1.4 !important;
+    text-decoration: none !important;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        color .18s ease,
+        transform .18s ease;
+}
+
+#isc-dropdown-navigation .isc-nav-item:hover {
+    background: #eff6ff !important;
+    border-color: #dbeafe !important;
+    color: #1d4ed8 !important;
+    transform: translateX(2px);
+}
+
+#isc-dropdown-navigation .isc-nav-item:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, .35) !important;
+    outline-offset: 1px;
+}
+
+#isc-dropdown-navigation .isc-nav-icon-wrap {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 38px !important;
+    width: 38px !important;
+    height: 38px !important;
+    box-sizing: border-box !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 11px !important;
+    background: #f8fafc !important;
+    color: #64748b !important;
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        color .18s ease;
+}
+
+#isc-dropdown-navigation .isc-nav-icon-wrap svg {
+    display: block !important;
+    width: 20px !important;
+    height: 20px !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.7 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item:hover .isc-nav-icon-wrap {
+    background: #dbeafe !important;
+    border-color: #bfdbfe !important;
+    color: #2563eb !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item > span:last-child {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+#isc-dropdown-navigation .isc-nav-badge,
+#isc-dropdown-navigation .isc-nav-status {
+    position: absolute !important;
+    top: -5px !important;
+    right: -7px !important;
+    z-index: 2;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 18px !important;
+    min-height: 18px !important;
+    padding: 2px 5px !important;
+    box-sizing: border-box !important;
+    border: 2px solid #ffffff !important;
+    border-radius: 999px !important;
+    background: #2563eb !important;
+    color: #ffffff !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+}
+
+#isc-dropdown-navigation .isc-nav-badge {
+    background: #dc2626 !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item[aria-current="page"],
+#isc-dropdown-navigation .isc-nav-item.active {
+    background: #eff6ff !important;
+    border-color: #dbeafe !important;
+    color: #1d4ed8 !important;
+    font-weight: 650 !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item[aria-current="page"] .isc-nav-icon-wrap,
+#isc-dropdown-navigation .isc-nav-item.active .isc-nav-icon-wrap {
+    background: #dbeafe !important;
+    border-color: #bfdbfe !important;
+    color: #2563eb !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item:active {
+    transform: scale(.985);
+}
+
+@media (max-width: 480px) {
+    #isc-dropdown-navigation .isc-dropdown-menu {
+        position: fixed !important;
+        top: 68px !important;
+        right: 10px !important;
+        width: min(330px, calc(100vw - 20px)) !important;
+        max-height: calc(100dvh - 88px) !important;
+        border-radius: 17px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #isc-dropdown-navigation .isc-nav-item,
+    #isc-dropdown-navigation .isc-nav-icon-wrap {
+        transition: none !important;
+    }
+}
+
+/* ISC DROPDOWN FINAL ITEM RESET */
+#isc-dropdown-navigation .isc-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 5px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item {
+    display: flex !important;
+    position: relative !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 13px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 49px !important;
+    max-height: none !important;
+    padding: 9px 12px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    border: 1px solid transparent !important;
+    border-radius: 13px !important;
+    font-family: inherit !important;
+    font-size: 14px !important;
+    font-weight: 550 !important;
+    line-height: 1.4 !important;
+    letter-spacing: normal !important;
+    text-align: left !important;
+    text-decoration: none !important;
+    white-space: normal !important;
+    transform: none;
+}
+
+#isc-dropdown-navigation .isc-nav-item > .isc-nav-icon-wrap {
+    display: inline-flex !important;
+    flex: 0 0 38px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 11px !important;
+    box-sizing: border-box !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item > span:last-child {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    text-align: left !important;
+    white-space: normal !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item svg {
+    flex-shrink: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item:hover {
+    background: #eff6ff !important;
+    border-color: #dbeafe !important;
+    color: #1d4ed8 !important;
+    transform: translateX(2px);
+}
+
+#isc-dropdown-navigation .isc-nav-item.active,
+#isc-dropdown-navigation .isc-nav-item[aria-current="page"] {
+    background: #eff6ff !important;
+    border-color: #dbeafe !important;
+    color: #1d4ed8 !important;
+    font-weight: 650 !important;
+}
+
+@media (max-width: 600px) {
+    #isc-dropdown-navigation .isc-nav-item {
+        min-height: 47px !important;
+        height: auto !important;
+        padding: 7px 10px !important;
+        font-size: 14px !important;
+    }
+
+    #isc-dropdown-navigation .isc-nav-item > span:last-child {
+        font-size: 14px !important;
+    }
+
+    #isc-dropdown-navigation .isc-nav-item > .isc-nav-icon-wrap {
+        flex-basis: 36px !important;
+        width: 36px !important;
+        min-width: 36px !important;
+        height: 36px !important;
+        min-height: 36px !important;
+    }
+}
+
+</style>
+
 </head>
 
 <body>
@@ -600,8 +908,19 @@ select {
 <main class="page-container">
     {% block content %}{% endblock %}
 </main>
-<nav class="isc-nav-shell" aria-label="Main navigation">
-    <div class="isc-nav">
+<div class="isc-menu-wrap" id="isc-dropdown-navigation">
+    <button type="button" class="isc-menu-trigger" id="iscMenuTrigger" aria-expanded="false" aria-controls="iscDropdownMenu">
+        <span class="isc-menu-trigger-label">Menu</span>
+        <svg class="isc-menu-arrow" viewBox="0 0 24 24"
+             width="20" height="20" fill="none"
+             stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+            <path d="m6 9 6 6 6-6"/>
+        </svg>
+    </button>
+    <div class="isc-dropdown-menu" id="iscDropdownMenu" hidden>
+        <div class="isc-nav">
 
         <!-- HOME -->
         <a href="{% url 'dashboard' %}" class="isc-nav-item" data-path="/">
@@ -705,8 +1024,9 @@ select {
             <span>Profile</span>
         </a>
 
+        </div>
     </div>
-</nav>
+</div>
 
 <script>
 (function () {
@@ -2743,6 +3063,586 @@ body.dark-mode .isc-nav-status {
     }
 }
 </style>
+
+<style id="isc-white-interface-final">
+/* Neutral white interface */
+html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+}
+
+.page-container {
+    background: #ffffff !important;
+    color: #111827 !important;
+}
+
+/* Dropdown navigation */
+.isc-menu-wrap {
+    position: fixed !important;
+    right: 22px !important;
+    bottom: 22px !important;
+    z-index: 12000 !important;
+    font-family: inherit;
+}
+
+.isc-menu-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #ffffff !important;
+    color: #111827 !important;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .10);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.isc-menu-trigger:hover,
+.isc-menu-trigger:focus-visible {
+    background: #f9fafb !important;
+    outline: 2px solid #d1d5db;
+    outline-offset: 2px;
+}
+
+.isc-dropdown-menu {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 10px);
+    width: min(290px, calc(100vw - 28px));
+    max-height: min(70vh, 560px);
+    overflow-y: auto;
+    padding: 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    background: #ffffff !important;
+    color: #111827 !important;
+    box-shadow: 0 12px 35px rgba(15, 23, 42, .12);
+}
+
+.isc-dropdown-menu[hidden] {
+    display: none !important;
+}
+
+.isc-dropdown-menu .isc-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 3px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.isc-dropdown-menu .isc-nav-item {
+    display: flex !important;
+    position: relative !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    padding: 10px 12px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    transform: none !important;
+}
+
+.isc-dropdown-menu .isc-nav-item:hover,
+.isc-dropdown-menu .isc-nav-item.active {
+    background: #f3f4f6 !important;
+    color: #111827 !important;
+}
+
+.isc-dropdown-menu .isc-nav-item svg {
+    flex-shrink: 0;
+    stroke: currentColor !important;
+}
+
+.isc-dropdown-menu .isc-nav-icon-wrap {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.isc-dropdown-menu .isc-nav-item::before,
+.isc-dropdown-menu .isc-nav-item::after {
+    display: none !important;
+}
+
+@media (max-width: 600px) {
+    .isc-menu-wrap {
+        right: 14px !important;
+        bottom: 14px !important;
+    }
+
+    .isc-menu-trigger {
+        min-height: 46px;
+        padding: 0 15px;
+    }
+}
+
+/* Dashboard: remove gradients and colored card surfaces */
+body:has(.performance-analytics-card) .page-container,
+body:has(.performance-analytics-card) .page-container [class*="card"],
+body:has(.performance-analytics-card) .page-container [class*="analytics"],
+body:has(.performance-analytics-card) .page-container [class*="summary"] {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    background-image: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container [class*="card"],
+body:has(.performance-analytics-card) .page-container [class*="analytics"] {
+    border-color: #e5e7eb !important;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .05) !important;
+}
+
+body:has(.performance-analytics-card) .page-container h1,
+body:has(.performance-analytics-card) .page-container h2,
+body:has(.performance-analytics-card) .page-container h3,
+body:has(.performance-analytics-card) .page-container p,
+body:has(.performance-analytics-card) .page-container span,
+body:has(.performance-analytics-card) .page-container strong,
+body:has(.performance-analytics-card) .page-container small {
+    color: #111827 !important;
+}
+
+body:has(.performance-analytics-card) .page-container a {
+    color: #374151;
+}
+
+body:has(.performance-analytics-card) .page-container input,
+body:has(.performance-analytics-card) .page-container select,
+body:has(.performance-analytics-card) .page-container textarea {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border-color: #d1d5db !important;
+}
+
+
+/* isc-cash-card-gradient-override */
+/* Restore the gradient only on Cash After Expenses. */
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card {
+    background: linear-gradient(
+        135deg,
+        #087f5b 0%,
+        #0f9b72 42%,
+        #6d28d9 100%
+    ) !important;
+    background-image: linear-gradient(
+        135deg,
+        #087f5b 0%,
+        #0f9b72 42%,
+        #6d28d9 100%
+    ) !important;
+    background-color: transparent !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+    box-shadow: 0 12px 28px rgba(75, 50, 150, .2) !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card h3,
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card p,
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card span,
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card strong,
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card small,
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card .cash-position-amount,
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card .cash-position-icon {
+    color: #ffffff !important;
+}
+
+/* Keep the dropdown open above page content and support keyboard users */
+</style>
+
+<script id="isc-dropdown-navigation-script">
+(function () {
+    const root = document.getElementById("isc-dropdown-navigation");
+    const trigger = document.getElementById("iscMenuTrigger");
+    const menu = document.getElementById("iscDropdownMenu");
+
+    if (!root || !trigger || !menu || root.dataset.ready === "1") return;
+    root.dataset.ready = "1";
+
+
+    /* isc-floating-toolbar-polish-v1 */
+    const themeToggle = document.getElementById("themeToggle");
+
+    if (themeToggle && !root.querySelector("#themeToggle")) {
+        root.insertBefore(themeToggle, trigger);
+    }
+
+    let dragHandle = root.querySelector(".isc-toolbar-drag-handle");
+
+    if (!dragHandle) {
+        dragHandle = document.createElement("button");
+        dragHandle.type = "button";
+        dragHandle.className = "isc-toolbar-drag-handle";
+        dragHandle.setAttribute("aria-label", "Move floating toolbar");
+        dragHandle.title = "Drag to move toolbar";
+        dragHandle.innerHTML =
+            '<svg viewBox="0 0 24 24" width="18" height="18" ' +
+            'fill="none" stroke="currentColor" stroke-width="2" ' +
+            'stroke-linecap="round" aria-hidden="true">' +
+            '<circle cx="9" cy="5" r="1"/><circle cx="15" cy="5" r="1"/>' +
+            '<circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/>' +
+            '<circle cx="9" cy="19" r="1"/><circle cx="15" cy="19" r="1"/>' +
+            '</svg>';
+        root.insertBefore(dragHandle, themeToggle || trigger);
+    }
+
+    const toolbarPositionKey = "iscFloatingToolbarPosition";
+
+    function clampToolbarPosition(left, top) {
+        const maxLeft = Math.max(8, window.innerWidth - root.offsetWidth - 8);
+        const maxTop = Math.max(8, window.innerHeight - root.offsetHeight - 8);
+
+        return {
+            left: Math.max(8, Math.min(left, maxLeft)),
+            top: Math.max(8, Math.min(top, maxTop))
+        };
+    }
+
+    function applyToolbarPosition(position) {
+        const safe = clampToolbarPosition(position.left, position.top);
+        root.style.left = safe.left + "px";
+        root.style.top = safe.top + "px";
+        root.style.right = "auto";
+        root.style.bottom = "auto";
+    }
+
+    try {
+        const saved = JSON.parse(localStorage.getItem(toolbarPositionKey) || "null");
+        if (saved && Number.isFinite(saved.left) && Number.isFinite(saved.top)) {
+            applyToolbarPosition(saved);
+        }
+    } catch (error) {
+        // Use the default top-right position if saved settings are unavailable.
+    }
+
+    let dragState = null;
+
+    dragHandle.addEventListener("pointerdown", function (event) {
+        if (event.button !== 0) return;
+
+        const rect = root.getBoundingClientRect();
+
+        dragState = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            left: rect.left,
+            top: rect.top,
+            moved: false
+        };
+
+        dragHandle.setPointerCapture(event.pointerId);
+        event.preventDefault();
+    });
+
+    dragHandle.addEventListener("pointermove", function (event) {
+        if (!dragState || event.pointerId !== dragState.pointerId) return;
+
+        const dx = event.clientX - dragState.startX;
+        const dy = event.clientY - dragState.startY;
+
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+            dragState.moved = true;
+        }
+
+        if (dragState.moved) {
+            applyToolbarPosition({
+                left: dragState.left + dx,
+                top: dragState.top + dy
+            });
+        }
+    });
+
+    dragHandle.addEventListener("pointerup", function (event) {
+        if (!dragState || event.pointerId !== dragState.pointerId) return;
+
+        if (dragState.moved) {
+            try {
+                localStorage.setItem(toolbarPositionKey, JSON.stringify({
+                    left: root.getBoundingClientRect().left,
+                    top: root.getBoundingClientRect().top
+                }));
+            } catch (error) {
+                // The toolbar still works if local storage is unavailable.
+            }
+        }
+
+        dragState = null;
+    });
+
+    dragHandle.addEventListener("pointercancel", function () {
+        dragState = null;
+    });
+
+    dragHandle.addEventListener("keydown", function (event) {
+        const step = event.shiftKey ? 20 : 8;
+        const rect = root.getBoundingClientRect();
+        let left = rect.left;
+        let top = rect.top;
+
+        if (event.key === "ArrowLeft") left -= step;
+        else if (event.key === "ArrowRight") left += step;
+        else if (event.key === "ArrowUp") top -= step;
+        else if (event.key === "ArrowDown") top += step;
+        else return;
+
+        event.preventDefault();
+        applyToolbarPosition({ left, top });
+
+        try {
+            localStorage.setItem(toolbarPositionKey, JSON.stringify({
+                left: root.getBoundingClientRect().left,
+                top: root.getBoundingClientRect().top
+            }));
+        } catch (error) {}
+    });
+
+    window.addEventListener("resize", function () {
+        const rect = root.getBoundingClientRect();
+        applyToolbarPosition({ left: rect.left, top: rect.top });
+    });
+
+    function closeMenu() {
+        menu.hidden = true;
+        trigger.setAttribute("aria-expanded", "false");
+    }
+
+    trigger.addEventListener("click", function () {
+        const willOpen = menu.hidden;
+        menu.hidden = !willOpen;
+        trigger.setAttribute("aria-expanded", String(willOpen));
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!root.contains(event.target)) closeMenu();
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeMenu();
+            trigger.focus();
+        }
+    });
+
+    menu.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", closeMenu);
+    });
+})();
+</script>
+
+
+<style id="isc-floating-toolbar-polish-v1">
+/* Compact floating toolbar: theme + navigation */
+#isc-dropdown-navigation {
+    position: fixed !important;
+    top: 18px !important;
+    right: 18px !important;
+    bottom: auto !important;
+    left: auto;
+    z-index: 12000 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 7px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 17px !important;
+    background: rgba(255,255,255,.96) !important;
+    box-shadow: 0 8px 28px rgba(15,23,42,.13) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    touch-action: auto;
+}
+
+#isc-dropdown-navigation .isc-toolbar-drag-handle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    border-radius: 9px;
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: grab;
+    touch-action: none;
+}
+
+#isc-dropdown-navigation .isc-toolbar-drag-handle:active {
+    cursor: grabbing;
+}
+
+#isc-dropdown-navigation .isc-toolbar-drag-handle:focus-visible,
+#isc-dropdown-navigation button:focus-visible {
+    outline: 2px solid #0ea5e9;
+    outline-offset: 2px;
+}
+
+#isc-dropdown-navigation #themeToggle {
+    position: static !important;
+    inset: auto !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+    width: 42px !important;
+    min-width: 42px;
+    height: 42px !important;
+    min-height: 42px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    background: #f8fafc !important;
+    color: #334155 !important;
+    box-shadow: none !important;
+    cursor: pointer;
+}
+
+#isc-dropdown-navigation #themeToggle svg {
+    width: 20px;
+    height: 20px;
+}
+
+#isc-dropdown-navigation .isc-menu-trigger {
+    min-height: 42px;
+    padding: 0 13px;
+    border-radius: 12px;
+    border-color: #e2e8f0;
+    box-shadow: none;
+}
+
+#isc-dropdown-navigation .isc-dropdown-menu {
+    position: absolute !important;
+    z-index: 12001 !important;
+    top: calc(100% + 12px) !important;
+    bottom: auto !important;
+    right: 0 !important;
+    width: min(330px, calc(100vw - 24px)) !important;
+    max-height: min(75vh, 620px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, .18) !important;
+    scrollbar-width: thin;
+    overscroll-behavior: contain;
+}
+
+body.dark-mode #isc-dropdown-navigation .isc-dropdown-menu {
+    background: #0f172a !important;
+    color: #e2e8f0 !important;
+    border-color: #334155 !important;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, .4) !important;
+}
+
+body.dark-mode #isc-dropdown-navigation .isc-nav-item {
+    background: transparent !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode #isc-dropdown-navigation .isc-nav-item:hover,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item[aria-current="page"],
+body.dark-mode #isc-dropdown-navigation .isc-nav-item.active {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #93c5fd !important;
+}
+
+body.dark-mode #isc-dropdown-navigation .isc-nav-icon-wrap {
+    background: #1e293b !important;
+    border-color: #475569 !important;
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode #isc-dropdown-navigation .isc-nav-item:hover .isc-nav-icon-wrap,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item[aria-current="page"] .isc-nav-icon-wrap,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item.active .isc-nav-icon-wrap {
+    background: #1d3557 !important;
+    border-color: #3b82f6 !important;
+    color: #93c5fd !important;
+}
+
+body.dark-mode #isc-dropdown-navigation .isc-nav-badge,
+body.dark-mode #isc-dropdown-navigation .isc-nav-status {
+    border-color: #0f172a !important;
+}
+
+body.dark-mode #isc-dropdown-navigation {
+    border-color: #334155 !important;
+    background: rgba(15,23,42,.97) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35) !important;
+}
+
+body.dark-mode #isc-dropdown-navigation .isc-toolbar-drag-handle,
+body.dark-mode #isc-dropdown-navigation #themeToggle {
+    border-color: #334155 !important;
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode #isc-dropdown-navigation .isc-menu-trigger {
+    border-color: #334155;
+    background: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+@media (max-width: 600px) {
+    #isc-dropdown-navigation {
+        top: 10px !important;
+        right: 10px !important;
+        gap: 5px !important;
+        padding: 5px !important;
+    }
+
+    #isc-dropdown-navigation .isc-toolbar-drag-handle {
+        flex-basis: 26px;
+        width: 26px;
+        height: 36px;
+    }
+
+    #isc-dropdown-navigation #themeToggle {
+        flex-basis: 38px;
+        width: 38px !important;
+        min-width: 38px;
+        height: 38px !important;
+        min-height: 38px !important;
+    }
+
+    #isc-dropdown-navigation .isc-menu-trigger {
+        min-height: 38px;
+        gap: 7px;
+        padding: 0 10px;
+    }
+}
+</style>
+
 </body>
 </html>
 
@@ -2776,4 +3676,60 @@ body.dark-mode .isc-nav-status {
 
 
 
+
+
+
+<style>
+/* ISC MOVABLE DROPDOWN POSITION FIX */
+
+/* Keep the toolbar movable anywhere on the viewport. */
+#isc-dropdown-navigation {
+    position: fixed !important;
+    z-index: 12000 !important;
+    max-width: calc(100vw - 16px) !important;
+    box-sizing: border-box !important;
+}
+
+/* Keep the menu attached to the toolbar wherever it is moved. */
+#isc-dropdown-navigation .isc-dropdown-menu {
+    position: absolute !important;
+    left: auto !important;
+    right: 0 !important;
+    top: calc(100% + 10px) !important;
+    bottom: auto !important;
+    width: min(330px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 16px) !important;
+    max-height: min(75vh, 620px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    z-index: 12001 !important;
+}
+
+/* Allow the menu to open below the toolbar when there isn't room above. */
+#isc-dropdown-navigation.isc-menu-open-below
+.isc-dropdown-menu {
+    top: calc(100% + 10px) !important;
+    bottom: auto !important;
+}
+
+/* Make drag interaction comfortable on touchscreens. */
+#isc-dropdown-navigation .isc-toolbar-drag-handle {
+    cursor: grab !important;
+    touch-action: none !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+#isc-dropdown-navigation .isc-toolbar-drag-handle:active {
+    cursor: grabbing !important;
+}
+
+@media (max-width: 480px) {
+    #isc-dropdown-navigation .isc-dropdown-menu {
+        width: min(330px, calc(100vw - 16px)) !important;
+        max-height: calc(100dvh - 24px) !important;
+    }
+}
+</style>
 

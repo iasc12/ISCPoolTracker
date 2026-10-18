@@ -1,6 +1,244 @@
 {% extends "tracker/base.html" %}
 
-{% block title %}Dashboard - ISC Pool Tracker{% endblock %}
+{% block title %}Dashboard - ISC Pool Tracker
+<style id="isc-dashboard-card-consistency">
+/* Consistent, clean dashboard card surfaces */
+.financial-card,
+.cash-position-card,
+.performance-analytics-card,
+.recent-activity-card {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07) !important;
+}
+
+/* Cash position: readable text on white */
+.cash-position-card h3,
+.cash-position-card .cash-position-amount,
+.cash-position-card .cash-position-icon {
+    color: #111827 !important;
+}
+
+.cash-position-card p,
+.cash-position-card .cash-position-eyebrow,
+.cash-position-card .cash-position-breakdown span {
+    color: #64748b !important;
+}
+
+.cash-position-card .cash-position-breakdown strong {
+    color: #111827 !important;
+}
+
+/* Analytics panel and its four inner cards */
+.performance-analytics-card h2 {
+    color: #111827 !important;
+}
+
+.performance-analytics-card .analytics-card {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+}
+
+.performance-analytics-card .analytics-card,
+.performance-analytics-card .analytics-card h3,
+.performance-analytics-card .analytics-card p,
+.performance-analytics-card .analytics-card span,
+.performance-analytics-card .analytics-card strong,
+.performance-analytics-card .analytics-card .analytics-label,
+.performance-analytics-card .analytics-card .analytics-date,
+.performance-analytics-card .analytics-card .analytics-small,
+.performance-analytics-card .analytics-card .analytics-value {
+    color: #111827 !important;
+}
+
+.performance-analytics-card .analytics-card .analytics-small,
+.performance-analytics-card .analytics-card .analytics-date {
+    color: #64748b !important;
+}
+
+/* Preserve clear profit/loss signals */
+.performance-analytics-card .analytics-value.profit {
+    color: #15803d !important;
+}
+
+.performance-analytics-card .analytics-value.loss {
+    color: #dc2626 !important;
+}
+
+/* Recent activity: one white card with subtle row dividers */
+.recent-activity-card {
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+.recent-activity-card .activity-row {
+    background: transparent !important;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.recent-activity-card .activity-details strong {
+    color: #111827 !important;
+}
+
+.recent-activity-card .activity-details span {
+    color: #64748b !important;
+}
+
+.recent-activity-card .activity-income {
+    color: #15803d !important;
+}
+
+.recent-activity-card .activity-cost {
+    color: #dc2626 !important;
+}
+
+.recent-activity-card .activity-empty {
+    color: #64748b !important;
+}
+
+/* Keep activity icons distinct from the white card surface */
+.recent-activity-card .activity-earning {
+    color: #15803d !important;
+    background: #dcfce7 !important;
+}
+
+.recent-activity-card .activity-expense {
+    color: #b91c1c !important;
+    background: #fee2e2 !important;
+}
+</style>
+
+
+<style id="isc-dashboard-white-final">
+body:has(.performance-analytics-card),
+body:has(.performance-analytics-card) .page-container {
+    background: #ffffff !important;
+    color: #111827 !important;
+}
+
+body:has(.performance-analytics-card) .financial-card,
+body:has(.performance-analytics-card) .cash-position-card,
+body:has(.performance-analytics-card) .performance-analytics-card,
+body:has(.performance-analytics-card) .recent-activity-card,
+body:has(.performance-analytics-card) .analytics-card {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .05) !important;
+}
+
+body:has(.performance-analytics-card) .recent-activity-card *,
+body:has(.performance-analytics-card) .financial-card *,
+body:has(.performance-analytics-card) .cash-position-card *,
+body:has(.performance-analytics-card) .performance-analytics-card * {
+    color: #111827 !important;
+}
+
+body:has(.performance-analytics-card) .page-container [style*="linear-gradient"],
+body:has(.performance-analytics-card) .page-container [style*="#14532d"],
+body:has(.performance-analytics-card) .page-container [style*="#166534"] {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+}
+</style>
+
+
+<style id="isc-compact-cash-top-right-v1">
+/* Keep all three reporting periods inside one main financial card. */
+.financial-overview-panel .financial-overview-top {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: start !important;
+    gap: 12px !important;
+}
+
+.financial-overview-panel .cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0 !important;
+    padding: 12px 0 !important;
+    background: #f8fafc !important;
+    border: 1px solid #e8edf3 !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+}
+
+.financial-overview-panel .financial-card {
+    min-width: 0 !important;
+    width: auto !important;
+    padding: 16px !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.financial-overview-panel .financial-card + .financial-card {
+    border-left: 1px solid #e2e8f0 !important;
+}
+
+/* Compact cash amount only, aligned to the top-right. */
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card {
+    justify-self: end !important;
+    align-self: start !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 190px !important;
+    margin: 0 !important;
+    padding: 12px 15px !important;
+    border-radius: 15px !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(
+        135deg, #087f5b 0%, #0f9b72 42%, #6d28d9 100%
+    ) !important;
+    background-image: linear-gradient(
+        135deg, #087f5b 0%, #0f9b72 42%, #6d28d9 100%
+    ) !important;
+    color: #fff !important;
+    box-shadow: 0 6px 18px rgba(75, 50, 150, .16) !important;
+}
+
+.financial-overview-panel .cash-position-card .cash-position-top {
+    display: none !important;
+}
+
+.financial-overview-panel .cash-position-card .cash-position-amount {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: clamp(15px, 1.5vw, 20px) !important;
+    line-height: 1.25 !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    color: #fff !important;
+}
+
+@media (max-width: 650px) {
+    .financial-overview-panel .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .financial-overview-panel .financial-card + .financial-card {
+        border-left: 0 !important;
+        border-top: 1px solid #e2e8f0 !important;
+    }
+
+    .financial-overview-panel .financial-card {
+        padding: 14px !important;
+    }
+
+    .financial-overview-panel .cash-position-card {
+        max-width: 175px !important;
+        padding: 10px 12px !important;
+    }
+}
+</style>
+
+{% endblock %}
 
 {% block content %}
 
@@ -493,84 +731,6 @@
             Keep pushing. Every game counts. Every shilling matters.
         </div>
 
-<!-- CASH AFTER EXPENSES -->
-
-<div class="cash-position-card">
-
-    <div class="cash-position-top">
-
-        <div>
-
-            <span class="cash-position-eyebrow">
-                CASH POSITION
-            </span>
-
-            <h3>
-                Cash After Expenses
-            </h3>
-
-            <p>
-                Expected money remaining after all recorded expenses
-            </p>
-
-        </div>
-
-        <div class="cash-position-icon">
-
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-
-                <path
-                    d="M4 7.5h16v11H4z"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.7"
-                    stroke-linejoin="round">
-                </path>
-
-                <path
-                    d="M4 9.5h16"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.7">
-                </path>
-
-                <path
-                    d="M15.5 14h2.5"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.7"
-                    stroke-linecap="round">
-                </path>
-
-                <circle
-                    cx="12"
-                    cy="14"
-                    r="1.8"
-                    fill="currentColor">
-                </circle>
-
-            </svg>
-
-        </div>
-
-    </div>
-
-
-    <div class="cash-position-amount
-        {% if cash_after_expenses < 0 %}
-            cash-negative
-        {% else %}
-            cash-positive
-        {% endif %}">
-
-        KSh {{ cash_after_expenses|floatformat:2 }}
-
-    </div>
-
-
-    
-
-</div>
 
 
 
@@ -1078,7 +1238,91 @@
 }
 </style><!-- FINANCIAL OVERVIEW -->
 
-    <h2>Financial Overview</h2>
+    <section class="financial-overview-panel" data-layout="isc-financial-overview-layout-v2">
+        <div class="financial-overview-top">
+            <div class="financial-overview-title">
+                <h2>Financial Overview</h2>
+                <p>Today, this week and this month</p>
+            </div>
+            <!-- CASH AFTER EXPENSES -->
+            
+            <div class="cash-position-card">
+            
+                <div class="cash-position-top">
+            
+                    <div>
+            
+                        <span class="cash-position-eyebrow">
+                            CASH POSITION
+                        </span>
+            
+                        <h3>
+                            Cash After Expenses
+                        </h3>
+            
+                        <p>
+                            Expected money remaining after all recorded expenses
+                        </p>
+            
+                    </div>
+            
+                    <div class="cash-position-icon">
+            
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+            
+                            <path
+                                d="M4 7.5h16v11H4z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linejoin="round">
+                            </path>
+            
+                            <path
+                                d="M4 9.5h16"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7">
+                            </path>
+            
+                            <path
+                                d="M15.5 14h2.5"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round">
+                            </path>
+            
+                            <circle
+                                cx="12"
+                                cy="14"
+                                r="1.8"
+                                fill="currentColor">
+                            </circle>
+            
+                        </svg>
+            
+                    </div>
+            
+                </div>
+            
+            
+                <div class="cash-position-amount
+                    {% if cash_after_expenses < 0 %}
+                        cash-negative
+                    {% else %}
+                        cash-positive
+                    {% endif %}">
+            
+                    KSh {{ cash_after_expenses|floatformat:2 }}
+            
+                </div>
+            
+            
+                
+            
+            </div>
+        </div>
 
     <div class="cards">
 
@@ -1159,6 +1403,8 @@
 
     </div>
 
+
+    </section><!-- end financial-overview-panel -->
 
     <style id="cash-position-style">
 
@@ -2248,7 +2494,7 @@
         </div>
     </div>
 
-    <div class="recent-activity-card" style="background:#14532d !important; border:1px solid #166534 !important; box-shadow:0 12px 30px rgba(20,83,45,.20) !important;">
+    <div class="recent-activity-card" >
 
         {% if recent_earnings %}
         <div class="activity-row">
@@ -2263,13 +2509,13 @@
 </div>
 
             <div class="activity-details">
-                <strong style="color:#ffffff !important;">Coins Collected</strong>
-                <span style="color:#ffffff !important;">
+                <strong>Coins Collected</strong>
+                <span>
                     {{ recent_earnings.0.collection_date|date:"d M Y" }}
                 </span>
             </div>
 
-            <div class="activity-amount activity-income" style="color:#ffffff !important;">
+            <div class="activity-amount activity-income">
                 {{ recent_earnings.0.coins_collected }} coins
             </div>
 
@@ -2282,45 +2528,46 @@
             </div>
 
             <div class="activity-details">
-                <strong style="color:#ffffff !important;">Amount Collected</strong>
-                <span style="color:#ffffff !important;">
+                <strong>Amount Collected</strong>
+                <span>
                     {{ recent_earnings.0.collection_date|date:"d M Y" }}
                 </span>
             </div>
 
-            <div class="activity-amount activity-income" style="color:#ffffff !important;">
+            <div class="activity-amount activity-income">
                 KSh {{ recent_earnings.0.actual_m_pesa|floatformat:2 }}
             </div>
 
         </div>
         {% endif %}
 
-        {% if recent_expenses %}
+        {% if recent_expenses.count %}
         <div class="activity-row">
-
             <div class="activity-icon activity-expense" aria-hidden="true">
-    <svg viewBox="0 0 24 24" width="21" height="21" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 3.5H15L19 7.5V20.5H6V3.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M14.5 3.5V8H19" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M9 11.5H16M9 14.5H16M9 17.5H13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-    </svg>
-</div>
-
+                <svg viewBox="0 0 24 24" width="21" height="21"
+                     fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 3.5H15L19 7.5V20.5H6V3.5Z"
+                          stroke="currentColor" stroke-width="1.8"
+                          stroke-linejoin="round"/>
+                    <path d="M14.5 3.5V8H19"
+                          stroke="currentColor" stroke-width="1.8"
+                          stroke-linejoin="round"/>
+                    <path d="M9 11.5H16M9 14.5H16M9 17.5H13"
+                          stroke="currentColor" stroke-width="1.6"
+                          stroke-linecap="round"/>
+                </svg>
+            </div>
             <div class="activity-details">
-                <strong style="color:#ffffff !important;">Expense Recorded</strong>
-                <span style="color:#ffffff !important;">
-                    {{ recent_expenses.0.date|date:"d M Y" }}
-                </span>
+                <strong>Expenses - Last 24 Hours</strong>
+                <span>{{ recent_expenses.count }} expense{{ recent_expenses.count|pluralize }}</span>
             </div>
-
-            <div class="activity-amount activity-cost" style="color:#ffffff !important;">
-                KSh {{ recent_expenses.0.amount|floatformat:2 }}
+            <div class="activity-amount activity-cost">
+                &minus; KSh {{ recent_expenses.total|default_if_none:0|floatformat:2 }}
             </div>
-
         </div>
         {% endif %}
 
-        {% if not recent_earnings and not recent_expenses %}
+{% if not recent_earnings and not recent_expenses.count %}
         <div class="activity-empty">
             No recent activity yet.
         </div>
@@ -2456,6 +2703,837 @@
 }
 </style>
 
+
+<style id="isc-dashboard-card-redesign">
+/* ISC Pool Tracker: consistent light-mode dashboard cards */
+body:not(.dark-mode) .page-container .financial-card,
+body:not(.dark-mode) .page-container .cash-position-card,
+body:not(.dark-mode) .page-container .performance-analytics-card,
+body:not(.dark-mode) .page-container .analytics-card,
+body:not(.dark-mode) .page-container .recent-activity-card {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 18px !important;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.055) !important;
+    box-sizing: border-box !important;
+    transition: box-shadow .2s ease, border-color .2s ease !important;
+}
+
+body:not(.dark-mode) .page-container .financial-card:hover,
+body:not(.dark-mode) .page-container .cash-position-card:hover,
+body:not(.dark-mode) .page-container .analytics-card:hover {
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.09) !important;
+    border-color: #cbd5e1 !important;
+    transform: translateY(-2px);
+}
+
+/* Financial summary cards */
+body:not(.dark-mode) .page-container .financial-card {
+    min-width: 0 !important;
+    padding: 22px !important;
+}
+
+body:not(.dark-mode) .page-container .financial-card h2,
+body:not(.dark-mode) .page-container .performance-analytics-card h2,
+body:not(.dark-mode) .page-container .recent-activity-header h2 {
+    color: #111827 !important;
+    font-weight: 750 !important;
+}
+
+body:not(.dark-mode) .page-container .financial-card p,
+body:not(.dark-mode) .page-container .financial-item > span,
+body:not(.dark-mode) .page-container .cash-position-card p,
+body:not(.dark-mode) .page-container .analytics-label,
+body:not(.dark-mode) .page-container .analytics-small,
+body:not(.dark-mode) .page-container .analytics-date,
+body:not(.dark-mode) .page-container .recent-activity-header p,
+body:not(.dark-mode) .page-container .activity-details span {
+    color: #64748b !important;
+}
+
+/* Cash position: remove decorative green/red/purple surfaces */
+body:not(.dark-mode) .page-container .cash-position-card {
+    position: relative;
+    overflow: hidden !important;
+    padding: 24px !important;
+}
+
+body:not(.dark-mode) .page-container .cash-position-card::before,
+body:not(.dark-mode) .page-container .cash-position-card::after {
+    display: none !important;
+    content: none !important;
+}
+
+body:not(.dark-mode) .page-container .cash-position-card h3,
+body:not(.dark-mode) .page-container .cash-position-card .cash-position-eyebrow,
+body:not(.dark-mode) .page-container .cash-position-card .cash-position-breakdown span,
+body:not(.dark-mode) .page-container .cash-position-card .cash-position-breakdown strong,
+body:not(.dark-mode) .page-container .cash-position-card .cash-position-amount,
+body:not(.dark-mode) .page-container .cash-position-card .cash-position-icon {
+    color: #111827 !important;
+}
+
+/* Analytics section and its inner cards */
+body:not(.dark-mode) .page-container .performance-analytics-card {
+    padding: 24px !important;
+}
+
+body:not(.dark-mode) .page-container .analytics-card {
+    padding: 20px !important;
+    min-width: 0 !important;
+    overflow-wrap: anywhere;
+}
+
+body:not(.dark-mode) .page-container .analytics-value {
+    color: #111827 !important;
+    font-weight: 750 !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+}
+
+body:not(.dark-mode) .page-container .analytics-value.profit {
+    color: #15803d !important;
+}
+
+body:not(.dark-mode) .page-container .analytics-value.loss {
+    color: #dc2626 !important;
+}
+
+/* Recent activity: white surface and clean row separators */
+body:not(.dark-mode) .page-container .recent-activity-card {
+    overflow: hidden !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-row {
+    background: transparent !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-details strong {
+    color: #111827 !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-income {
+    color: #15803d !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-cost {
+    color: #dc2626 !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-earning {
+    color: #15803d !important;
+    background: #dcfce7 !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-expense {
+    color: #b91c1c !important;
+    background: #fee2e2 !important;
+}
+
+/* Avoid text clipping on small screens */
+body:not(.dark-mode) .page-container .financial-card h2 {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+@media (max-width: 600px) {
+    body:not(.dark-mode) .page-container .financial-card,
+    body:not(.dark-mode) .page-container .cash-position-card,
+    body:not(.dark-mode) .page-container .performance-analytics-card {
+        padding: 17px !important;
+        border-radius: 16px !important;
+    }
+
+    body:not(.dark-mode) .page-container .analytics-card {
+        padding: 16px !important;
+        border-radius: 14px !important;
+    }
+}
+</style>
+
+<style id="isc-dashboard-polish-v1">
+/* Modern dashboard surface and typography */
+.page-container:has(.financial-card) {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: clamp(16px, 2.5vw, 34px);
+}
+
+.page-container .financial-card,
+.page-container .cash-position-card,
+.page-container .performance-analytics-card,
+.page-container .analytics-card,
+.page-container .recent-activity-card {
+    box-sizing: border-box;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 20px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 4px 16px rgba(15,23,42,.045) !important;
+    transition: box-shadow .2s ease, border-color .2s ease,
+                transform .2s ease;
+}
+
+.page-container .financial-card:hover,
+.page-container .cash-position-card:hover,
+.page-container .performance-analytics-card:hover,
+.page-container .analytics-card:hover,
+.page-container .recent-activity-card:hover {
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 10px 26px rgba(15,23,42,.075) !important;
+}
+
+.page-container .financial-card h2,
+.page-container .financial-card h3,
+.page-container .cash-position-card h2,
+.page-container .cash-position-card h3,
+.page-container .performance-analytics-card h2,
+.page-container .analytics-card h2,
+.page-container .recent-activity-card h2 {
+    color: #0f172a !important;
+    letter-spacing: -.025em;
+}
+
+.page-container .financial-card p,
+.page-container .cash-position-card p,
+.page-container .analytics-label,
+.page-container .analytics-small,
+.page-container .analytics-date,
+.page-container .recent-activity-header p,
+.page-container .activity-details span {
+    color: #64748b !important;
+}
+
+.page-container .financial-card svg,
+.page-container .cash-position-card svg,
+.page-container .analytics-card svg,
+.page-container .performance-analytics-card svg,
+.page-container .recent-activity-card svg {
+    max-width: 100%;
+    flex-shrink: 0;
+}
+
+.page-container .analytics-card,
+.page-container .recent-activity-card {
+    overflow: hidden;
+}
+
+.page-container .recent-activity-card .activity-row {
+    border-bottom: 1px solid #edf2f7;
+}
+
+.page-container .recent-activity-card .activity-row:last-child {
+    border-bottom: 0;
+}
+
+.page-container .activity-income,
+.page-container .activity-earning,
+.page-container .analytics-value.profit {
+    color: #15803d !important;
+}
+
+.page-container .activity-cost,
+.page-container .activity-expense,
+.page-container .analytics-value.loss {
+    color: #dc2626 !important;
+}
+
+/* Respect the site's existing dark-mode toggle */
+body.dark-mode .page-container:has(.financial-card) {
+    background: #0b1220 !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .page-container .financial-card,
+body.dark-mode .page-container .cash-position-card,
+body.dark-mode .page-container .performance-analytics-card,
+body.dark-mode .page-container .analytics-card,
+body.dark-mode .page-container .recent-activity-card {
+    border-color: #293548 !important;
+    background: #111c2e !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 5px 20px rgba(0,0,0,.14) !important;
+}
+
+body.dark-mode .page-container .financial-card h2,
+body.dark-mode .page-container .financial-card h3,
+body.dark-mode .page-container .cash-position-card h2,
+body.dark-mode .page-container .cash-position-card h3,
+body.dark-mode .page-container .performance-analytics-card h2,
+body.dark-mode .page-container .analytics-card h2,
+body.dark-mode .page-container .recent-activity-card h2 {
+    color: #f1f5f9 !important;
+}
+
+body.dark-mode .page-container .financial-card p,
+body.dark-mode .page-container .cash-position-card p,
+body.dark-mode .page-container .analytics-label,
+body.dark-mode .page-container .analytics-small,
+body.dark-mode .page-container .analytics-date,
+body.dark-mode .page-container .recent-activity-header p,
+body.dark-mode .page-container .activity-details span {
+    color: #a7b4c8 !important;
+}
+
+body.dark-mode .page-container .recent-activity-card .activity-row {
+    border-color: #293548;
+}
+
+@media (max-width: 700px) {
+    .page-container:has(.financial-card) {
+        padding: 14px 12px 88px;
+    }
+
+    .page-container .financial-card,
+    .page-container .cash-position-card,
+    .page-container .performance-analytics-card,
+    .page-container .analytics-card,
+    .page-container .recent-activity-card {
+        border-radius: 16px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-container .financial-card,
+    .page-container .cash-position-card,
+    .page-container .performance-analytics-card,
+    .page-container .analytics-card,
+    .page-container .recent-activity-card {
+        transition: none;
+    }
+}
+</style>
+
+
+
+<style id="isc-financial-overview-layout-v2">
+.financial-overview-panel {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 24px 0 30px !important;
+    padding: clamp(18px, 2.5vw, 30px) !important;
+    background: #fff !important;
+    color: #172033 !important;
+    border: 1px solid #e7edf4 !important;
+    border-radius: 28px !important;
+    box-shadow: 0 12px 34px rgba(15, 23, 42, .07) !important;
+    overflow: hidden !important;
+}
+.financial-overview-top {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 360px) !important;
+    align-items: start !important;
+    gap: 24px !important;
+    margin-bottom: 24px !important;
+}
+.financial-overview-title h2 {
+    margin: 4px 0 8px !important;
+    color: #172033 !important;
+    font-size: clamp(23px, 2.5vw, 31px) !important;
+    line-height: 1.2 !important;
+    font-weight: 800 !important;
+}
+.financial-overview-title p {
+    margin: 0 !important;
+    color: #64748b !important;
+    font-size: 14px !important;
+}
+.financial-overview-panel .cash-position-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 22px 24px !important;
+    box-sizing: border-box !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    background: linear-gradient(135deg, #087f5b 0%, #0f9b72 42%, #6d28d9 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 12px 28px rgba(75, 50, 150, .2) !important;
+}
+.financial-overview-panel .cash-position-card h3,
+.financial-overview-panel .cash-position-card p,
+.financial-overview-panel .cash-position-card span,
+.financial-overview-panel .cash-position-card .cash-position-amount,
+.financial-overview-panel .cash-position-card .cash-position-icon {
+    color: #fff !important;
+}
+.financial-overview-panel .cash-position-card h3 {
+    font-size: 18px !important;
+    font-weight: 750 !important;
+}
+.financial-overview-panel .cash-position-card p {
+    opacity: .9 !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+}
+.financial-overview-panel .cash-position-card .cash-position-amount {
+    font-size: clamp(23px, 2.3vw, 31px) !important;
+    line-height: 1.25 !important;
+    font-weight: 850 !important;
+    overflow-wrap: anywhere !important;
+}
+.financial-overview-panel .cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    align-items: stretch !important;
+}
+.financial-overview-panel .financial-card {
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 22px !important;
+    border: 1px solid #e8edf3 !important;
+    border-radius: 21px !important;
+    background: #f8fafc !important;
+    color: #172033 !important;
+    box-shadow: none !important;
+}
+.financial-overview-panel .financial-card h2 {
+    margin: 0 0 18px !important;
+    color: #172033 !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+}
+.financial-overview-panel .financial-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    padding: 12px 0 !important;
+    border-bottom: 1px solid #e6ebf2 !important;
+    color: #64748b !important;
+}
+.financial-overview-panel .financial-item:last-child {
+    border-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+.financial-overview-panel .financial-item > span {
+    min-width: 0 !important;
+    color: #64748b !important;
+}
+.financial-overview-panel .financial-item strong {
+    max-width: 65% !important;
+    color: #172033 !important;
+    font-size: clamp(13px, 1.2vw, 16px) !important;
+    text-align: right !important;
+    overflow-wrap: anywhere !important;
+}
+.financial-overview-panel .financial-item strong.profit {
+    color: #059669 !important;
+}
+.financial-overview-panel .financial-item strong.loss {
+    color: #dc2626 !important;
+}
+.financial-overview-panel .financial-icon {
+    background: #e9eef5 !important;
+    color: #475569 !important;
+}
+@media (max-width: 850px) {
+    .financial-overview-top {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+    .financial-overview-panel .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+@media (max-width: 560px) {
+    .financial-overview-panel {
+        padding: 16px !important;
+        border-radius: 22px !important;
+    }
+    .financial-overview-panel .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 12px !important;
+    }
+    .financial-overview-panel .financial-card {
+        padding: 18px !important;
+        border-radius: 17px !important;
+    }
+    .financial-overview-panel .cash-position-card {
+        padding: 19px !important;
+        border-radius: 18px !important;
+    }
+}
+
+
+
+/* Financial Overview: reliable responsive three-column layout */
+.financial-overview-panel > .cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 14px 0 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.financial-overview-panel > .cards > .financial-card {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow-wrap: anywhere !important;
+}
+
+.financial-overview-panel > .cards > .financial-card h2 {
+    overflow-wrap: anywhere !important;
+}
+
+.financial-overview-panel > .cards > .financial-card .financial-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+}
+
+.financial-overview-panel > .cards > .financial-card .financial-item > span,
+.financial-overview-panel > .cards > .financial-card .financial-item > strong {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 760px) {
+    .financial-overview-panel > .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .financial-overview-panel > .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+}
+
+</style>
+
+
+<style id="isc-final-financial-overrides-v2">
+/* Final layout: one overview panel, three periods, compact cash amount. */
+.financial-overview-panel {
+    background: #fff !important;
+    color: #172033 !important;
+    border-radius: 24px !important;
+    overflow: visible !important;
+}
+
+.financial-overview-panel .financial-overview-top {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: start !important;
+    gap: 12px !important;
+    margin-bottom: 18px !important;
+}
+
+.financial-overview-panel .cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0 !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 17px !important;
+    overflow: hidden !important;
+}
+
+.financial-overview-panel .financial-card {
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 17px !important;
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: #172033 !important;
+}
+
+.financial-overview-panel .financial-card + .financial-card {
+    border-left: 1px solid #e2e8f0 !important;
+}
+
+/* Specific, final override for the cash amount card. */
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card {
+    display: block !important;
+    justify-self: end !important;
+    align-self: start !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: 190px !important;
+    margin: 0 !important;
+    padding: 11px 14px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    background: linear-gradient(
+        120deg, #087f5b 0%, #0f9b72 45%, #6d28d9 100%
+    ) !important;
+    background-image: linear-gradient(
+        120deg, #087f5b 0%, #0f9b72 45%, #6d28d9 100%
+    ) !important;
+    background-color: transparent !important;
+    color: #fff !important;
+    box-shadow: 0 6px 16px rgba(75, 50, 150, .18) !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card .cash-position-top {
+    display: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card::before,
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card::after {
+    display: none !important;
+    content: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card .cash-position-amount {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: clamp(15px, 1.5vw, 19px) !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    white-space: nowrap !important;
+    color: #fff !important;
+}
+
+@media (max-width: 650px) {
+    .financial-overview-panel .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .financial-overview-panel .financial-card + .financial-card {
+        border-left: 0 !important;
+        border-top: 1px solid #e2e8f0 !important;
+    }
+
+    .financial-overview-panel .financial-card {
+        padding: 14px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .financial-overview-panel .cash-position-card {
+        max-width: 175px !important;
+    }
+}
+</style>
+
+
+<style id="isc-performance-unified-subtle-v1">
+/* Modern, unified Performance Analytics panel */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: clamp(18px, 2.5vw, 28px) !important;
+    margin: 20px 0 26px !important;
+    border: 1px solid #e8edf3 !important;
+    border-radius: 22px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.035) !important;
+    color: #0f172a !important;
+}
+
+/* Refined heading */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card h2 {
+    margin: 0 0 22px !important;
+    color: #172033 !important;
+    font-size: clamp(19px, 2vw, 23px) !important;
+    font-weight: 750 !important;
+    letter-spacing: -0.035em !important;
+}
+
+/* Four cards in a balanced desktop grid */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    width: 100% !important;
+}
+
+/* Subtle, modern metric cards */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-card {
+    position: relative !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 9px !important;
+    padding: 20px 18px !important;
+    border: 1px solid #edf0f5 !important;
+    border-radius: 16px !important;
+    background: #f8fafc !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    transition: transform .18s ease,
+                border-color .18s ease,
+                background-color .18s ease !important;
+}
+
+/* A fine, muted accent at the top of each metric */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-card::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 18px !important;
+    width: 34px !important;
+    height: 3px !important;
+    border-radius: 0 0 4px 4px !important;
+    background: #94a3b8 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-earnings::before {
+    background: #0d9488 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-profit::before {
+    background: #6478d3 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-best::before {
+    background: #b58a43 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-lowest::before {
+    background: #94a3b8 !important;
+}
+
+/* Gentle hover feedback, without a heavy floating shadow */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-card:hover {
+    transform: translateY(-2px) !important;
+    border-color: #d9e1eb !important;
+    background: #ffffff !important;
+}
+
+/* Metric labels */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-label {
+    color: #64748b !important;
+    font-size: 12px !important;
+    font-weight: 650 !important;
+    line-height: 1.5 !important;
+    letter-spacing: .025em !important;
+}
+
+/* Large, clear values */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value {
+    color: #172033 !important;
+    font-size: clamp(19px, 1.8vw, 25px) !important;
+    font-weight: 780 !important;
+    line-height: 1.25 !important;
+    letter-spacing: -.04em !important;
+    overflow-wrap: anywhere !important;
+    font-variant-numeric: tabular-nums !important;
+}
+
+/* Keep profit/loss meaning visible */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value.profit {
+    color: #16805d !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value.loss {
+    color: #c24141 !important;
+}
+
+/* Explanations and earning dates */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-small,
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-date {
+    color: #94a3b8 !important;
+    font-size: 12px !important;
+    font-weight: 450 !important;
+    line-height: 1.5 !important;
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-value {
+        font-size: clamp(19px, 2.5vw, 24px) !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 520px) {
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card {
+        padding: 16px !important;
+        border-radius: 17px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-card {
+        padding: 17px 16px !important;
+        border-radius: 13px !important;
+        gap: 7px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-value {
+        font-size: 22px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-card {
+        transition: none !important;
+    }
+}
+</style>
+
 {% endblock %}
 
 
@@ -2565,7 +3643,7 @@
 }
 
 /* =========================================================
-   RECENT ACTIONS ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â FOREST GREEN CARD
+   RECENT ACTIONS ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â FOREST GREEN CARD
    ========================================================= */
 
 .recent-activity-card {
@@ -2616,3 +3694,6 @@
     color: #ffffff !important;
 }
 </style>
+
+
+

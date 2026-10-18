@@ -1,0 +1,2578 @@
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from datetime import date, timedelta
+from decimal import Decimal
+import json
+from io import BytesIO
+
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import mm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, KeepTogether
+
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.db.models import Sum
+from django.shortcuts import (
+    get_object_or_404,
+    redirect,
+    render,
+)
+from django.utils import timezone
+from .forms import (
+    DailyEarningForm,
+    ExpenseForm,
+    CoinCollectionForm,
+    RegisterForm,
+    ProfileForm,
+)
+
+from .decorators import membership_required
+from .models import (
+    Profile,
+    MpesaPayment,
+    Membership,
+    DailyEarning,
+    Expense,
+    CoinCollection,
+)
+
+
+def money(value):
+
+    if value is None:
+        return Decimal("0.00")
+
+    return Decimal(value)
+
+
+
+
+def register(request):
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+
+            login(request, user)
+
+            messages.success(
+                request,
+                "Account created successfully. Welcome to ISC Pool Tracker!"
+            )
+
+            return redirect("membership")
+    else:
+        form = RegisterForm()
+
+    return render(
+        request,
+        "registration/register.html",
+        {"form": form},
+    )
+
+
+@login_required
+def profile(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        form = ProfileForm(
+            request.POST,
+            request.FILES,
+            instance=profile,
+        )
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "Profile picture updated successfully.",
+            )
+
+            return redirect("profile")
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(
+        request,
+        "tracker/profile.html",
+        {
+            "profile": profile,
+            "profile_form": form,
+        },
+    )
+
+
+@login_required
+def edit_profile(request):
+    user = request.user
+
+    if request.method == "POST":
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
+
+        if not username:
+            messages.error(
+                request,
+                "Username cannot be empty.",
+            )
+        elif (
+            username != user.username
+            and type(user).objects.filter(username=username).exists()
+        ):
+            messages.error(
+                request,
+                "That username is already in use.",
+            )
+        else:
+            user.username = username
+            user.email = email
+            user.save()
+
+            messages.success(
+                request,
+                "Profile updated successfully.",
+            )
+
+            return redirect("profile")
+
+    return render(
+        request,
+        "tracker/edit_profile.html",
+    )
+
+
+@login_required
+def change_password(request):
+    if request.method == "POST":
+        form = PasswordChangeForm(
+            request.user,
+            request.POST,
+        )
+
+        if form.is_valid():
+            user = form.save()
+
+            update_session_auth_hash(
+                request,
+                user,
+            )
+
+            messages.success(
+                request,
+                "Your password has been changed successfully.",
+            )
+
+            return redirect("profile")
+    else:
+        form = PasswordChangeForm(request.user)
+
+    return render(
+        request,
+        "tracker/change_password.html",
+        {
+            "form": form,
+        },
+    )
+
+
+@login_required
+def settings_page(request):
+    return render(
+        request,
+        "tracker/settings.html",
+    )
+def history(request):
+    return render(
+        request,
+        "tracker/history.html",
+    )
+@membership_required
+def dashboard(request):
+
+    today = date.today()
+
+    # ---------------------------------------------------------
+    # DATE RANGES
+    # ---------------------------------------------------------
+
+    week_start = (
+        today -
+        timedelta(days=today.weekday())
+    )
+
+    week_end = (
+        week_start +
+        timedelta(days=6)
+    )
+
+    month_start = today.replace(
+        day=1
+    )
+
+    if month_start.month == 12:
+
+        next_month = date(
+            month_start.year + 1,
+            1,
+            1
+        )
+
+    else:
+
+        next_month = date(
+            month_start.year,
+            month_start.month + 1,
+            1
+        )
+
+    month_end = (
+        next_month -
+        timedelta(days=1)
+    )
+
+    # ---------------------------------------------------------
+    # TODAY
+    # ---------------------------------------------------------
+
+    today_earnings = money(
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            collection_date=today,
+        )
+        .aggregate(
+            total=Sum("actual_m_pesa")
+        )["total"]
+    )
+
+    today_expenses = money(
+        Expense.objects
+        .filter(
+            user=request.user,
+            date=today,
+        )
+        .aggregate(
+            total=Sum("amount")
+        )["total"]
+    )
+
+    today_profit = (
+        today_earnings -
+        today_expenses
+    )
+
+    # ---------------------------------------------------------
+    # WEEK
+    # ---------------------------------------------------------
+
+    weekly_earnings = money(
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            collection_date__range=[
+                week_start,
+                week_end
+            ]
+        )
+        .aggregate(
+            total=Sum("actual_m_pesa")
+        )["total"]
+    )
+
+    weekly_expenses = money(
+        Expense.objects
+        .filter(
+            user=request.user,
+            date__range=[
+                week_start,
+                week_end
+            ]
+        )
+        .aggregate(
+            total=Sum("amount")
+        )["total"]
+    )
+
+    weekly_profit = (
+        weekly_earnings -
+        weekly_expenses
+    )
+
+    # ---------------------------------------------------------
+    # MONTH
+    # ---------------------------------------------------------
+
+    monthly_earnings = money(
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            collection_date__range=[
+                month_start,
+                month_end
+            ]
+        )
+        .aggregate(
+            total=Sum("actual_m_pesa")
+        )["total"]
+    )
+
+    monthly_expenses = money(
+        Expense.objects
+        .filter(
+            user=request.user,
+            date__range=[
+                month_start,
+                month_end
+            ]
+        )
+        .aggregate(
+            total=Sum("amount")
+        )["total"]
+    )
+
+    monthly_profit = (
+        monthly_earnings -
+        monthly_expenses
+    )
+
+    # ---------------------------------------------------------
+    # PROFIT MARGINS
+    # ---------------------------------------------------------
+
+    if today_earnings:
+
+        today_profit_margin = (
+            today_profit /
+            today_earnings
+        ) * Decimal("100")
+
+    else:
+
+        today_profit_margin = Decimal("0.00")
+
+    if weekly_earnings:
+
+        weekly_profit_margin = (
+            weekly_profit /
+            weekly_earnings
+        ) * Decimal("100")
+
+    else:
+
+        weekly_profit_margin = Decimal("0.00")
+
+    if monthly_earnings:
+
+        monthly_profit_margin = (
+            monthly_profit /
+            monthly_earnings
+        ) * Decimal("100")
+
+    else:
+
+        monthly_profit_margin = Decimal("0.00")
+
+    # ---------------------------------------------------------
+    # OVERALL EARNING STATISTICS
+    # ---------------------------------------------------------
+
+    earning_days = (
+        CoinCollection.objects
+        .filter(user=request.user)
+        .values("collection_date")
+        .distinct()
+        .count()
+    )
+
+    total_earnings = money(
+        CoinCollection.objects
+        .filter(user=request.user)
+        .aggregate(
+            total=Sum("actual_m_pesa")
+        )["total"]
+    )
+
+    total_expenses = money(
+        Expense.objects
+        .filter(user=request.user)
+        .aggregate(
+            total=Sum("amount")
+        )["total"]
+    )
+
+    total_profit = (
+        total_earnings -
+        total_expenses
+    )
+
+    cash_after_expenses = total_profit
+    if earning_days > 0:
+
+        average_daily_earnings = (
+            total_earnings /
+            Decimal(earning_days)
+        )
+
+        average_daily_profit = (
+            total_profit /
+            Decimal(earning_days)
+        )
+
+    else:
+
+        average_daily_earnings = Decimal("0.00")
+        average_daily_profit = Decimal("0.00")
+
+    # ---------------------------------------------------------
+    # EXPECTED EARNINGS
+    # ---------------------------------------------------------
+
+    expected_weekly_earnings = (
+        average_daily_earnings *
+        Decimal("7")
+    )
+
+    expected_monthly_earnings = (
+        average_daily_earnings *
+        Decimal("30")
+    )
+
+    # ---------------------------------------------------------
+    # BEST AND LOWEST EARNING DAYS
+    # ---------------------------------------------------------
+
+    earning_day_totals = (
+        CoinCollection.objects
+        .filter(user=request.user)
+        .values("collection_date")
+        .annotate(
+            total=Sum("actual_m_pesa")
+        )
+        .order_by("collection_date")
+    )
+
+    best_day = None
+    lowest_day = None
+
+    if earning_day_totals:
+        best_record = max(
+            earning_day_totals,
+            key=lambda item: item["total"] or Decimal("0.00")
+        )
+
+        lowest_record = min(
+            earning_day_totals,
+            key=lambda item: item["total"] or Decimal("0.00")
+        )
+
+        best_day = {
+            "date": best_record["collection_date"],
+            "amount_collected": best_record["total"] or Decimal("0.00"),
+        }
+
+        lowest_day = {
+            "date": lowest_record["collection_date"],
+            "amount_collected": lowest_record["total"] or Decimal("0.00"),
+        }
+
+    # ---------------------------------------------------------
+    # LAST 7 DAYS CHART DATA
+    # ---------------------------------------------------------
+
+    chart_labels = []
+    earnings_chart_values = []
+    expense_chart_values = []
+    profit_chart_values = []
+
+    for i in range(6, -1, -1):
+
+        chart_date = (
+            today -
+            timedelta(days=i)
+        )
+
+        daily_earnings = money(
+            CoinCollection.objects
+            .filter(
+                user=request.user,
+                collection_date=chart_date,
+            )
+            .aggregate(
+                total=Sum("actual_m_pesa")
+            )["total"]
+        )
+
+        daily_expenses = money(
+            Expense.objects
+            .filter(
+                user=request.user,
+                date=chart_date,
+            )
+            .aggregate(
+                total=Sum("amount")
+            )["total"]
+        )
+
+        daily_profit = (
+            daily_earnings -
+            daily_expenses
+        )
+
+        chart_labels.append(
+            chart_date.strftime("%a %d %b")
+        )
+
+        earnings_chart_values.append(
+            float(daily_earnings)
+        )
+
+        expense_chart_values.append(
+            float(daily_expenses)
+        )
+
+        profit_chart_values.append(
+            float(daily_profit)
+        )
+
+    # ---------------------------------------------------------
+    # TARGET VS ACTUAL
+    # ---------------------------------------------------------
+
+    target_monthly = Decimal(
+        "50000.00"
+    )
+
+    target_progress = Decimal(
+        "0.00"
+    )
+
+    if target_monthly > 0:
+
+        target_progress = (
+            monthly_earnings /
+            target_monthly
+        ) * Decimal("100")
+
+    if target_progress > Decimal("100"):
+
+        target_progress = Decimal(
+            "100"
+        )
+
+    # ---------------------------------------------------------
+    # COIN COLLECTION
+    # ---------------------------------------------------------
+
+    latest_coin_collection = (
+        CoinCollection.objects
+        .filter(user=request.user)
+        .order_by(
+            "-collection_date",
+            "-created_at"
+        )
+        .first()
+    )
+
+    # ---------------------------------------------------------
+    # CONTEXT
+    # ---------------------------------------------------------
+
+    context = {
+
+        "today": today,
+
+        "week_start": week_start,
+        "week_end": week_end,
+
+        "month_start": month_start,
+        "month_end": month_end,
+
+        # Today
+        "today_earnings": today_earnings,
+        "today_expenses": today_expenses,
+        "today_profit": today_profit,
+        "today_profit_margin": today_profit_margin,
+
+        # Week
+        "weekly_earnings": weekly_earnings,
+        "weekly_expenses": weekly_expenses,
+        "weekly_profit": weekly_profit,
+        "weekly_profit_margin": weekly_profit_margin,
+
+        # Month
+        "monthly_earnings": monthly_earnings,
+        "monthly_expenses": monthly_expenses,
+        "monthly_profit": monthly_profit,
+        "monthly_profit_margin": monthly_profit_margin,
+
+        # General analytics
+        "earning_days": earning_days,
+        "average_daily_earnings": average_daily_earnings,
+        "average_daily_profit": average_daily_profit,
+
+        "total_earnings": total_earnings,
+        "total_expenses": total_expenses,
+        "total_profit": total_profit,
+        "cash_after_expenses": cash_after_expenses,
+
+        # Expected
+        "expected_weekly_earnings": (
+            expected_weekly_earnings
+        ),
+
+        "expected_monthly_earnings": (
+            expected_monthly_earnings
+        ),
+
+        # Best / lowest
+        "best_day": best_day,
+        "lowest_day": lowest_day,
+
+        # Charts
+        "chart_labels": chart_labels,
+
+        "chart_values": (
+            earnings_chart_values
+        ),
+
+        "earnings_chart_values": (
+            earnings_chart_values
+        ),
+
+        "expense_chart_values": (
+            expense_chart_values
+        ),
+
+        "profit_chart_values": (
+            profit_chart_values
+        ),
+
+        # Target
+        "target_monthly": target_monthly,
+        "target_progress": target_progress,
+
+        # Recent
+        "recent_earnings": (
+            CoinCollection.objects
+            .filter(
+                user=request.user,
+                actual_m_pesa__isnull=False,
+            )
+            .order_by(
+                "-collection_date",
+                "-created_at",
+                "-id",
+            )[:5]
+        ),
+
+        "recent_expenses": (
+            Expense.objects
+            .filter(user=request.user)
+            .order_by(
+                "-created_at",
+                "-id"
+            )[:5]
+        ),
+
+        "recent_expenses_total": money(
+            Expense.objects
+            .filter(
+                user=request.user,
+                date=latest_coin_collection.collection_date,
+            )
+            .aggregate(total=Sum("amount"))["total"]
+        ) if latest_coin_collection else money(0),
+
+        # Coin system
+        "latest_coin_collection": (
+            latest_coin_collection
+        ),
+    }
+
+    return render(
+        request,
+        "tracker/dashboard.html",
+        context
+    )
+def add_earning(request):
+
+    if request.method == "POST":
+
+        form = DailyEarningForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            earning = form.save(commit=False)
+            earning.user = request.user
+            earning.save()
+
+            messages.success(
+                request,
+                (
+                    f"Earning of KSh "
+                    f"{earning.amount_collected:.2f} "
+                    f"saved successfully."
+                )
+            )
+
+            return redirect("earnings_list")
+
+    else:
+
+        form = DailyEarningForm(
+            initial={
+                "date": date.today()
+            }
+        )
+
+    return render(
+        request,
+        "tracker/add_earning.html",
+        {
+            "form": form
+        }
+    )
+def earnings_list(request):
+
+    earnings = (
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            actual_m_pesa__isnull=False,
+        )
+        .order_by(
+            "-collection_date",
+            "-created_at",
+            "-id",
+        )
+    )
+
+    total = money(
+        earnings.aggregate(
+            total=Sum("actual_m_pesa")
+        )["total"]
+    )
+
+    paginator = Paginator(
+        earnings,
+        7
+    )
+
+    page_number = request.GET.get(
+        "page"
+    )
+
+    earnings_page = (
+        paginator.get_page(
+            page_number
+        )
+    )
+
+    return render(
+        request,
+        "tracker/earnings_list.html",
+        {
+            "earnings": earnings_page,
+            "total": total,
+        }
+    )
+
+def edit_earning(
+    request,
+    earning_id
+):
+
+    earning = get_object_or_404(
+        DailyEarning,
+        id=earning_id,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+
+        form = DailyEarningForm(
+            request.POST,
+            instance=earning
+        )
+
+        if form.is_valid():
+
+            earning = form.save()
+
+            messages.success(
+                request,
+                (
+                    f"Earning of KSh "
+                    f"{earning.amount_collected:.2f} "
+                    f"updated successfully."
+                )
+            )
+
+            return redirect(
+                "earnings_list"
+            )
+
+    else:
+
+        form = DailyEarningForm(
+            instance=earning
+        )
+
+    return render(
+        request,
+        "tracker/add_earning.html",
+        {
+            "form": form,
+            "editing": True,
+        }
+    )
+def delete_earning(
+    request,
+    earning_id
+):
+
+    earning = get_object_or_404(
+        DailyEarning,
+        id=earning_id,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+
+        amount = (
+            earning.amount_collected
+        )
+
+        earning.delete()
+
+        messages.success(
+            request,
+            (
+                f"Earning of KSh "
+                f"{amount:.2f} "
+                f"deleted successfully."
+            )
+        )
+
+        return redirect(
+            "earnings_list"
+        )
+
+    return render(
+        request,
+        "tracker/delete_confirm.html",
+        {
+            "object": earning,
+            "object_type": "earning",
+        }
+    )
+def add_expense(request):
+
+    if request.method == "POST":
+
+        form = ExpenseForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            expense = form.save(commit=False)
+            expense.user = request.user
+            expense.save()
+
+            messages.success(
+                request,
+                (
+                    f"Expense of KSh "
+                    f"{expense.amount:.2f} "
+                    f"saved successfully."
+                )
+            )
+
+            return redirect("earnings_list")
+
+    else:
+
+        form = ExpenseForm(
+            initial={
+                "date": date.today()
+            }
+        )
+
+    return render(
+        request,
+        "tracker/add_expense.html",
+        {
+            "form": form
+        }
+    )
+def expenses_list(request):
+
+    expenses = (
+        Expense.objects
+        .filter(user=request.user)
+        .order_by(
+            "-date",
+            "-id"
+        )
+    )
+
+    total = money(
+        expenses.aggregate(
+            total=Sum("amount")
+        )["total"]
+    )
+
+    paginator = Paginator(
+        expenses,
+        7
+    )
+
+    page_number = request.GET.get(
+        "page"
+    )
+
+    expenses_page = (
+        paginator.get_page(
+            page_number
+        )
+    )
+
+    return render(
+        request,
+        "tracker/expenses_list.html",
+        {
+            "expenses": expenses_page,
+            "total": total,
+        }
+    )
+def edit_expense(
+    request,
+    expense_id
+):
+
+    expense = get_object_or_404(
+        Expense,
+        id=expense_id,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+
+        form = ExpenseForm(
+            request.POST,
+            instance=expense
+        )
+
+        if form.is_valid():
+
+            expense = form.save()
+
+            messages.success(
+                request,
+                (
+                    f"Expense of KSh "
+                    f"{expense.amount:.2f} "
+                    f"updated successfully."
+                )
+            )
+
+            return redirect(
+                "expenses_list"
+            )
+
+    else:
+
+        form = ExpenseForm(
+            instance=expense
+        )
+
+    return render(
+        request,
+        "tracker/add_expense.html",
+        {
+            "form": form,
+            "editing": True,
+        }
+    )
+def delete_expense(
+    request,
+    expense_id
+):
+
+    expense = get_object_or_404(
+        Expense,
+        id=expense_id,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+
+        amount = expense.amount
+
+        expense.delete()
+
+        messages.success(
+            request,
+            (
+                f"Expense of KSh "
+                f"{amount:.2f} "
+                f"deleted successfully."
+            )
+        )
+
+        return redirect(
+            "expenses_list"
+        )
+
+    return render(
+        request,
+        "tracker/delete_confirm.html",
+        {
+            "object": expense,
+            "object_type": "expense",
+        }
+    )
+@login_required
+def reports(request):
+
+    today = timezone.localdate()
+
+    # ---------------------------------------------------------
+    # SELECTED MONTH
+    # ---------------------------------------------------------
+
+    selected_year = request.GET.get("year")
+    selected_month = request.GET.get("month")
+
+    try:
+        selected_year = int(selected_year)
+        selected_month = int(selected_month)
+
+        if selected_month < 1 or selected_month > 12:
+            raise ValueError
+
+    except (TypeError, ValueError):
+        selected_year = today.year
+        selected_month = today.month
+
+    month_start = date(
+        selected_year,
+        selected_month,
+        1,
+    )
+
+    if selected_month == 12:
+        next_month = date(
+            selected_year + 1,
+            1,
+            1,
+        )
+    else:
+        next_month = date(
+            selected_year,
+            selected_month + 1,
+            1,
+        )
+
+    month_end = next_month - timedelta(days=1)
+
+    # ---------------------------------------------------------
+    # MONTHLY EARNINGS
+    # ---------------------------------------------------------
+
+    monthly_earnings_qs = (
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            collection_date__gte=month_start,
+            collection_date__lte=month_end,
+            actual_m_pesa__isnull=False,
+        )
+    )
+
+    monthly_expenses_qs = (
+        Expense.objects
+        .filter(
+            user=request.user,
+            date__gte=month_start,
+            date__lte=month_end,
+        )
+    )
+
+    monthly_earnings = money(
+        monthly_earnings_qs.aggregate(
+            total=Sum("actual_m_pesa")
+        )["total"]
+    )
+
+    monthly_expenses = money(
+        monthly_expenses_qs.aggregate(
+            total=Sum("amount")
+        )["total"]
+    )
+
+    monthly_profit = (
+        monthly_earnings -
+        monthly_expenses
+    )
+
+    # ---------------------------------------------------------
+    # ALL TIME
+    # ---------------------------------------------------------
+
+    all_earnings_qs = (
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            actual_m_pesa__isnull=False,
+        )
+    )
+
+    all_expenses_qs = (
+        Expense.objects
+        .filter(
+            user=request.user,
+        )
+    )
+
+    all_time_earnings = money(
+        all_earnings_qs.aggregate(
+            total=Sum("actual_m_pesa")
+        )["total"]
+    )
+
+    all_time_expenses = money(
+        all_expenses_qs.aggregate(
+            total=Sum("amount")
+        )["total"]
+    )
+
+    all_time_profit = (
+        all_time_earnings -
+        all_time_expenses
+    )
+
+    # ---------------------------------------------------------
+    # PROFIT MARGIN
+    # ---------------------------------------------------------
+
+    if all_time_earnings > 0:
+
+        profit_margin = (
+            all_time_profit /
+            all_time_earnings
+        ) * Decimal("100")
+
+    else:
+
+        profit_margin = Decimal("0.00")
+
+    if profit_margin < 0:
+        margin_width = Decimal("0.00")
+
+    elif profit_margin > 100:
+        margin_width = Decimal("100.00")
+
+    else:
+        margin_width = profit_margin
+
+    # ---------------------------------------------------------
+    # EXPENSE BREAKDOWN
+    # ---------------------------------------------------------
+
+    expense_breakdown = []
+
+    expense_labels = dict(
+        Expense.EXPENSE_TYPE_CHOICES
+    )
+
+    expense_types = (
+        all_expenses_qs
+        .values("expense_type")
+        .distinct()
+    )
+
+    for row in expense_types:
+
+        expense_type = row["expense_type"]
+
+        amount = money(
+            all_expenses_qs
+            .filter(
+                expense_type=expense_type
+            )
+            .aggregate(
+                total=Sum("amount")
+            )["total"]
+        )
+
+        expense_breakdown.append({
+            "type": expense_labels.get(
+                expense_type,
+                expense_type,
+            ),
+            "amount": amount,
+        })
+
+    expense_breakdown.sort(
+        key=lambda item: item["amount"],
+        reverse=True,
+    )
+
+    # ---------------------------------------------------------
+    # MONTH SELECTOR
+    # ---------------------------------------------------------
+
+    months = [
+        (1, "January"),
+        (2, "February"),
+        (3, "March"),
+        (4, "April"),
+        (5, "May"),
+        (6, "June"),
+        (7, "July"),
+        (8, "August"),
+        (9, "September"),
+        (10, "October"),
+        (11, "November"),
+        (12, "December"),
+    ]
+
+    years = range(
+        today.year - 5,
+        today.year + 1,
+    )
+
+    # ---------------------------------------------------------
+    # CONTEXT
+    # ---------------------------------------------------------
+
+    context = {
+        "month_start": month_start,
+        "month_end": month_end,
+
+        "selected_month": selected_month,
+        "selected_year": selected_year,
+
+        "months": months,
+        "years": years,
+
+        "monthly_earnings": monthly_earnings,
+        "monthly_expenses": monthly_expenses,
+        "monthly_profit": monthly_profit,
+
+        "all_time_earnings": all_time_earnings,
+        "all_time_expenses": all_time_expenses,
+        "all_time_profit": all_time_profit,
+
+        "profit_margin": profit_margin,
+        "margin_width": margin_width,
+
+        "expense_breakdown": expense_breakdown,
+    }
+
+    return render(
+        request,
+        "tracker/reports.html",
+        context,
+    )
+@login_required
+def coin_collection_list(request):
+
+    collections = list(
+        CoinCollection.objects
+        .filter(user=request.user)
+        .order_by(
+            "-collection_date",
+            "-created_at"
+        )
+    )
+
+    paginator = Paginator(
+        collections,
+        7
+    )
+
+    page_number = request.GET.get(
+        "page"
+    )
+
+    collections_page = paginator.get_page(
+        page_number
+    )
+
+    today = date.today()
+
+    todays_collections = [
+        collection
+        for collection in collections
+        if collection.collection_date == today
+    ]
+
+    # -----------------------------------------------------
+    # TODAY'S COIN TOTAL
+    # -----------------------------------------------------
+
+    todays_coins = sum(
+        collection.coins_collected
+        for collection in todays_collections
+    )
+
+    # -----------------------------------------------------
+    # TODAY'S ADDITIONAL / LOST COINS
+    # -----------------------------------------------------
+
+    todays_additional_coins = sum(
+        collection.additional_coins
+        for collection in todays_collections
+    )
+
+    todays_lost_coins = sum(
+        collection.lost_coins
+        for collection in todays_collections
+    )
+
+    # -----------------------------------------------------
+    # TODAY'S ACTUAL M-PESA
+    # -----------------------------------------------------
+
+    todays_money = sum(
+        (
+            collection.actual_m_pesa
+            for collection in todays_collections
+            if collection.actual_m_pesa is not None
+        ),
+        Decimal("0.00")
+    )
+
+    # -----------------------------------------------------
+    # TODAY'S EXPECTED M-PESA
+    #
+    # Only collections with actual M-Pesa recorded are
+    # included in today's comparison.
+    #
+    # Every coin is worth KSh 20.
+    # -----------------------------------------------------
+
+    todays_expected = sum(
+        (
+            collection.expected_amount
+            for collection in todays_collections
+        ),
+        Decimal("0.00")
+    )
+
+    # -----------------------------------------------------
+    # DIFFERENCE
+    # -----------------------------------------------------
+
+    todays_difference = (
+        todays_money -
+        todays_expected
+    )
+
+    # -----------------------------------------------------
+    # COLLECTION RATE
+    # -----------------------------------------------------
+
+    if todays_expected > 0:
+
+        todays_rate = (
+            todays_money /
+            todays_expected
+        ) * Decimal("100")
+
+    else:
+
+        todays_rate = None
+
+    # -----------------------------------------------------
+    # NEXT EXPECTED COLLECTION
+    #
+    # Today's coins [20 KSh per coin].
+    # -----------------------------------------------------
+
+    tomorrow_expected = (
+        Decimal(todays_coins) *
+        Decimal("20.00")
+    )
+
+    latest = collections[0] if collections else None
+
+    return render(
+        request,
+        "tracker/coin_collections.html",
+        {
+            "collections": collections_page,
+            "latest": latest,
+            "todays_coins": todays_coins,
+            "todays_additional_coins": todays_additional_coins,
+            "todays_lost_coins": todays_lost_coins,
+            "todays_money": todays_money,
+            "todays_expected": todays_expected,
+            "todays_difference": todays_difference,
+            "todays_rate": todays_rate,
+            "tomorrow_expected": tomorrow_expected,
+            "today": today,
+        }
+    )
+
+
+@login_required
+def add_coin_collection(request):
+
+    if request.method == "POST":
+
+        form = CoinCollectionForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            collection = form.save(commit=False)
+
+            collection.user = request.user
+
+            # Every ISC coin is worth KSh 20.
+            collection.coin_value = Decimal("20.00")
+
+            collection.save()
+
+            messages.success(
+                request,
+                (
+                    f"{collection.coins_collected} "
+                    f"coins recorded successfully. "
+                    f"Expected M-Pesa: "
+                    f"KSh "
+                    f"{collection.expected_amount:.2f}. "
+                    f"Actual M-Pesa: "
+                    f"KSh "
+                    f"{collection.actual_m_pesa or Decimal('0.00'):.2f}. "
+                    f"Difference: "
+                    f"KSh "
+                    f"{collection.difference or Decimal('0.00'):.2f}."
+                )
+            )
+
+            return redirect(
+                "coin_collections"
+            )
+
+    else:
+
+        form = CoinCollectionForm(
+            initial={
+                "collection_date": date.today(),
+            }
+        )
+
+    return render(
+        request,
+        "tracker/add_coin_collection.html",
+        {
+            "form": form,
+        }
+    )
+
+
+@login_required
+def edit_coin_collection(
+    request,
+    collection_id
+):
+
+    collection = get_object_or_404(
+        CoinCollection,
+        id=collection_id,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+
+        form = CoinCollectionForm(
+            request.POST,
+            instance=collection
+        )
+
+        if form.is_valid():
+
+            collection = form.save(commit=False)
+
+            collection.user = request.user
+
+            # Every ISC coin is worth KSh 20.
+            collection.coin_value = Decimal("20.00")
+
+            collection.save()
+
+            messages.success(
+                request,
+                "Coin collection updated successfully."
+            )
+
+            return redirect(
+                "coin_collections"
+            )
+
+    else:
+
+        form = CoinCollectionForm(
+            instance=collection
+        )
+
+    return render(
+        request,
+        "tracker/add_coin_collection.html",
+        {
+            "form": form,
+            "editing": True,
+            "collection": collection,
+        }
+    )
+
+
+@login_required
+def delete_coin_collection(
+    request,
+    collection_id
+):
+
+    collection = get_object_or_404(
+        CoinCollection,
+        id=collection_id,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+
+        collection.delete()
+
+        messages.success(
+            request,
+            "Coin collection deleted successfully."
+        )
+
+        return redirect(
+            "coin_collections"
+        )
+
+    return render(
+        request,
+        "tracker/delete_confirm.html",
+        {
+            "object": collection,
+            "object_type": "coin collection",
+        }
+    )
+
+@login_required
+def membership(request):
+
+    membership, created = Membership.objects.get_or_create(
+        user=request.user,
+        defaults={
+            "status": Membership.STATUS_TRIAL,
+            "trial_started_at": timezone.now(),
+            "trial_ends_at": timezone.now() + timedelta(days=7),
+        },
+    )
+
+    latest_payment = (
+        MpesaPayment.objects
+        .filter(user=request.user)
+        .order_by("-created_at")
+        .first()
+    )
+
+    pending_payment = (
+        MpesaPayment.objects
+        .filter(
+            user=request.user,
+            status=MpesaPayment.STATUS_PENDING,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+
+    return render(
+        request,
+        "tracker/membership.html",
+        {
+            "membership": membership,
+            "latest_payment": latest_payment,
+            "pending_payment": pending_payment,
+            "membership_amount": settings.MPESA_MEMBERSHIP_AMOUNT,
+            "membership_days": settings.MPESA_MEMBERSHIP_DAYS,
+            "mpesa_shortcode": settings.MPESA_SHORTCODE,
+        },
+    )
+
+
+def _normalize_mpesa_phone(phone_number):
+    """
+    Normalize common Kenyan phone formats to 2547XXXXXXXX.
+    """
+
+    phone = "".join(
+        character
+        for character in phone_number
+        if character.isdigit()
+    )
+
+    if phone.startswith("07") and len(phone) == 10:
+        return "254" + phone[1:]
+
+    if phone.startswith("01") and len(phone) == 10:
+        return "254" + phone[1:]
+
+    if phone.startswith("7") and len(phone) == 9:
+        return "254" + phone
+
+    if phone.startswith("1") and len(phone) == 9:
+        return "254" + phone
+
+    if phone.startswith("2547") and len(phone) == 12:
+        return phone
+
+    if phone.startswith("2541") and len(phone) == 12:
+        return phone
+
+    return None
+
+
+@login_required
+def pay_membership(request):
+
+    if request.method != "POST":
+        return redirect("membership")
+
+    membership, created = Membership.objects.get_or_create(
+        user=request.user,
+        defaults={
+            "status": Membership.STATUS_TRIAL,
+            "trial_started_at": timezone.now(),
+            "trial_ends_at": timezone.now() + timedelta(days=7),
+        },
+    )
+
+    if request.user.is_superuser:
+        messages.info(
+            request,
+            "Your administrator account already has permanent access."
+        )
+        return redirect("membership")
+
+    if membership.is_active:
+        messages.info(
+            request,
+            "Your membership is already active."
+        )
+        return redirect("membership")
+
+    existing_pending = (
+        MpesaPayment.objects
+        .filter(
+            user=request.user,
+            status=MpesaPayment.STATUS_PENDING,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+
+    if existing_pending:
+        messages.info(
+            request,
+            "Your payment is already awaiting admin confirmation."
+        )
+        return redirect("membership")
+
+    phone_number = request.POST.get(
+        "phone_number",
+        "",
+    ).strip()
+
+    normalized_phone = _normalize_mpesa_phone(phone_number)
+
+    if not normalized_phone:
+        messages.error(
+            request,
+            "Enter a valid Kenyan M-Pesa number."
+        )
+        return redirect("membership")
+
+    MpesaPayment.objects.create(
+        user=request.user,
+        amount=settings.MPESA_MEMBERSHIP_AMOUNT,
+        phone_number=normalized_phone,
+        status=MpesaPayment.STATUS_PENDING,
+        result_description=(
+            "Payment reported by user. "
+            "Awaiting manual admin verification."
+        ),
+    )
+
+    messages.success(
+        request,
+        "Payment marked as paid. "
+        "Please wait while an admin verifies your M-Pesa payment."
+    )
+
+    return redirect("membership")
+
+
+def mpesa_callback(request):
+
+    if request.method != "POST":
+        return JsonResponse(
+            {
+                "ResultCode": 1,
+                "ResultDesc": "Invalid request method.",
+            },
+            status=405,
+        )
+
+    try:
+
+        callback_data = json.loads(
+            request.body.decode("utf-8")
+        )
+
+        stk_callback = (
+            callback_data
+            .get("Body", {})
+            .get("stkCallback", {})
+        )
+
+        checkout_request_id = stk_callback.get(
+            "CheckoutRequestID"
+        )
+
+        result_code = stk_callback.get(
+            "ResultCode"
+        )
+
+        result_description = stk_callback.get(
+            "ResultDesc",
+            "",
+        )
+
+        if not checkout_request_id:
+            return JsonResponse(
+                {
+                    "ResultCode": 1,
+                    "ResultDesc": "Missing CheckoutRequestID.",
+                },
+                status=400,
+            )
+
+        try:
+
+            payment = MpesaPayment.objects.get(
+                checkout_request_id=checkout_request_id
+            )
+
+        except MpesaPayment.DoesNotExist:
+
+            return JsonResponse(
+                {
+                    "ResultCode": 1,
+                    "ResultDesc": "Payment not found.",
+                },
+                status=404,
+            )
+
+        payment.result_code = result_code
+        payment.result_description = result_description
+
+        if result_code == 0:
+
+            callback_items = (
+                stk_callback
+                .get("CallbackMetadata", {})
+                .get("Item", [])
+            )
+
+            receipt_number = None
+
+            for item in callback_items:
+
+                if item.get("Name") == "MpesaReceiptNumber":
+                    receipt_number = item.get("Value")
+                    break
+
+            payment.mpesa_receipt_number = receipt_number
+            payment.status = MpesaPayment.STATUS_SUCCESS
+            payment.save()
+
+            membership = Membership.objects.get(
+                user=payment.user
+            )
+
+            now = timezone.now()
+
+            if (
+                membership.status == Membership.STATUS_ACTIVE
+                and membership.membership_ends_at
+                and membership.membership_ends_at > now
+            ):
+                start_date = membership.membership_ends_at
+            else:
+                start_date = now
+
+            membership.status = Membership.STATUS_ACTIVE
+            membership.membership_started_at = start_date
+            membership.membership_ends_at = (
+                start_date
+                + timedelta(
+                    days=settings.MPESA_MEMBERSHIP_DAYS
+                )
+            )
+
+            membership.save()
+
+        else:
+
+            payment.status = MpesaPayment.STATUS_FAILED
+            payment.save()
+
+        return JsonResponse(
+            {
+                "ResultCode": 0,
+                "ResultDesc": "Accepted",
+            }
+        )
+
+    except Exception:
+
+        return JsonResponse(
+            {
+                "ResultCode": 1,
+                "ResultDesc": "Callback processing failed.",
+            },
+            status=500,
+        )
+
+
+
+
+
+
+
+
+@login_required
+@user_passes_test(lambda user: user.is_superuser)
+def membership_approvals(request):
+    pending_payments = (
+        MpesaPayment.objects
+        .filter(
+            status=MpesaPayment.STATUS_PENDING,
+        )
+        .select_related("user")
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "tracker/membership_approvals.html",
+        {
+            "pending_payments": pending_payments,
+        },
+    )
+
+
+@login_required
+@user_passes_test(lambda user: user.is_superuser)
+def membership_approval_action(request, payment_id, action):
+
+    if request.method != "POST":
+        return redirect("membership_approvals")
+
+    payment = get_object_or_404(
+        MpesaPayment,
+        id=payment_id,
+    )
+
+    if payment.status != MpesaPayment.STATUS_PENDING:
+        messages.info(
+            request,
+            "This payment has already been processed.",
+        )
+        return redirect("membership_approvals")
+
+    membership, created = Membership.objects.get_or_create(
+        user=payment.user,
+        defaults={
+            "status": Membership.STATUS_TRIAL,
+            "trial_started_at": timezone.now(),
+            "trial_ends_at": timezone.now() + timedelta(days=7),
+        },
+    )
+
+    if action == "approve":
+
+        now = timezone.now()
+
+        if (
+            membership.membership_ends_at
+            and membership.membership_ends_at > now
+        ):
+            start = membership.membership_ends_at
+        else:
+            start = now
+
+        membership.status = Membership.STATUS_ACTIVE
+        membership.membership_started_at = start
+        membership.membership_ends_at = (
+            start
+            + timedelta(
+                days=settings.MPESA_MEMBERSHIP_DAYS,
+            )
+        )
+        membership.save()
+
+        payment.status = MpesaPayment.STATUS_SUCCESS
+        payment.result_description = "Approved by admin."
+        payment.save()
+
+        messages.success(
+            request,
+            f"Membership approved for {payment.user.username}.",
+        )
+
+    elif action == "deny":
+
+        payment.status = MpesaPayment.STATUS_FAILED
+        payment.result_description = "Denied by admin."
+        payment.save()
+
+        messages.warning(
+            request,
+            f"Payment denied for {payment.user.username}.",
+        )
+
+    else:
+        messages.error(
+            request,
+            "Invalid membership action.",
+        )
+
+    return redirect("membership_approvals")
+
+@login_required
+def make_system_owner(request):
+    if request.user.username != "isac12":
+        return JsonResponse(
+            {"error": "Unauthorized"},
+            status=403,
+        )
+
+    request.user.is_staff = True
+    request.user.is_superuser = True
+    request.user.is_active = True
+    request.user.save(
+        update_fields=[
+            "is_staff",
+            "is_superuser",
+            "is_active",
+        ]
+    )
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": (
+                "isac12 is now the permanent system owner. "
+                "Log out and log back in."
+            ),
+        }
+    )
+
+
+
+@login_required
+def generate_report(request):
+
+    today = timezone.localdate()
+
+    # ---------------------------------------------------------
+    # SELECTED MONTH / YEAR
+    # ---------------------------------------------------------
+
+    try:
+        selected_year = int(request.GET.get("year", today.year))
+        selected_month = int(request.GET.get("month", today.month))
+
+        if selected_month < 1 or selected_month > 12:
+            raise ValueError
+
+    except (TypeError, ValueError):
+        selected_year = today.year
+        selected_month = today.month
+
+    month_start = date(
+        selected_year,
+        selected_month,
+        1,
+    )
+
+    if selected_month == 12:
+        next_month = date(
+            selected_year + 1,
+            1,
+            1,
+        )
+    else:
+        next_month = date(
+            selected_year,
+            selected_month + 1,
+            1,
+        )
+
+    month_end = next_month - timedelta(days=1)
+
+    # ---------------------------------------------------------
+    # EARNINGS HISTORY
+    # ---------------------------------------------------------
+
+    earnings = (
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            collection_date__gte=month_start,
+            collection_date__lte=month_end,
+            actual_m_pesa__isnull=False,
+        )
+        .order_by(
+            "collection_date",
+            "created_at",
+        )
+    )
+
+    # ---------------------------------------------------------
+    # EXPENSE HISTORY
+    # ---------------------------------------------------------
+
+    expenses = (
+        Expense.objects
+        .filter(
+            user=request.user,
+            date__gte=month_start,
+            date__lte=month_end,
+        )
+        .order_by(
+            "date",
+            "id",
+        )
+    )
+
+    expense_labels = dict(
+        Expense.EXPENSE_TYPE_CHOICES
+    )
+
+    # ---------------------------------------------------------
+    # TOTALS
+    # ---------------------------------------------------------
+
+    total_earnings = sum(
+        (
+            collection.actual_m_pesa or Decimal("0.00")
+            for collection in earnings
+        ),
+        Decimal("0.00"),
+    )
+
+    total_expenses = sum(
+        (
+            expense.amount or Decimal("0.00")
+            for expense in expenses
+        ),
+        Decimal("0.00"),
+    )
+
+    net_balance = (
+        total_earnings -
+        total_expenses
+    )
+
+    # ---------------------------------------------------------
+    # PDF
+    # ---------------------------------------------------------
+
+    buffer = BytesIO()
+
+    document = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=12 * mm,
+        leftMargin=12 * mm,
+        topMargin=14 * mm,
+        bottomMargin=14 * mm,
+        title="ISC Pool Tracker Report",
+        author="ISC Pool Tracker",
+    )
+
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        "ReportTitle",
+        parent=styles["Title"],
+        alignment=TA_CENTER,
+        fontSize=18,
+        leading=22,
+        spaceAfter=4,
+        textColor=colors.HexColor("#0f172a"),
+    )
+
+    subtitle_style = ParagraphStyle(
+        "ReportSubtitle",
+        parent=styles["Normal"],
+        alignment=TA_CENTER,
+        fontSize=9,
+        leading=12,
+        spaceAfter=14,
+        textColor=colors.HexColor("#64748b"),
+    )
+
+    section_style = ParagraphStyle(
+        "ReportSection",
+        parent=styles["Heading2"],
+        fontSize=12,
+        leading=15,
+        spaceBefore=12,
+        spaceAfter=7,
+        textColor=colors.HexColor("#0f172a"),
+    )
+
+    body_style = ParagraphStyle(
+        "ReportBody",
+        parent=styles["Normal"],
+        fontSize=7.5,
+        leading=10,
+        textColor=colors.HexColor("#334155"),
+    )
+
+    story = []
+
+    month_name = month_start.strftime("%B")
+
+    story.append(
+        Paragraph(
+            "ISC POOL TRACKER",
+            title_style,
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Earnings &amp; Expenses History — "
+            f"{month_name} {selected_year}",
+            subtitle_style,
+        )
+    )
+
+    # ---------------------------------------------------------
+    # SUMMARY
+    # ---------------------------------------------------------
+
+    summary_data = [
+        [
+            Paragraph("<b>Total Earnings</b>", body_style),
+            Paragraph("<b>Total Expenses</b>", body_style),
+            Paragraph("<b>Net Balance</b>", body_style),
+        ],
+        [
+            Paragraph(
+                f"KSh {total_earnings:,.2f}",
+                body_style,
+            ),
+            Paragraph(
+                f"KSh {total_expenses:,.2f}",
+                body_style,
+            ),
+            Paragraph(
+                f"KSh {net_balance:,.2f}",
+                body_style,
+            ),
+        ],
+    ]
+
+    summary_table = Table(
+        summary_data,
+        colWidths=[
+            58 * mm,
+            58 * mm,
+            58 * mm,
+        ],
+    )
+
+    summary_table.setStyle(
+        TableStyle([
+            (
+                "BACKGROUND",
+                (0, 0),
+                (-1, -1),
+                colors.HexColor("#f8fafc"),
+            ),
+            (
+                "BOX",
+                (0, 0),
+                (-1, -1),
+                0.6,
+                colors.HexColor("#cbd5e1"),
+            ),
+            (
+                "INNERGRID",
+                (0, 0),
+                (-1, -1),
+                0.4,
+                colors.HexColor("#e2e8f0"),
+            ),
+            (
+                "ALIGN",
+                (0, 0),
+                (-1, -1),
+                "CENTER",
+            ),
+            (
+                "VALIGN",
+                (0, 0),
+                (-1, -1),
+                "MIDDLE",
+            ),
+            (
+                "TOPPADDING",
+                (0, 0),
+                (-1, -1),
+                7,
+            ),
+            (
+                "BOTTOMPADDING",
+                (0, 0),
+                (-1, -1),
+                7,
+            ),
+        ])
+    )
+
+    story.append(summary_table)
+
+    # ---------------------------------------------------------
+    # EARNINGS TABLE
+    # ---------------------------------------------------------
+
+    story.append(
+        Paragraph(
+            "Earnings History",
+            section_style,
+        )
+    )
+
+    earnings_data = [
+        [
+            "Date",
+            "Coins",
+            "Expected M-Pesa",
+            "Actual M-Pesa",
+            "Difference",
+            "Rate",
+        ]
+    ]
+
+    for collection in earnings:
+
+        expected = (
+            Decimal(collection.coins_collected) *
+            Decimal("20.00")
+        )
+
+        actual = (
+            collection.actual_m_pesa or
+            Decimal("0.00")
+        )
+
+        difference = actual - expected
+
+        if expected > 0:
+            rate = (
+                actual /
+                expected *
+                Decimal("100")
+            )
+            rate_text = f"{rate:.1f}%"
+        else:
+            rate_text = "—"
+
+        earnings_data.append([
+            collection.collection_date.strftime(
+                "%d %b %Y"
+            ),
+            str(collection.coins_collected),
+            f"KSh {expected:,.2f}",
+            f"KSh {actual:,.2f}",
+            f"KSh {difference:,.2f}",
+            rate_text,
+        ])
+
+    if len(earnings_data) == 1:
+        earnings_data.append([
+            "No earnings recorded",
+            "—",
+            "—",
+            "—",
+            "—",
+            "—",
+        ])
+
+    earnings_table = Table(
+        earnings_data,
+        colWidths=[
+            27 * mm,
+            15 * mm,
+            34 * mm,
+            34 * mm,
+            32 * mm,
+            18 * mm,
+        ],
+        repeatRows=1,
+    )
+
+    earnings_table.setStyle(
+        TableStyle([
+            (
+                "BACKGROUND",
+                (0, 0),
+                (-1, 0),
+                colors.HexColor("#2563eb"),
+            ),
+            (
+                "TEXTCOLOR",
+                (0, 0),
+                (-1, 0),
+                colors.white,
+            ),
+            (
+                "FONTNAME",
+                (0, 0),
+                (-1, 0),
+                "Helvetica-Bold",
+            ),
+            (
+                "FONTSIZE",
+                (0, 0),
+                (-1, -1),
+                7,
+            ),
+            (
+                "GRID",
+                (0, 0),
+                (-1, -1),
+                0.4,
+                colors.HexColor("#cbd5e1"),
+            ),
+            (
+                "ROWBACKGROUNDS",
+                (0, 1),
+                (-1, -1),
+                [
+                    colors.white,
+                    colors.HexColor("#f8fafc"),
+                ],
+            ),
+            (
+                "ALIGN",
+                (1, 1),
+                (-1, -1),
+                "RIGHT",
+            ),
+            (
+                "VALIGN",
+                (0, 0),
+                (-1, -1),
+                "MIDDLE",
+            ),
+            (
+                "TOPPADDING",
+                (0, 0),
+                (-1, -1),
+                5,
+            ),
+            (
+                "BOTTOMPADDING",
+                (0, 0),
+                (-1, -1),
+                5,
+            ),
+        ])
+    )
+
+    story.append(earnings_table)
+
+    # ---------------------------------------------------------
+    # EXPENSE TABLE
+    # ---------------------------------------------------------
+
+    story.append(
+        Paragraph(
+            "Expenses History",
+            section_style,
+        )
+    )
+
+    expenses_data = [
+        [
+            "Date",
+            "Expense Type",
+            "Amount",
+            "Notes",
+        ]
+    ]
+
+    for expense in expenses:
+
+        expense_type = expense_labels.get(
+            expense.expense_type,
+            expense.expense_type,
+        )
+
+        expenses_data.append([
+            expense.date.strftime("%d %b %Y"),
+            expense_type,
+            f"KSh {expense.amount:,.2f}",
+            expense.notes or "—",
+        ])
+
+    if len(expenses_data) == 1:
+        expenses_data.append([
+            "No expenses recorded",
+            "—",
+            "—",
+            "—",
+        ])
+
+    expenses_table = Table(
+        expenses_data,
+        colWidths=[
+            29 * mm,
+            44 * mm,
+            32 * mm,
+            55 * mm,
+        ],
+        repeatRows=1,
+    )
+
+    expenses_table.setStyle(
+        TableStyle([
+            (
+                "BACKGROUND",
+                (0, 0),
+                (-1, 0),
+                colors.HexColor("#dc2626"),
+            ),
+            (
+                "TEXTCOLOR",
+                (0, 0),
+                (-1, 0),
+                colors.white,
+            ),
+            (
+                "FONTNAME",
+                (0, 0),
+                (-1, 0),
+                "Helvetica-Bold",
+            ),
+            (
+                "FONTSIZE",
+                (0, 0),
+                (-1, -1),
+                7,
+            ),
+            (
+                "GRID",
+                (0, 0),
+                (-1, -1),
+                0.4,
+                colors.HexColor("#cbd5e1"),
+            ),
+            (
+                "ROWBACKGROUNDS",
+                (0, 1),
+                (-1, -1),
+                [
+                    colors.white,
+                    colors.HexColor("#f8fafc"),
+                ],
+            ),
+            (
+                "ALIGN",
+                (2, 1),
+                (2, -1),
+                "RIGHT",
+            ),
+            (
+                "VALIGN",
+                (0, 0),
+                (-1, -1),
+                "MIDDLE",
+            ),
+            (
+                "TOPPADDING",
+                (0, 0),
+                (-1, -1),
+                5,
+            ),
+            (
+                "BOTTOMPADDING",
+                (0, 0),
+                (-1, -1),
+                5,
+            ),
+        ])
+    )
+
+    story.append(expenses_table)
+
+    story.append(Spacer(1, 12))
+
+    story.append(
+        Paragraph(
+            f"<b>Report period:</b> "
+            f"{month_start.strftime('%d %b %Y')} "
+            f"to {month_end.strftime('%d %b %Y')}",
+            body_style,
+        )
+    )
+
+    document.build(story)
+
+    buffer.seek(0)
+
+    filename = (
+        f"ISC_Pool_Tracker_Report_"
+        f"{month_name}_{selected_year}.pdf"
+    )
+
+    response = HttpResponse(
+        buffer.getvalue(),
+        content_type="application/pdf",
+    )
+
+    response["Content-Disposition"] = (
+        f'attachment; filename="{filename}"'
+    )
+
+    return response

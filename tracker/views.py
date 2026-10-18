@@ -1,8 +1,16 @@
-﻿from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date, timedelta
 from decimal import Decimal
 import json
+from io import BytesIO
+
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import mm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, KeepTogether
 
 from django.conf import settings
 from django.contrib import messages
@@ -11,7 +19,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.db.models import Sum
+from django.db.models import Count, Sum
 from django.shortcuts import (
     get_object_or_404,
     redirect,
@@ -670,12 +678,21 @@ def dashboard(request):
 
         "recent_expenses": (
             Expense.objects
-            .filter(user=request.user)
-            .order_by(
-                "-date",
-                "-id"
-            )[:5]
+            .filter(
+                user=request.user,
+                created_at__gte=timezone.now() - timedelta(hours=24),
+            )
+            .aggregate(total=Sum("amount"), count=Count("id"))
         ),
+
+        "recent_expenses_total": money(
+            Expense.objects
+            .filter(
+                user=request.user,
+                date=latest_coin_collection.collection_date,
+            )
+            .aggregate(total=Sum("amount"))["total"]
+        ) if latest_coin_collection else money(0),
 
         # Coin system
         "latest_coin_collection": (
@@ -1989,4 +2006,573 @@ def make_system_owner(request):
 
 @login_required
 def generate_report(request):
-    return redirect("reports")
+
+    today = timezone.localdate()
+
+    # ---------------------------------------------------------
+    # SELECTED MONTH / YEAR
+    # ---------------------------------------------------------
+
+    try:
+        selected_year = int(request.GET.get("year", today.year))
+        selected_month = int(request.GET.get("month", today.month))
+
+        if selected_month < 1 or selected_month > 12:
+            raise ValueError
+
+    except (TypeError, ValueError):
+        selected_year = today.year
+        selected_month = today.month
+
+    month_start = date(
+        selected_year,
+        selected_month,
+        1,
+    )
+
+    if selected_month == 12:
+        next_month = date(
+            selected_year + 1,
+            1,
+            1,
+        )
+    else:
+        next_month = date(
+            selected_year,
+            selected_month + 1,
+            1,
+        )
+
+    month_end = next_month - timedelta(days=1)
+
+    # ---------------------------------------------------------
+    # EARNINGS HISTORY
+    # ---------------------------------------------------------
+
+    earnings = (
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            collection_date__gte=month_start,
+            collection_date__lte=month_end,
+            actual_m_pesa__isnull=False,
+        )
+        .order_by(
+            "collection_date",
+            "created_at",
+        )
+    )
+
+    # ---------------------------------------------------------
+    # EXPENSE HISTORY
+    # ---------------------------------------------------------
+
+    expenses = (
+        Expense.objects
+        .filter(
+            user=request.user,
+            date__gte=month_start,
+            date__lte=month_end,
+        )
+        .order_by(
+            "date",
+            "id",
+        )
+    )
+
+    expense_labels = dict(
+        Expense.EXPENSE_TYPE_CHOICES
+    )
+
+    # ---------------------------------------------------------
+    # TOTALS
+    # ---------------------------------------------------------
+
+    total_earnings = sum(
+        (
+            collection.actual_m_pesa or Decimal("0.00")
+            for collection in earnings
+        ),
+        Decimal("0.00"),
+    )
+
+    total_expenses = sum(
+        (
+            expense.amount or Decimal("0.00")
+            for expense in expenses
+        ),
+        Decimal("0.00"),
+    )
+
+    net_balance = (
+        total_earnings -
+        total_expenses
+    )
+
+    # ---------------------------------------------------------
+    # PDF
+    # ---------------------------------------------------------
+
+    buffer = BytesIO()
+
+    document = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=12 * mm,
+        leftMargin=12 * mm,
+        topMargin=14 * mm,
+        bottomMargin=14 * mm,
+        title="ISC Pool Tracker Report",
+        author="ISC Pool Tracker",
+    )
+
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        "ReportTitle",
+        parent=styles["Title"],
+        alignment=TA_CENTER,
+        fontSize=18,
+        leading=22,
+        spaceAfter=4,
+        textColor=colors.HexColor("#0f172a"),
+    )
+
+    subtitle_style = ParagraphStyle(
+        "ReportSubtitle",
+        parent=styles["Normal"],
+        alignment=TA_CENTER,
+        fontSize=9,
+        leading=12,
+        spaceAfter=14,
+        textColor=colors.HexColor("#64748b"),
+    )
+
+    section_style = ParagraphStyle(
+        "ReportSection",
+        parent=styles["Heading2"],
+        fontSize=12,
+        leading=15,
+        spaceBefore=12,
+        spaceAfter=7,
+        textColor=colors.HexColor("#0f172a"),
+    )
+
+    body_style = ParagraphStyle(
+        "ReportBody",
+        parent=styles["Normal"],
+        fontSize=7.5,
+        leading=10,
+        textColor=colors.HexColor("#334155"),
+    )
+
+    story = []
+
+    month_name = month_start.strftime("%B")
+
+    story.append(
+        Paragraph(
+            "ISC POOL TRACKER",
+            title_style,
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Earnings &amp; Expenses History — "
+            f"{month_name} {selected_year}",
+            subtitle_style,
+        )
+    )
+
+    # ---------------------------------------------------------
+    # SUMMARY
+    # ---------------------------------------------------------
+
+    summary_data = [
+        [
+            Paragraph("<b>Total Earnings</b>", body_style),
+            Paragraph("<b>Total Expenses</b>", body_style),
+            Paragraph("<b>Net Balance</b>", body_style),
+        ],
+        [
+            Paragraph(
+                f"KSh {total_earnings:,.2f}",
+                body_style,
+            ),
+            Paragraph(
+                f"KSh {total_expenses:,.2f}",
+                body_style,
+            ),
+            Paragraph(
+                f"KSh {net_balance:,.2f}",
+                body_style,
+            ),
+        ],
+    ]
+
+    summary_table = Table(
+        summary_data,
+        colWidths=[
+            58 * mm,
+            58 * mm,
+            58 * mm,
+        ],
+    )
+
+    summary_table.setStyle(
+        TableStyle([
+            (
+                "BACKGROUND",
+                (0, 0),
+                (-1, -1),
+                colors.HexColor("#f8fafc"),
+            ),
+            (
+                "BOX",
+                (0, 0),
+                (-1, -1),
+                0.6,
+                colors.HexColor("#cbd5e1"),
+            ),
+            (
+                "INNERGRID",
+                (0, 0),
+                (-1, -1),
+                0.4,
+                colors.HexColor("#e2e8f0"),
+            ),
+            (
+                "ALIGN",
+                (0, 0),
+                (-1, -1),
+                "CENTER",
+            ),
+            (
+                "VALIGN",
+                (0, 0),
+                (-1, -1),
+                "MIDDLE",
+            ),
+            (
+                "TOPPADDING",
+                (0, 0),
+                (-1, -1),
+                7,
+            ),
+            (
+                "BOTTOMPADDING",
+                (0, 0),
+                (-1, -1),
+                7,
+            ),
+        ])
+    )
+
+    story.append(summary_table)
+
+    # ---------------------------------------------------------
+    # EARNINGS TABLE
+    # ---------------------------------------------------------
+
+    story.append(
+        Paragraph(
+            "Earnings History",
+            section_style,
+        )
+    )
+
+    earnings_data = [
+        [
+            "Date",
+            "Coins",
+            "Expected M-Pesa",
+            "Actual M-Pesa",
+            "Difference",
+            "Rate",
+        ]
+    ]
+
+    for collection in earnings:
+
+        expected = (
+            Decimal(collection.coins_collected) *
+            Decimal("20.00")
+        )
+
+        actual = (
+            collection.actual_m_pesa or
+            Decimal("0.00")
+        )
+
+        difference = actual - expected
+
+        if expected > 0:
+            rate = (
+                actual /
+                expected *
+                Decimal("100")
+            )
+            rate_text = f"{rate:.1f}%"
+        else:
+            rate_text = "—"
+
+        earnings_data.append([
+            collection.collection_date.strftime(
+                "%d %b %Y"
+            ),
+            str(collection.coins_collected),
+            f"KSh {expected:,.2f}",
+            f"KSh {actual:,.2f}",
+            f"KSh {difference:,.2f}",
+            rate_text,
+        ])
+
+    if len(earnings_data) == 1:
+        earnings_data.append([
+            "No earnings recorded",
+            "—",
+            "—",
+            "—",
+            "—",
+            "—",
+        ])
+
+    earnings_table = Table(
+        earnings_data,
+        colWidths=[
+            27 * mm,
+            15 * mm,
+            34 * mm,
+            34 * mm,
+            32 * mm,
+            18 * mm,
+        ],
+        repeatRows=1,
+    )
+
+    earnings_table.setStyle(
+        TableStyle([
+            (
+                "BACKGROUND",
+                (0, 0),
+                (-1, 0),
+                colors.HexColor("#2563eb"),
+            ),
+            (
+                "TEXTCOLOR",
+                (0, 0),
+                (-1, 0),
+                colors.white,
+            ),
+            (
+                "FONTNAME",
+                (0, 0),
+                (-1, 0),
+                "Helvetica-Bold",
+            ),
+            (
+                "FONTSIZE",
+                (0, 0),
+                (-1, -1),
+                7,
+            ),
+            (
+                "GRID",
+                (0, 0),
+                (-1, -1),
+                0.4,
+                colors.HexColor("#cbd5e1"),
+            ),
+            (
+                "ROWBACKGROUNDS",
+                (0, 1),
+                (-1, -1),
+                [
+                    colors.white,
+                    colors.HexColor("#f8fafc"),
+                ],
+            ),
+            (
+                "ALIGN",
+                (1, 1),
+                (-1, -1),
+                "RIGHT",
+            ),
+            (
+                "VALIGN",
+                (0, 0),
+                (-1, -1),
+                "MIDDLE",
+            ),
+            (
+                "TOPPADDING",
+                (0, 0),
+                (-1, -1),
+                5,
+            ),
+            (
+                "BOTTOMPADDING",
+                (0, 0),
+                (-1, -1),
+                5,
+            ),
+        ])
+    )
+
+    story.append(earnings_table)
+
+    # ---------------------------------------------------------
+    # EXPENSE TABLE
+    # ---------------------------------------------------------
+
+    story.append(
+        Paragraph(
+            "Expenses History",
+            section_style,
+        )
+    )
+
+    expenses_data = [
+        [
+            "Date",
+            "Expense Type",
+            "Amount",
+            "Notes",
+        ]
+    ]
+
+    for expense in expenses:
+
+        expense_type = expense_labels.get(
+            expense.expense_type,
+            expense.expense_type,
+        )
+
+        expenses_data.append([
+            expense.date.strftime("%d %b %Y"),
+            expense_type,
+            f"KSh {expense.amount:,.2f}",
+            expense.notes or "—",
+        ])
+
+    if len(expenses_data) == 1:
+        expenses_data.append([
+            "No expenses recorded",
+            "—",
+            "—",
+            "—",
+        ])
+
+    expenses_table = Table(
+        expenses_data,
+        colWidths=[
+            29 * mm,
+            44 * mm,
+            32 * mm,
+            55 * mm,
+        ],
+        repeatRows=1,
+    )
+
+    expenses_table.setStyle(
+        TableStyle([
+            (
+                "BACKGROUND",
+                (0, 0),
+                (-1, 0),
+                colors.HexColor("#dc2626"),
+            ),
+            (
+                "TEXTCOLOR",
+                (0, 0),
+                (-1, 0),
+                colors.white,
+            ),
+            (
+                "FONTNAME",
+                (0, 0),
+                (-1, 0),
+                "Helvetica-Bold",
+            ),
+            (
+                "FONTSIZE",
+                (0, 0),
+                (-1, -1),
+                7,
+            ),
+            (
+                "GRID",
+                (0, 0),
+                (-1, -1),
+                0.4,
+                colors.HexColor("#cbd5e1"),
+            ),
+            (
+                "ROWBACKGROUNDS",
+                (0, 1),
+                (-1, -1),
+                [
+                    colors.white,
+                    colors.HexColor("#f8fafc"),
+                ],
+            ),
+            (
+                "ALIGN",
+                (2, 1),
+                (2, -1),
+                "RIGHT",
+            ),
+            (
+                "VALIGN",
+                (0, 0),
+                (-1, -1),
+                "MIDDLE",
+            ),
+            (
+                "TOPPADDING",
+                (0, 0),
+                (-1, -1),
+                5,
+            ),
+            (
+                "BOTTOMPADDING",
+                (0, 0),
+                (-1, -1),
+                5,
+            ),
+        ])
+    )
+
+    story.append(expenses_table)
+
+    story.append(Spacer(1, 12))
+
+    story.append(
+        Paragraph(
+            f"<b>Report period:</b> "
+            f"{month_start.strftime('%d %b %Y')} "
+            f"to {month_end.strftime('%d %b %Y')}",
+            body_style,
+        )
+    )
+
+    document.build(story)
+
+    buffer.seek(0)
+
+    filename = (
+        f"ISC_Pool_Tracker_Report_"
+        f"{month_name}_{selected_year}.pdf"
+    )
+
+    response = HttpResponse(
+        buffer.getvalue(),
+        content_type="application/pdf",
+    )
+
+    response["Content-Disposition"] = (
+        f'attachment; filename="{filename}"'
+    )
+
+    return response
