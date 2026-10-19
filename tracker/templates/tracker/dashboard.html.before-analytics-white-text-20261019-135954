@@ -1,0 +1,4163 @@
+﻿{% extends "tracker/base.html" %}
+
+{% block title %}Dashboard - ISC Pool Tracker
+<style id="isc-dashboard-card-consistency">
+/* Consistent, clean dashboard card surfaces */
+.financial-card,
+.cash-position-card,
+.performance-analytics-card,
+.recent-activity-card {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07) !important;
+}
+
+/* Cash position: readable text on white */
+.cash-position-card h3,
+.cash-position-card .cash-position-amount,
+.cash-position-card .cash-position-icon {
+    color: #111827 !important;
+}
+
+.cash-position-card p,
+.cash-position-card .cash-position-eyebrow,
+.cash-position-card .cash-position-breakdown span {
+    color: #64748b !important;
+}
+
+.cash-position-card .cash-position-breakdown strong {
+    color: #111827 !important;
+}
+
+/* Analytics panel and its four inner cards */
+.performance-analytics-card h2 {
+    color: #111827 !important;
+}
+
+.performance-analytics-card .analytics-card {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+}
+
+.performance-analytics-card .analytics-card,
+.performance-analytics-card .analytics-card h3,
+.performance-analytics-card .analytics-card p,
+.performance-analytics-card .analytics-card span,
+.performance-analytics-card .analytics-card strong,
+.performance-analytics-card .analytics-card .analytics-label,
+.performance-analytics-card .analytics-card .analytics-date,
+.performance-analytics-card .analytics-card .analytics-small,
+.performance-analytics-card .analytics-card .analytics-value {
+    color: #111827 !important;
+}
+
+.performance-analytics-card .analytics-card .analytics-small,
+.performance-analytics-card .analytics-card .analytics-date {
+    color: #64748b !important;
+}
+
+/* Preserve clear profit/loss signals */
+.performance-analytics-card .analytics-value.profit {
+    color: #15803d !important;
+}
+
+.performance-analytics-card .analytics-value.loss {
+    color: #dc2626 !important;
+}
+
+/* Recent activity: one white card with subtle row dividers */
+.recent-activity-card {
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+.recent-activity-card .activity-row {
+    background: transparent !important;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.recent-activity-card .activity-details strong {
+    color: #111827 !important;
+}
+
+.recent-activity-card .activity-details span {
+    color: #64748b !important;
+}
+
+.recent-activity-card .activity-income {
+    color: #15803d !important;
+}
+
+.recent-activity-card .activity-cost {
+    color: #dc2626 !important;
+}
+
+.recent-activity-card .activity-empty {
+    color: #64748b !important;
+}
+
+/* Keep activity icons distinct from the white card surface */
+.recent-activity-card .activity-earning {
+    color: #15803d !important;
+    background: #dcfce7 !important;
+}
+
+.recent-activity-card .activity-expense {
+    color: #b91c1c !important;
+    background: #fee2e2 !important;
+}
+</style>
+
+
+<style id="isc-dashboard-white-final">
+body:has(.performance-analytics-card),
+body:has(.performance-analytics-card) .page-container {
+    background: #ffffff !important;
+    color: #111827 !important;
+}
+
+body:has(.performance-analytics-card) .financial-card,
+body:has(.performance-analytics-card) .cash-position-card,
+body:has(.performance-analytics-card) .performance-analytics-card,
+body:has(.performance-analytics-card) .recent-activity-card,
+body:has(.performance-analytics-card) .analytics-card {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .05) !important;
+}
+
+body:has(.performance-analytics-card) .recent-activity-card *,
+body:has(.performance-analytics-card) .financial-card *,
+body:has(.performance-analytics-card) .cash-position-card *,
+body:has(.performance-analytics-card) .performance-analytics-card * {
+    color: #111827 !important;
+}
+
+body:has(.performance-analytics-card) .page-container [style*="linear-gradient"],
+body:has(.performance-analytics-card) .page-container [style*="#14532d"],
+body:has(.performance-analytics-card) .page-container [style*="#166534"] {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+}
+</style>
+
+
+<style id="isc-compact-cash-top-right-v1">
+/* Keep all three reporting periods inside one main financial card. */
+.financial-overview-panel .financial-overview-top {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: start !important;
+    gap: 12px !important;
+}
+
+.financial-overview-panel .cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0 !important;
+    padding: 12px 0 !important;
+    background: #f8fafc !important;
+    border: 1px solid #e8edf3 !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+}
+
+.financial-overview-panel .financial-card {
+    min-width: 0 !important;
+    width: auto !important;
+    padding: 16px !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.financial-overview-panel .financial-card + .financial-card {
+    border-left: 1px solid #e2e8f0 !important;
+}
+
+/* Compact cash amount only, aligned to the top-right. */
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card {
+    justify-self: end !important;
+    align-self: start !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 190px !important;
+    margin: 0 !important;
+    padding: 12px 15px !important;
+    border-radius: 15px !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(
+        135deg, #087f5b 0%, #0f9b72 42%, #6d28d9 100%
+    ) !important;
+    background-image: linear-gradient(
+        135deg, #087f5b 0%, #0f9b72 42%, #6d28d9 100%
+    ) !important;
+    color: #fff !important;
+    box-shadow: 0 6px 18px rgba(75, 50, 150, .16) !important;
+}
+
+.financial-overview-panel .cash-position-card .cash-position-top {
+    display: none !important;
+}
+
+.financial-overview-panel .cash-position-card .cash-position-amount {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: clamp(15px, 1.5vw, 20px) !important;
+    line-height: 1.25 !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    color: #fff !important;
+}
+
+@media (max-width: 650px) {
+    .financial-overview-panel .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .financial-overview-panel .financial-card + .financial-card {
+        border-left: 0 !important;
+        border-top: 1px solid #e2e8f0 !important;
+    }
+
+    .financial-overview-panel .financial-card {
+        padding: 14px !important;
+    }
+
+    .financial-overview-panel .cash-position-card {
+        max-width: 175px !important;
+        padding: 10px 12px !important;
+    }
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<style>
+/* =========================================================
+   ISC POOL TRACKER - DASHBOARD
+   Clean, responsive dashboard styling
+   ========================================================= */
+
+.dashboard {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+}
+
+/* HEADER */
+
+.brand-encouragement {
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.header {
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 34px);
+}
+
+.header p {
+    color: var(--muted);
+}
+
+/* QUICK ACTIONS */
+
+.actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.action {
+    min-height: 70px;
+    padding: 12px 16px;
+    border-radius: 18px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action:hover {
+    transform: translateY(-2px);
+}
+
+.earning {
+    background: #16a34a;
+}
+
+.expense {
+    background: #dc2626;
+}
+
+.action-icon {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+/* FINANCIAL OVERVIEW */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    width: 100%;
+    margin-top: 20px;
+    align-items: stretch;
+    box-sizing: border-box;
+}
+
+.financial-card {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 25px;
+    border: none;
+    border-radius: 22px;
+    color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    overflow: hidden;
+}
+
+.financial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.24);
+}
+
+.financial-card h2 {
+    margin: 0 0 22px;
+    font-size: clamp(18px, 2vw, 24px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.today-card {
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
+}
+
+.week-card {
+    background: linear-gradient(135deg, #059669, #34d399);
+}
+
+.month-card {
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+}
+
+.financial-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    padding: 14px 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.financial-item span {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: clamp(11px, 1.2vw, 15px);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.financial-item strong {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 60%;
+    font-size: clamp(11px, 1.2vw, 16px);
+    font-weight: 900;
+    line-height: 1.2;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.financial-icon {
+    display: inline-block;
+    width: auto;
+    margin-right: 3px;
+}
+
+.profit {
+    color: #15803d;
+}
+
+.loss {
+    color: #dc2626;
+}
+
+/* ANALYTICS */
+
+.analytics-section {
+    margin-top: 35px;
+}
+
+.analytics-section h2 {
+    margin-bottom: 18px;
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.analytics-card {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 22px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: 22px;
+}
+
+.analytics-earnings {
+    background: #dcfce7;
+    border-left: 6px solid #22c55e;
+}
+
+.analytics-profit {
+    background: #dbeafe;
+    border-left: 6px solid #3b82f6;
+}
+
+.analytics-best {
+    background: #fef3c7;
+    border-left: 6px solid #f59e0b;
+}
+
+.analytics-lowest {
+    background: #fee2e2;
+    border-left: 6px solid #ef4444;
+}
+
+.analytics-label {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.analytics-value {
+    font-size: clamp(18px, 2vw, 28px);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.analytics-small {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 7px;
+}
+
+/* PROFIT MARGINS */
+
+.margin-section {
+    margin-top: 25px;
+}
+
+.margin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.margin-card {
+    padding: 22px;
+    border-radius: 18px;
+    background: #fef3c7;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.margin-title {
+    font-weight: 800;
+    font-size: 14px;
+}
+
+.margin-value {
+    font-size: 28px;
+    font-weight: 900;
+    margin-top: 8px;
+    color: #92400e;
+}
+
+/* EXPECTED */
+
+.expected-section {
+    margin-top: 30px;
+}
+
+.expected-section h2 {
+    margin-bottom: 18px;
+}
+
+.expected-cards {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+
+/* CHARTS */
+
+.charts-section {
+    margin-top: 35px;
+}
+
+.charts-section h2 {
+    margin-bottom: 18px;
+}
+
+.chart-card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.chart-card h3 {
+    margin-bottom: 6px;
+}
+
+.chart-description {
+    color: var(--muted);
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.chart-box {
+    position: relative;
+    width: 100%;
+    min-height: 320px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    outline: none;
+    padding: 10px 0;
+    box-sizing: border-box;
+}
+
+.chart-box canvas {
+    display: block;
+    width: 100% !important;
+    height: 320px !important;
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+/* TABLET */
+
+@media (max-width: 950px) {
+
+    .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .financial-card:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .analytics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .analytics-card {
+        padding: 20px;
+    }
+
+    .margin-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+/* LARGE PHONE */
+
+@media (max-width: 650px) {
+
+    .actions {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .financial-card:last-child {
+        grid-column: auto;
+    }
+
+    .financial-card {
+        padding: 20px;
+    }
+
+    .financial-card h2 {
+        font-size: 21px;
+    }
+
+    .financial-item span {
+        font-size: 14px;
+    }
+
+    .financial-item strong {
+        font-size: 14px;
+        max-width: 55%;
+    }
+
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .analytics-card {
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .analytics-value {
+        font-size: 23px;
+    }
+
+    .margin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-box {
+        min-height: 280px;
+    }
+
+    .chart-box canvas {
+        height: 280px !important;
+    }
+
+}
+
+/* SMALL PHONES */
+
+@media (max-width: 400px) {
+
+    .cards {
+        gap: 12px;
+    }
+
+    .financial-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .financial-card h2 {
+        font-size: 19px;
+    }
+
+    .financial-item {
+        gap: 5px;
+    }
+
+    .financial-item span {
+        font-size: 13px;
+    }
+
+    .financial-item strong {
+        font-size: 12px;
+        max-width: 58%;
+    }
+
+    .analytics-card {
+        padding: 15px;
+        border-radius: 18px;
+    }
+
+    .analytics-value {
+        font-size: 20px;
+    }
+
+}
+</style>
+
+
+<div class="dashboard">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>Dashboard</h1>
+
+        <p>
+            ISC Pool financial overview.
+        </p>
+
+        <div class="brand-encouragement">
+            Keep pushing. Every game counts. Every shilling matters.
+        </div>
+
+
+
+
+    </div>
+
+
+    
+<style id="isc-financial-overview-card-separation">
+/* Give Financial Overview cards distinct edges and breathing room */
+.financial-overview-panel {
+    gap: 22px !important;
+}
+
+.financial-overview-panel .financial-overview-top {
+    gap: 20px !important;
+}
+
+.financial-overview-panel .cash-position-card,
+.financial-overview-panel .financial-card,
+.financial-overview-panel .overview-card,
+.financial-overview-panel .summary-card {
+    box-sizing: border-box;
+    border: 1px solid #dbe3ee !important;
+    border-radius: 18px !important;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.07) !important;
+    margin-bottom: 18px !important;
+}
+
+.financial-overview-panel .financial-overview-top > *,
+.financial-overview-panel .financial-overview-grid > *,
+.financial-overview-panel .financial-cards-grid > * {
+    min-width: 0;
+    border-radius: 18px;
+}
+
+.financial-overview-panel .cash-position-card {
+    margin-top: 18px !important;
+    padding: 20px !important;
+}
+
+body.dark-mode .financial-overview-panel .cash-position-card,
+body.dark-mode .financial-overview-panel .financial-card,
+body.dark-mode .financial-overview-panel .overview-card,
+body.dark-mode .financial-overview-panel .summary-card {
+    border-color: #374151 !important;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2) !important;
+}
+
+@media (max-width: 600px) {
+    .financial-overview-panel .cash-position-card,
+    .financial-overview-panel .financial-card,
+    .financial-overview-panel .overview-card,
+    .financial-overview-panel .summary-card {
+        margin-bottom: 14px !important;
+        border-radius: 15px !important;
+    }
+}
+</style>
+
+<style>
+
+/* SMALLER ADD EARNING / ADD EXPENSE BUTTONS */
+
+.actions {
+    gap: 14px;
+}
+
+.action {
+    padding: 14px 18px !important;
+}
+
+.action .action-icon {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 22px !important;
+}
+
+.action div[style*="font-size:21px"] {
+    font-size: 17px !important;
+}
+
+.action div[style*="font-size:13px"] {
+    font-size: 11px !important;
+}
+
+
+/* TODAY / THIS WEEK / THIS MONTH */
+
+.cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 22px;
+    width: 100%;
+    margin-top: 20px;
+    align-items: stretch;
+}
+
+.financial-card {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 25px;
+    border-radius: 22px;
+    color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+
+/* KEEP AMOUNTS INSIDE THE CARDS */
+
+.financial-item {
+    min-width: 0;
+}
+
+.financial-item strong {
+    font-size: clamp(14px, 1.5vw, 18px);
+    white-space: nowrap;
+}
+
+
+ /* MOBILE */
+
+@media (max-width: 1000px) {
+
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
+
+}
+
+@media (max-width: 800px) {
+
+    .cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
+
+    .actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .expected-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .expected-card {
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .margin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-box {
+        height: 280px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .cards {
+        grid-template-columns: 1fr !important;
+    }
+
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
+
+}
+
+    .analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
+
+    .target-header,
+    .target-details {
+        flex-direction: column;
+    }
+
+}
+.financial-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    margin-bottom: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
+}
+
+.financial-item:last-child {
+    margin-bottom: 0;
+}
+
+.financial-item span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.financial-item strong {
+    font-size: 17px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.financial-icon {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    font-size: 16px;
+    background: rgba(255,255,255,0.20);
+}
+
+.financial-earnings {
+    background: rgba(34,197,94,0.22);
+}
+
+.financial-expenses {
+    background: rgba(239,68,68,0.22);
+}
+
+.financial-profit {
+    background: rgba(250,204,21,0.22);
+}
+
+.financial-earnings .financial-icon {
+    background: rgba(34,197,94,0.30);
+}
+
+.financial-expenses .financial-icon {
+    background: rgba(239,68,68,0.30);
+}
+
+.financial-profit .financial-icon {
+    background: rgba(250,204,21,0.30);
+}
+
+.financial-item {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.financial-item > span:first-child {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.financial-item strong {
+    flex: 0 1 auto;
+    min-width: 0;
+    font-size: clamp(12px, 1.25vw, 17px);
+    line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-align: right;
+}
+
+.financial-icon {
+    flex: 0 0 30px;
+}
+
+.financial-item span {
+    min-width: 0;
+}
+
+.analytics-earnings {
+    background: linear-gradient(135deg, #2563eb, #60a5fa) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.analytics-profit {
+    background: linear-gradient(135deg, #059669, #34d399) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.analytics-best {
+    background: linear-gradient(135deg, #7c3aed, #a78bfa) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.analytics-lowest {
+    background: linear-gradient(135deg, #dc2626, #f87171) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; overflow:hidden !important; }
+
+.analytics-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.24);
+}
+
+.analytics-card,
+.analytics-card h3,
+.analytics-card p,
+.analytics-card span,
+.analytics-card strong {
+    color: #ffffff !important;
+}
+
+.analytics-card h3 { font-size:clamp(12px,1.2vw,16px) !important; line-height:1.3 !important; overflow-wrap:anywhere !important;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.analytics-card p {
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0.95;
+}
+
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
+    color: #ffffff !important;
+    font-size: clamp(15px, 1.8vw, 28px) !important;
+    font-weight: 900 !important;
+    line-height: 1.25;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.analytics-card .analytics-label {
+    color: rgba(255,255,255,0.95) !important;
+    font-weight: 800;
+}
+
+.analytics-card .analytics-date {
+    color: rgba(255,255,255,0.90) !important;
+    font-weight: 700;
+}
+
+.cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 22px;
+    width: 100%;
+}
+
+.financial-card {
+    width: 100% !important;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.financial-item {
+    min-width: 0;
+}
+
+.financial-item strong {
+    font-size: 16px !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+.analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
+
+.analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; overflow:hidden !important; }
+
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
+    font-size: 22px !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: break-word !important;
+}
+
+.cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 22px !important;
+    width: 100% !important;
+    margin: 20px 0 30px 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+/* RESPONSIVE FINANCIAL CARDS */
+
+.cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 22px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.financial-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+.financial-card h2 {
+    font-size: clamp(18px, 2vw, 24px) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.financial-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.financial-item > span {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    font-size: clamp(11px, 1.2vw, 15px) !important;
+    white-space: nowrap !important;
+}
+
+.financial-item strong {
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+    max-width: 60% !important;
+    font-size: clamp(11px, 1.2vw, 16px) !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    text-align: right !important;
+}
+
+.financial-icon {
+    display: inline-block !important;
+    width: auto !important;
+    margin-right: 3px !important;
+}
+
+/* TABLET */
+
+@media (max-width: 900px) {
+
+    .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 18px !important;
+    }
+
+    .financial-card:last-child {
+        grid-column: 1 / -1 !important;
+    }
+
+}
+
+/* SMALL TABLET / LARGE PHONE */
+
+@media (max-width: 650px) {
+
+    .cards {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    .financial-card:last-child {
+        grid-column: auto !important;
+    }
+
+    .financial-card {
+        padding: 20px !important;
+    }
+
+    .financial-card h2 {
+        font-size: 21px !important;
+    }
+
+    .financial-item > span {
+        font-size: 14px !important;
+    }
+
+    .financial-item strong {
+        font-size: 14px !important;
+        max-width: 55% !important;
+    }
+
+}
+
+/* SMALL PHONES */
+
+@media (max-width: 400px) {
+
+    .cards {
+        gap: 12px !important;
+    }
+
+    .financial-card {
+        padding: 16px !important;
+        border-radius: 16px !important;
+    }
+
+    .financial-card h2 {
+        font-size: 19px !important;
+    }
+
+    .financial-item {
+        gap: 5px !important;
+    }
+
+    .financial-item > span {
+        font-size: 13px !important;
+    }
+
+    .financial-item strong {
+        font-size: 12px !important;
+        max-width: 58% !important;
+    }
+
+}
+
+@media (max-width:950px) { .analytics-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; } } @media (max-width:600px) { .analytics-grid { grid-template-columns:1fr !important; } .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:20px !important; } } @media (max-width:400px) { .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:16px !important; } } @media (max-width:950px) { .analytics-card { padding:20px !important; } .analytics-card h3 { font-size:14px !important; } .analytics-value { font-size:22px !important; } } @media (max-width:600px) { .analytics-card { padding:18px !important; border-radius:20px !important; } .analytics-card h3 { font-size:15px !important; } .analytics-value { font-size:23px !important; } } @media (max-width:400px) { .analytics-card { padding:15px !important; border-radius:18px !important; } .analytics-card h3 { font-size:13px !important; } .analytics-value { font-size:20px !important; } } .chart-box {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 10px 0 !important;
+}
+
+.chart-box canvas {
+    background: transparent !important;
+}
+/* BEAUTIFUL PLAIN EARNINGS CHART */
+
+.chart-box {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.chart-box canvas {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+}
+</style><!-- FINANCIAL OVERVIEW -->
+
+    <section class="financial-overview-panel" data-layout="isc-financial-overview-layout-v2">
+        <div class="financial-overview-top">
+            <div class="financial-overview-title">
+                <h2>Financial Overview</h2>
+                <p>Today, this week and this month</p>
+            </div>
+            <!-- CASH AFTER EXPENSES -->
+            
+            <div class="cash-position-card">
+            
+                <div class="cash-position-top">
+            
+                    <div>
+            
+                        <span class="cash-position-eyebrow">
+                            CASH POSITION
+                        </span>
+            
+                        <h3>
+                            Cash After Expenses
+                        </h3>
+            
+                        <p>
+                            Expected money remaining after all recorded expenses
+                        </p>
+            
+                    </div>
+            
+                    <div class="cash-position-icon">
+            
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+            
+                            <path
+                                d="M4 7.5h16v11H4z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linejoin="round">
+                            </path>
+            
+                            <path
+                                d="M4 9.5h16"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7">
+                            </path>
+            
+                            <path
+                                d="M15.5 14h2.5"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round">
+                            </path>
+            
+                            <circle
+                                cx="12"
+                                cy="14"
+                                r="1.8"
+                                fill="currentColor">
+                            </circle>
+            
+                        </svg>
+            
+                    </div>
+            
+                </div>
+            
+            
+                <div class="cash-position-amount
+                    {% if cash_after_expenses < 0 %}
+                        cash-negative
+                    {% else %}
+                        cash-positive
+                    {% endif %}">
+            
+                    <span class="cash-balance-label">Bal:</span> KSh {{ cash_after_expenses|floatformat:2 }}
+            
+                </div>
+            
+            
+                
+            
+            </div>
+        </div>
+
+    <div class="cards">
+
+
+        <div class="financial-card today-card">
+
+            <h2>Today</h2>
+
+            <div class="financial-item">
+                <span><span class="financial-icon" style="width:28px !important;height:28px !important;min-width:28px !important;min-height:28px !important;max-width:28px !important;max-height:28px !important;flex:0 0 28px !important;display:inline-flex !important;align-items:center !important;justify-content:center !important;box-sizing:border-box !important;overflow:hidden !important;margin:0 !important;border-radius:8px !important;font-size:14px !important;line-height:1 !important;">&#128176;</span> Earnings</span>
+                <strong>KSh {{ today_earnings|floatformat:2 }}</strong>
+            </div>
+
+            <div class="financial-item">
+                <span><span class="financial-icon" style="width:28px !important;height:28px !important;min-width:28px !important;min-height:28px !important;max-width:28px !important;max-height:28px !important;flex:0 0 28px !important;display:inline-flex !important;align-items:center !important;justify-content:center !important;box-sizing:border-box !important;overflow:hidden !important;margin:0 !important;border-radius:8px !important;font-size:14px !important;line-height:1 !important;">&#128184;</span> Expenses</span>
+                <strong>KSh {{ today_expenses|floatformat:2 }}</strong>
+            </div>
+
+            <div class="financial-item">
+                <span>Profit / Loss</span>
+
+                <strong class="{% if today_profit < 0 %}loss{% else %}profit{% endif %}">
+                    KSh {{ today_profit|floatformat:2 }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="financial-card week-card">
+
+            <h2>This Week</h2>
+
+            <div class="financial-item">
+                <span><span class="financial-icon" style="width:28px !important;height:28px !important;min-width:28px !important;min-height:28px !important;max-width:28px !important;max-height:28px !important;flex:0 0 28px !important;display:inline-flex !important;align-items:center !important;justify-content:center !important;box-sizing:border-box !important;overflow:hidden !important;margin:0 !important;border-radius:8px !important;font-size:14px !important;line-height:1 !important;">&#128176;</span> Earnings</span>
+                <strong>KSh {{ weekly_earnings|floatformat:2 }}</strong>
+            </div>
+
+            <div class="financial-item">
+                <span><span class="financial-icon" style="width:28px !important;height:28px !important;min-width:28px !important;min-height:28px !important;max-width:28px !important;max-height:28px !important;flex:0 0 28px !important;display:inline-flex !important;align-items:center !important;justify-content:center !important;box-sizing:border-box !important;overflow:hidden !important;margin:0 !important;border-radius:8px !important;font-size:14px !important;line-height:1 !important;">&#128184;</span> Expenses</span>
+                <strong>KSh {{ weekly_expenses|floatformat:2 }}</strong>
+            </div>
+
+            <div class="financial-item">
+                <span>Profit / Loss</span>
+
+                <strong class="{% if weekly_profit < 0 %}loss{% else %}profit{% endif %}">
+                    KSh {{ weekly_profit|floatformat:2 }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="financial-card month-card">
+
+            <h2>This Month</h2>
+
+            <div class="financial-item">
+                <span><span class="financial-icon" style="width:28px !important;height:28px !important;min-width:28px !important;min-height:28px !important;max-width:28px !important;max-height:28px !important;flex:0 0 28px !important;display:inline-flex !important;align-items:center !important;justify-content:center !important;box-sizing:border-box !important;overflow:hidden !important;margin:0 !important;border-radius:8px !important;font-size:14px !important;line-height:1 !important;">&#128176;</span> Earnings</span>
+                <strong>KSh {{ monthly_earnings|floatformat:2 }}</strong>
+            </div>
+
+            <div class="financial-item">
+                <span><span class="financial-icon" style="width:28px !important;height:28px !important;min-width:28px !important;min-height:28px !important;max-width:28px !important;max-height:28px !important;flex:0 0 28px !important;display:inline-flex !important;align-items:center !important;justify-content:center !important;box-sizing:border-box !important;overflow:hidden !important;margin:0 !important;border-radius:8px !important;font-size:14px !important;line-height:1 !important;">&#128184;</span> Expenses</span>
+                <strong>KSh {{ monthly_expenses|floatformat:2 }}</strong>
+            </div>
+
+            <div class="financial-item">
+                <span>Profit / Loss</span>
+
+                <strong class="{% if monthly_profit < 0 %}loss{% else %}profit{% endif %}">
+                    KSh {{ monthly_profit|floatformat:2 }}
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    </section><!-- end financial-overview-panel -->
+
+    <style id="cash-position-style">
+
+.cash-position-card {
+    position: relative;
+    width: 100%;
+    margin: 0 0 30px 0;
+    padding: 26px 28px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at 92% 15%, rgba(250,204,21,.18), transparent 28%),
+        linear-gradient(135deg, #064e3b 0%, #047857 52%, #065f46 100%);
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow:
+        0 18px 40px rgba(6,78,59,.24),
+        inset 0 1px 0 rgba(255,255,255,.10);
+    color: #ffffff;
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease;
+}
+
+.cash-position-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(
+        180deg,
+        #fde047,
+        #facc15,
+        #84cc16
+    );
+}
+
+.cash-position-card::after {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    right: -70px;
+    bottom: -90px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.06);
+    pointer-events: none;
+}
+
+.cash-position-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 24px 48px rgba(6,78,59,.30),
+        inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+.cash-position-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.cash-position-eyebrow {
+    display: block;
+    margin-bottom: 7px;
+    color: #fde68a;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .14em;
+}
+
+.cash-position-card h3 {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(20px, 2.2vw, 28px);
+    line-height: 1.15;
+    font-weight: 900;
+}
+
+.cash-position-card p {
+    margin: 7px 0 0;
+    color: rgba(255,255,255,.72);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.cash-position-icon {
+    flex: 0 0 52px;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    color: #fde047;
+    background: rgba(250,204,21,.14);
+    border: 1px solid rgba(253,224,71,.28);
+    box-shadow: 0 8px 22px rgba(0,0,0,.12);
+}
+
+.cash-position-icon svg {
+    width: 27px;
+    height: 27px;
+}
+
+.cash-position-amount {
+    position: relative;
+    z-index: 1;
+    margin-top: 22px;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: -.025em;
+}
+
+.cash-positive {
+    color: #bbf7d0;
+}
+
+.cash-negative {
+    color: #fecaca;
+}
+
+.cash-position-breakdown {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.cash-position-breakdown > div {
+    min-width: 0;
+    padding: 13px 15px;
+    border-radius: 14px;
+    background: rgba(0,0,0,.13);
+    border: 1px solid rgba(255,255,255,.08);
+}
+
+.cash-position-breakdown span {
+    display: block;
+    margin-bottom: 5px;
+    color: rgba(255,255,255,.65);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.cash-position-breakdown strong {
+    display: block;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 900;
+    overflow-wrap: anywhere;
+}
+
+.cash-position-breakdown .cash-minus strong {
+    color: #fecaca;
+}
+
+@media (max-width: 650px) {
+
+    .cash-position-card {
+        padding: 22px 20px;
+        border-radius: 20px;
+    }
+
+    .cash-position-icon {
+        flex-basis: 46px;
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+    }
+
+    .cash-position-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .cash-position-amount {
+        margin-top: 20px;
+        font-size: clamp(28px, 8vw, 40px);
+    }
+
+    .cash-position-breakdown {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+}
+
+@media (max-width: 400px) {
+
+    .cash-position-card {
+        padding: 19px 17px;
+    }
+
+    .cash-position-top {
+        gap: 12px;
+    }
+
+    .cash-position-card h3 {
+        font-size: 20px;
+    }
+
+    .cash-position-card p {
+        font-size: 12px;
+    }
+
+    .cash-position-amount {
+        font-size: 29px;
+    }
+}
+
+</style>
+<!-- ANALYTICS -->
+
+<style>
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
+    font-size: clamp(1rem, 1.8vw, 1.8rem);
+    line-height: 1.2;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: normal;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 1100px) {
+    .analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
+    font-size: clamp(1rem, 1.8vw, 1.8rem);
+    line-height: 1.2;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: normal;
+    overflow-wrap: anywhere;
+}
+}
+
+@media (max-width: 700px) {
+    .analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
+    font-size: clamp(1rem, 1.8vw, 1.8rem);
+    line-height: 1.2;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: normal;
+    overflow-wrap: anywhere;
+}
+}
+
+.financial-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    margin-bottom: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
+}
+
+.financial-item:last-child {
+    margin-bottom: 0;
+}
+
+.financial-item span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.financial-item strong {
+    font-size: 17px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.financial-icon {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    font-size: 16px;
+    background: rgba(255,255,255,0.20);
+}
+
+.financial-earnings {
+    background: rgba(34,197,94,0.22);
+}
+
+.financial-expenses {
+    background: rgba(239,68,68,0.22);
+}
+
+.financial-profit {
+    background: rgba(250,204,21,0.22);
+}
+
+.financial-earnings .financial-icon {
+    background: rgba(34,197,94,0.30);
+}
+
+.financial-expenses .financial-icon {
+    background: rgba(239,68,68,0.30);
+}
+
+.financial-profit .financial-icon {
+    background: rgba(250,204,21,0.30);
+}
+
+.financial-item {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.financial-item > span:first-child {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.financial-item strong {
+    flex: 0 1 auto;
+    min-width: 0;
+    font-size: clamp(12px, 1.25vw, 17px);
+    line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-align: right;
+}
+
+.financial-icon {
+    flex: 0 0 30px;
+}
+
+.financial-item span {
+    min-width: 0;
+}
+
+.analytics-earnings {
+    background: linear-gradient(135deg, #2563eb, #60a5fa) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.analytics-profit {
+    background: linear-gradient(135deg, #059669, #34d399) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.analytics-best {
+    background: linear-gradient(135deg, #7c3aed, #a78bfa) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.analytics-lowest {
+    background: linear-gradient(135deg, #dc2626, #f87171) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; overflow:hidden !important; }
+
+.analytics-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.24);
+}
+
+.analytics-card,
+.analytics-card h3,
+.analytics-card p,
+.analytics-card span,
+.analytics-card strong {
+    color: #ffffff !important;
+}
+
+.analytics-card h3 { font-size:clamp(12px,1.2vw,16px) !important; line-height:1.3 !important; overflow-wrap:anywhere !important;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.analytics-card p {
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0.95;
+}
+
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
+    color: #ffffff !important;
+    font-size: clamp(15px, 1.8vw, 28px) !important;
+    font-weight: 900 !important;
+    line-height: 1.25;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.analytics-card .analytics-label {
+    color: rgba(255,255,255,0.95) !important;
+    font-weight: 800;
+}
+
+.analytics-card .analytics-date {
+    color: rgba(255,255,255,0.90) !important;
+    font-weight: 700;
+}
+
+.cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 22px;
+    width: 100%;
+}
+
+.financial-card {
+    width: 100% !important;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.financial-item {
+    min-width: 0;
+}
+
+.financial-item strong {
+    font-size: 16px !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+.analytics-grid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:18px !important; width:100% !important; max-width:100% !important; box-sizing:border-box !important; }
+
+.analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; overflow:hidden !important; }
+
+.analytics-value { font-size:clamp(18px,2vw,28px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; word-break:break-word !important;
+    font-size: 22px !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: break-word !important;
+}
+
+.cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 22px !important;
+    width: 100% !important;
+    margin: 20px 0 30px 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+/* RESPONSIVE FINANCIAL CARDS */
+
+.cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 22px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.financial-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+.financial-card h2 {
+    font-size: clamp(18px, 2vw, 24px) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.financial-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.financial-item > span {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    font-size: clamp(11px, 1.2vw, 15px) !important;
+    white-space: nowrap !important;
+}
+
+.financial-item strong {
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+    max-width: 60% !important;
+    font-size: clamp(11px, 1.2vw, 16px) !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    text-align: right !important;
+}
+
+.financial-icon {
+    display: inline-block !important;
+    width: auto !important;
+    margin-right: 3px !important;
+}
+
+/* TABLET */
+
+@media (max-width: 900px) {
+
+    .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 18px !important;
+    }
+
+    .financial-card:last-child {
+        grid-column: 1 / -1 !important;
+    }
+
+}
+
+/* SMALL TABLET / LARGE PHONE */
+
+@media (max-width: 650px) {
+
+    .cards {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    .financial-card:last-child {
+        grid-column: auto !important;
+    }
+
+    .financial-card {
+        padding: 20px !important;
+    }
+
+    .financial-card h2 {
+        font-size: 21px !important;
+    }
+
+    .financial-item > span {
+        font-size: 14px !important;
+    }
+
+    .financial-item strong {
+        font-size: 14px !important;
+        max-width: 55% !important;
+    }
+
+}
+
+/* SMALL PHONES */
+
+@media (max-width: 400px) {
+
+    .cards {
+        gap: 12px !important;
+    }
+
+    .financial-card {
+        padding: 16px !important;
+        border-radius: 16px !important;
+    }
+
+    .financial-card h2 {
+        font-size: 19px !important;
+    }
+
+    .financial-item {
+        gap: 5px !important;
+    }
+
+    .financial-item > span {
+        font-size: 13px !important;
+    }
+
+    .financial-item strong {
+        font-size: 12px !important;
+        max-width: 58% !important;
+    }
+
+}
+
+@media (max-width:950px) { .analytics-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; } } @media (max-width:600px) { .analytics-grid { grid-template-columns:1fr !important; } .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:20px !important; } } @media (max-width:400px) { .analytics-card { border-radius:22px !important; min-width:0 !important; overflow:hidden !important; box-sizing:border-box !important; border-radius:22px !important; padding:16px !important; } } @media (max-width:950px) { .analytics-card { padding:20px !important; } .analytics-card h3 { font-size:14px !important; } .analytics-value { font-size:22px !important; } } @media (max-width:600px) { .analytics-card { padding:18px !important; border-radius:20px !important; } .analytics-card h3 { font-size:15px !important; } .analytics-value { font-size:23px !important; } } @media (max-width:400px) { .analytics-card { padding:15px !important; border-radius:18px !important; } .analytics-card h3 { font-size:13px !important; } .analytics-value { font-size:20px !important; } } .chart-box {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 10px 0 !important;
+}
+
+.chart-box canvas {
+    background: transparent !important;
+}
+/* BEAUTIFUL PLAIN EARNINGS CHART */
+
+.chart-box {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.chart-box canvas {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+}
+
+.cash-position-card {
+    margin-top: 28px !important;
+}
+.cash-position-card {
+    background: #eef2ff !important;
+    border: 1px solid #c7d2fe !important;
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.10) !important;
+}
+
+.cash-position-card * {
+    background: transparent !important;
+}
+
+.cash-position-amount {
+    color: #3730a3 !important;
+}
+.cash-position-card {
+    background: #fff1f2 !important;
+    border: 1px solid #fecdd3 !important;
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.10) !important;
+}
+
+.cash-position-card * {
+    background: transparent !important;
+}
+
+.cash-position-amount {
+    color: #b91c1c !important;
+}
+.cash-position-card {
+    background: #fff1f2 !important;
+    border: 1px solid #fecdd3 !important;
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.10) !important;
+}
+
+.cash-position-card * {
+    background: transparent !important;
+}
+
+.cash-position-amount {
+    color: #b91c1c !important;
+}
+.cash-position-card {
+    background: #fff1f2 !important;
+    border: 1px solid #fda4af !important;
+    color: #450a0a !important;
+    box-shadow: 0 8px 24px rgba(185, 28, 28, 0.10) !important;
+}
+
+.cash-position-card * {
+    background: transparent !important;
+}
+
+.cash-position-card .cash-position-eyebrow {
+    color: #991b1b !important;
+}
+
+.cash-position-card h3 {
+    color: #450a0a !important;
+}
+
+.cash-position-card p {
+    color: #7f1d1d !important;
+}
+
+.cash-position-card .cash-position-breakdown span {
+    color: #7f1d1d !important;
+}
+
+.cash-position-card .cash-position-breakdown strong {
+    color: #450a0a !important;
+}
+
+.cash-position-card .cash-position-amount {
+    color: #991b1b !important;
+}
+
+.cash-position-card .cash-position-icon {
+    color: #991b1b !important;
+}
+.cash-position-card {
+    background: #fff1f2 !important;
+    border: 1px solid #fda4af !important;
+    color: #450a0a !important;
+    box-shadow: 0 8px 24px rgba(185, 28, 28, 0.10) !important;
+}
+
+.cash-position-card * {
+    background: transparent !important;
+}
+
+.cash-position-card .cash-position-eyebrow {
+    color: #991b1b !important;
+}
+
+.cash-position-card h3 {
+    color: #450a0a !important;
+}
+
+.cash-position-card p {
+    color: #7f1d1d !important;
+}
+
+.cash-position-card .cash-position-breakdown span {
+    color: #7f1d1d !important;
+}
+
+.cash-position-card .cash-position-breakdown strong {
+    color: #450a0a !important;
+}
+
+.cash-position-card .cash-position-amount {
+    color: #991b1b !important;
+}
+
+.cash-position-card .cash-position-icon {
+    color: #991b1b !important;
+}</style><div class="analytics-section"><div class="performance-analytics-card"><h2>Performance Analytics</h2><div class="analytics-grid">
+
+        <div class="analytics-card analytics-earnings">
+
+            <div class="analytics-label">
+                Average Daily Earnings
+            </div>
+
+            <div class="analytics-value">
+                KSh {{ average_daily_earnings|floatformat:2 }}
+            </div>
+
+            <div class="analytics-small">
+                Based on {{ earning_days }} earning day{{ earning_days|pluralize }}
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card analytics-profit">
+
+            <div class="analytics-label">
+                Average Daily Profit
+            </div>
+
+            <div class="analytics-value {% if average_daily_profit < 0 %}loss{% else %}profit{% endif %}">
+                KSh {{ average_daily_profit|floatformat:2 }}
+            </div>
+
+            <div class="analytics-small">
+                Earnings minus expenses
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card analytics-best">
+
+            <div class="analytics-label">
+                Best Earning Day
+            </div>
+
+            <div class="analytics-value">
+
+                {% if best_day %}
+                    KSh {{ best_day.amount_collected|floatformat:2 }}
+                {% else %}
+                    KSh 0.00
+                {% endif %}
+
+            </div>
+
+            <div class="analytics-small">
+
+                {% if best_day %}
+                    {{ best_day.date|date:"d M Y" }}
+                {% else %}
+                    No records yet
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card analytics-lowest">
+
+            <div class="analytics-label">
+                Lowest Earning Day
+            </div>
+
+            <div class="analytics-value">
+
+                {% if lowest_day %}
+                    KSh {{ lowest_day.amount_collected|floatformat:2 }}
+                {% else %}
+                    KSh 0.00
+                {% endif %}
+
+            </div>
+
+            <div class="analytics-small">
+
+                {% if lowest_day %}
+                    {{ lowest_day.date|date:"d M Y" }}
+                {% else %}
+                    No records yet
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<style id="isc-daily-earnings-card-fix">
+/* Enclose the daily earnings chart in a proper card */
+.charts-section > h2 {
+    margin: 0 0 20px;
+}
+
+.charts-section > .chart-card {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 24px;
+    margin: 0 0 24px;
+    background: #ffffff;
+    color: #172033;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+    overflow: hidden;
+}
+
+.charts-section > .chart-card h3 {
+    margin-top: 0;
+    color: #172033;
+}
+
+.charts-section > .chart-card .chart-description {
+    color: #64748b;
+    margin-bottom: 16px;
+}
+
+.charts-section > .chart-card .chart-box {
+    width: 100%;
+    min-width: 0;
+}
+
+body.dark-mode .charts-section > .chart-card {
+    background: #111827;
+    color: #f3f4f6;
+    border-color: #374151;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+body.dark-mode .charts-section > .chart-card h3 {
+    color: #f9fafb;
+}
+
+body.dark-mode .charts-section > .chart-card .chart-description {
+    color: #cbd5e1;
+}
+
+@media (max-width: 600px) {
+    .charts-section > .chart-card {
+        padding: 17px;
+        border-radius: 16px;
+    }
+}
+</style>
+
+
+<style id="isc-financial-heading-inside-card">
+.charts-section > h2 {
+    display: none;
+}
+
+.charts-section > .chart-card .isc-financial-heading-inside-card {
+    margin: 0 0 22px;
+    padding: 0 0 16px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #172033;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card {
+    color: #f9fafb;
+    border-bottom-color: #374151;
+}
+</style>
+<!-- CHARTS -->
+
+    <div class="charts-section">
+
+        
+
+
+        <!-- DAILY EARNINGS -->
+
+        <div class="chart-card">
+            <h2 class="isc-financial-heading-inside-card">Financial Charts</h2>
+
+
+            <h3>
+                Daily Earnings - Last 7 Days
+            </h3>
+
+            <p class="chart-description">
+                Daily pool earnings.
+            </p>
+
+            <div class="chart-box">
+
+                <canvas id="earningsChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+    <!-- HISTORY -->
+
+    <div class="history">
+
+        
+
+        
+
+        
+
+    </div>
+
+
+</div>
+
+
+<!-- CHART DATA -->
+
+{{ chart_labels|json_script:"chart-labels" }}
+{{ earnings_chart_values|json_script:"earnings-values" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+(function () {
+
+    const labels = JSON.parse(
+        document.getElementById("chart-labels").textContent
+    );
+
+    const earningsValues = JSON.parse(
+        document.getElementById("earnings-values").textContent
+    );
+
+    const canvas = document.getElementById("earningsChart");
+
+    const ctx = canvas.getContext("2d");
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 420);
+
+    gradient.addColorStop(0, "#4ade80");
+    gradient.addColorStop(0.5, "#22c55e");
+    gradient.addColorStop(1, "#15803d");
+
+    if (!canvas) {
+        return;
+    }
+
+    new Chart(canvas, {
+
+        type: "bar",
+
+        data: {
+            labels: labels,
+
+            datasets: [{
+                label: "Daily Earnings",
+                data: earningsValues,
+
+                backgroundColor: gradient,
+
+                hoverBackgroundColor: "#16a34a",
+
+                borderRadius: 14,
+
+                borderSkipped: false,
+
+                barPercentage: 0.58,
+
+                categoryPercentage: 0.72
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+
+                    backgroundColor: "#111827",
+
+                    titleColor: "#ffffff",
+
+                    bodyColor: "#ffffff",
+
+                    padding: 14,
+
+                    cornerRadius: 12,
+
+                    displayColors: false,
+
+                    callbacks: {
+
+                        title: function(context) {
+                            return context[0].label;
+                        },
+
+                        label: function(context) {
+
+                            return "KSh " +
+                                Number(context.raw).toLocaleString(
+                                    "en-KE",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+                        }
+                    }
+                }
+            },
+
+            scales: {
+
+                x: {
+
+                    grid: {
+                        display: false
+                    },
+
+                    border: {
+                        display: false
+                    },
+
+                    ticks: {
+
+                        color: "#6b7280",
+
+                        padding: 8,
+
+                        font: {
+                            size: 12,
+                            weight: "700"
+                        }
+                    }
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    grid: {
+                        display: false
+                    },
+
+                    border: {
+                        display: false
+                    },
+
+                    ticks: {
+
+                        color: "#6b7280",
+
+                        padding: 8,
+
+                        font: {
+                            size: 11,
+                            weight: "600"
+                        },
+
+                        callback: function(value) {
+
+                            return "KSh " +
+                                Number(value).toLocaleString();
+                        }
+                    }
+                }
+            },
+
+            animation: {
+
+                duration: 1000,
+
+                easing: "easeOutQuart"
+            },
+
+            interaction: {
+
+                intersect: false,
+
+                mode: "index"
+            }
+        }
+    });
+
+})();
+</script>
+
+
+
+
+<!-- RECENT ACTIVITY -->
+
+<section class="recent-activity-section">
+
+    <div class="recent-activity-header">
+        <div>
+            <span class="recent-activity-eyebrow">ACTIVITY</span>
+            <h2>Recent Activity</h2>
+            <p>Your latest collection and expense activity.</p>
+        </div>
+    </div>
+
+    <div class="recent-activity-card" >
+
+        {% if recent_earnings %}
+        <div class="activity-row">
+
+            <div class="activity-icon activity-earning" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="21" height="21" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="9" cy="7" rx="5.5" ry="2.5" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M3.5 7V11C3.5 12.38 5.96 13.5 9 13.5C12.04 13.5 14.5 12.38 14.5 11V7" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M14.5 9.5C17.82 9.5 20.5 10.62 20.5 12V17C20.5 18.38 17.82 19.5 14.5 19.5C11.18 19.5 8.5 18.38 8.5 17V13.5" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M8.5 13.5V17C8.5 18.38 11.18 19.5 14.5 19.5" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+</div>
+
+            <div class="activity-details">
+                <strong>Coins Collected</strong>
+                <span>
+                    {{ recent_earnings.0.collection_date|date:"d M Y" }}
+                </span>
+            </div>
+
+            <div class="activity-amount activity-income">
+                {{ recent_earnings.0.coins_collected }} coins
+            </div>
+
+        </div>
+
+        <div class="activity-row">
+
+            <div class="activity-icon activity-earning">
+                KSh
+            </div>
+
+            <div class="activity-details">
+                <strong>Amount Collected</strong>
+                <span>
+                    {{ recent_earnings.0.collection_date|date:"d M Y" }}
+                </span>
+            </div>
+
+            <div class="activity-amount activity-income">
+                KSh {{ recent_earnings.0.actual_m_pesa|floatformat:2 }}
+            </div>
+
+        </div>
+        {% endif %}
+
+        {% if recent_expenses.count %}
+        <div class="activity-row">
+            <div class="activity-icon activity-expense" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="21" height="21"
+                     fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 3.5H15L19 7.5V20.5H6V3.5Z"
+                          stroke="currentColor" stroke-width="1.8"
+                          stroke-linejoin="round"/>
+                    <path d="M14.5 3.5V8H19"
+                          stroke="currentColor" stroke-width="1.8"
+                          stroke-linejoin="round"/>
+                    <path d="M9 11.5H16M9 14.5H16M9 17.5H13"
+                          stroke="currentColor" stroke-width="1.6"
+                          stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="activity-details">
+                <strong>Expenses - Last 24 Hours</strong>
+                <span>{{ recent_expenses.count }} expense{{ recent_expenses.count|pluralize }}</span>
+            </div>
+            <div class="activity-amount activity-cost">
+                &minus; KSh {{ recent_expenses.total|default_if_none:0|floatformat:2 }}
+            </div>
+        </div>
+        {% endif %}
+
+{% if not recent_earnings and not recent_expenses.count %}
+        <div class="activity-empty">
+            No recent activity yet.
+        </div>
+        {% endif %}
+
+    </div>
+
+</section>
+
+<style>
+.recent-activity-section {
+    width: 100%;
+    margin-top: 28px;
+}
+
+.recent-activity-header {
+    margin-bottom: 14px;
+}
+
+.recent-activity-eyebrow {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    color: #6b7280;
+}
+
+.recent-activity-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.recent-activity-header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.recent-activity-card {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 20px;
+    background: rgba(255,255,255,.92);
+    border: 1px solid rgba(148,163,184,.20);
+    box-shadow: 0 10px 28px rgba(15,23,42,.08);
+}
+
+.activity-row {
+    display: grid;
+    grid-template-columns: 42px minmax(0,1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(148,163,184,.14);
+}
+
+.activity-row:last-child {
+    border-bottom: 0;
+}
+
+.activity-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.activity-earning {
+    color: #15803d;
+    background: #dcfce7;
+}
+
+.activity-expense {
+    color: #b91c1c;
+    background: #fee2e2;
+}
+
+.activity-details {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.activity-details strong {
+    font-size: 14px;
+    color: #111827;
+}
+
+.activity-details span {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.activity-amount {
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.activity-income {
+    color: #15803d;
+}
+
+.activity-cost {
+    color: #b91c1c;
+}
+
+.activity-empty {
+    padding: 30px 20px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .activity-row {
+        grid-template-columns: 38px minmax(0,1fr);
+        gap: 12px;
+        padding: 14px 16px;
+    }
+
+    .activity-amount {
+        grid-column: 2;
+        font-size: 13px;
+    }
+}
+</style>
+
+
+<style id="isc-dashboard-card-redesign">
+/* ISC Pool Tracker: consistent light-mode dashboard cards */
+body:not(.dark-mode) .page-container .financial-card,
+body:not(.dark-mode) .page-container .cash-position-card,
+body:not(.dark-mode) .page-container .performance-analytics-card,
+body:not(.dark-mode) .page-container .analytics-card,
+body:not(.dark-mode) .page-container .recent-activity-card {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 18px !important;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.055) !important;
+    box-sizing: border-box !important;
+    transition: box-shadow .2s ease, border-color .2s ease !important;
+}
+
+body:not(.dark-mode) .page-container .financial-card:hover,
+body:not(.dark-mode) .page-container .cash-position-card:hover,
+body:not(.dark-mode) .page-container .analytics-card:hover {
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.09) !important;
+    border-color: #cbd5e1 !important;
+    transform: translateY(-2px);
+}
+
+/* Financial summary cards */
+body:not(.dark-mode) .page-container .financial-card {
+    min-width: 0 !important;
+    padding: 22px !important;
+}
+
+body:not(.dark-mode) .page-container .financial-card h2,
+body:not(.dark-mode) .page-container .performance-analytics-card h2,
+body:not(.dark-mode) .page-container .recent-activity-header h2 {
+    color: #111827 !important;
+    font-weight: 750 !important;
+}
+
+body:not(.dark-mode) .page-container .financial-card p,
+body:not(.dark-mode) .page-container .financial-item > span,
+body:not(.dark-mode) .page-container .cash-position-card p,
+body:not(.dark-mode) .page-container .analytics-label,
+body:not(.dark-mode) .page-container .analytics-small,
+body:not(.dark-mode) .page-container .analytics-date,
+body:not(.dark-mode) .page-container .recent-activity-header p,
+body:not(.dark-mode) .page-container .activity-details span {
+    color: #64748b !important;
+}
+
+/* Cash position: remove decorative green/red/purple surfaces */
+body:not(.dark-mode) .page-container .cash-position-card {
+    position: relative;
+    overflow: hidden !important;
+    padding: 24px !important;
+}
+
+body:not(.dark-mode) .page-container .cash-position-card::before,
+body:not(.dark-mode) .page-container .cash-position-card::after {
+    display: none !important;
+    content: none !important;
+}
+
+body:not(.dark-mode) .page-container .cash-position-card h3,
+body:not(.dark-mode) .page-container .cash-position-card .cash-position-eyebrow,
+body:not(.dark-mode) .page-container .cash-position-card .cash-position-breakdown span,
+body:not(.dark-mode) .page-container .cash-position-card .cash-position-breakdown strong,
+body:not(.dark-mode) .page-container .cash-position-card .cash-position-amount,
+body:not(.dark-mode) .page-container .cash-position-card .cash-position-icon {
+    color: #111827 !important;
+}
+
+/* Analytics section and its inner cards */
+body:not(.dark-mode) .page-container .performance-analytics-card {
+    padding: 24px !important;
+}
+
+body:not(.dark-mode) .page-container .analytics-card {
+    padding: 20px !important;
+    min-width: 0 !important;
+    overflow-wrap: anywhere;
+}
+
+body:not(.dark-mode) .page-container .analytics-value {
+    color: #111827 !important;
+    font-weight: 750 !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+}
+
+body:not(.dark-mode) .page-container .analytics-value.profit {
+    color: #15803d !important;
+}
+
+body:not(.dark-mode) .page-container .analytics-value.loss {
+    color: #dc2626 !important;
+}
+
+/* Recent activity: white surface and clean row separators */
+body:not(.dark-mode) .page-container .recent-activity-card {
+    overflow: hidden !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-row {
+    background: transparent !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-details strong {
+    color: #111827 !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-income {
+    color: #15803d !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-cost {
+    color: #dc2626 !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-earning {
+    color: #15803d !important;
+    background: #dcfce7 !important;
+}
+
+body:not(.dark-mode) .page-container .recent-activity-card .activity-expense {
+    color: #b91c1c !important;
+    background: #fee2e2 !important;
+}
+
+/* Avoid text clipping on small screens */
+body:not(.dark-mode) .page-container .financial-card h2 {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+@media (max-width: 600px) {
+    body:not(.dark-mode) .page-container .financial-card,
+    body:not(.dark-mode) .page-container .cash-position-card,
+    body:not(.dark-mode) .page-container .performance-analytics-card {
+        padding: 17px !important;
+        border-radius: 16px !important;
+    }
+
+    body:not(.dark-mode) .page-container .analytics-card {
+        padding: 16px !important;
+        border-radius: 14px !important;
+    }
+}
+</style>
+
+<style id="isc-dashboard-polish-v1">
+/* Modern dashboard surface and typography */
+.page-container:has(.financial-card) {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: clamp(16px, 2.5vw, 34px);
+}
+
+.page-container .financial-card,
+.page-container .cash-position-card,
+.page-container .performance-analytics-card,
+.page-container .analytics-card,
+.page-container .recent-activity-card {
+    box-sizing: border-box;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 20px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 4px 16px rgba(15,23,42,.045) !important;
+    transition: box-shadow .2s ease, border-color .2s ease,
+                transform .2s ease;
+}
+
+.page-container .financial-card:hover,
+.page-container .cash-position-card:hover,
+.page-container .performance-analytics-card:hover,
+.page-container .analytics-card:hover,
+.page-container .recent-activity-card:hover {
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 10px 26px rgba(15,23,42,.075) !important;
+}
+
+.page-container .financial-card h2,
+.page-container .financial-card h3,
+.page-container .cash-position-card h2,
+.page-container .cash-position-card h3,
+.page-container .performance-analytics-card h2,
+.page-container .analytics-card h2,
+.page-container .recent-activity-card h2 {
+    color: #0f172a !important;
+    letter-spacing: -.025em;
+}
+
+.page-container .financial-card p,
+.page-container .cash-position-card p,
+.page-container .analytics-label,
+.page-container .analytics-small,
+.page-container .analytics-date,
+.page-container .recent-activity-header p,
+.page-container .activity-details span {
+    color: #64748b !important;
+}
+
+.page-container .financial-card svg,
+.page-container .cash-position-card svg,
+.page-container .analytics-card svg,
+.page-container .performance-analytics-card svg,
+.page-container .recent-activity-card svg {
+    max-width: 100%;
+    flex-shrink: 0;
+}
+
+.page-container .analytics-card,
+.page-container .recent-activity-card {
+    overflow: hidden;
+}
+
+.page-container .recent-activity-card .activity-row {
+    border-bottom: 1px solid #edf2f7;
+}
+
+.page-container .recent-activity-card .activity-row:last-child {
+    border-bottom: 0;
+}
+
+.page-container .activity-income,
+.page-container .activity-earning,
+.page-container .analytics-value.profit {
+    color: #15803d !important;
+}
+
+.page-container .activity-cost,
+.page-container .activity-expense,
+.page-container .analytics-value.loss {
+    color: #dc2626 !important;
+}
+
+/* Respect the site's existing dark-mode toggle */
+body.dark-mode .page-container:has(.financial-card) {
+    background: #0b1220 !important;
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .page-container .financial-card,
+body.dark-mode .page-container .cash-position-card,
+body.dark-mode .page-container .performance-analytics-card,
+body.dark-mode .page-container .analytics-card,
+body.dark-mode .page-container .recent-activity-card {
+    border-color: #293548 !important;
+    background: #111c2e !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 5px 20px rgba(0,0,0,.14) !important;
+}
+
+body.dark-mode .page-container .financial-card h2,
+body.dark-mode .page-container .financial-card h3,
+body.dark-mode .page-container .cash-position-card h2,
+body.dark-mode .page-container .cash-position-card h3,
+body.dark-mode .page-container .performance-analytics-card h2,
+body.dark-mode .page-container .analytics-card h2,
+body.dark-mode .page-container .recent-activity-card h2 {
+    color: #f1f5f9 !important;
+}
+
+body.dark-mode .page-container .financial-card p,
+body.dark-mode .page-container .cash-position-card p,
+body.dark-mode .page-container .analytics-label,
+body.dark-mode .page-container .analytics-small,
+body.dark-mode .page-container .analytics-date,
+body.dark-mode .page-container .recent-activity-header p,
+body.dark-mode .page-container .activity-details span {
+    color: #a7b4c8 !important;
+}
+
+body.dark-mode .page-container .recent-activity-card .activity-row {
+    border-color: #293548;
+}
+
+@media (max-width: 700px) {
+    .page-container:has(.financial-card) {
+        padding: 14px 12px 88px;
+    }
+
+    .page-container .financial-card,
+    .page-container .cash-position-card,
+    .page-container .performance-analytics-card,
+    .page-container .analytics-card,
+    .page-container .recent-activity-card {
+        border-radius: 16px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-container .financial-card,
+    .page-container .cash-position-card,
+    .page-container .performance-analytics-card,
+    .page-container .analytics-card,
+    .page-container .recent-activity-card {
+        transition: none;
+    }
+}
+</style>
+
+
+
+<style id="isc-financial-overview-layout-v2">
+.financial-overview-panel {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 24px 0 30px !important;
+    padding: clamp(18px, 2.5vw, 30px) !important;
+    background: #fff !important;
+    color: #172033 !important;
+    border: 1px solid #e7edf4 !important;
+    border-radius: 28px !important;
+    box-shadow: 0 12px 34px rgba(15, 23, 42, .07) !important;
+    overflow: hidden !important;
+}
+.financial-overview-top {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 360px) !important;
+    align-items: start !important;
+    gap: 24px !important;
+    margin-bottom: 24px !important;
+}
+.financial-overview-title h2 {
+    margin: 4px 0 8px !important;
+    color: #172033 !important;
+    font-size: clamp(23px, 2.5vw, 31px) !important;
+    line-height: 1.2 !important;
+    font-weight: 800 !important;
+}
+.financial-overview-title p {
+    margin: 0 !important;
+    color: #64748b !important;
+    font-size: 14px !important;
+}
+.financial-overview-panel .cash-position-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 22px 24px !important;
+    box-sizing: border-box !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    background: linear-gradient(135deg, #087f5b 0%, #0f9b72 42%, #6d28d9 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 12px 28px rgba(75, 50, 150, .2) !important;
+}
+.financial-overview-panel .cash-position-card h3,
+.financial-overview-panel .cash-position-card p,
+.financial-overview-panel .cash-position-card span,
+.financial-overview-panel .cash-position-card .cash-position-amount,
+.financial-overview-panel .cash-position-card .cash-position-icon {
+    color: #fff !important;
+}
+.financial-overview-panel .cash-position-card h3 {
+    font-size: 18px !important;
+    font-weight: 750 !important;
+}
+.financial-overview-panel .cash-position-card p {
+    opacity: .9 !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+}
+.financial-overview-panel .cash-position-card .cash-position-amount {
+    font-size: clamp(23px, 2.3vw, 31px) !important;
+    line-height: 1.25 !important;
+    font-weight: 850 !important;
+    overflow-wrap: anywhere !important;
+}
+.financial-overview-panel .cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    align-items: stretch !important;
+}
+.financial-overview-panel .financial-card {
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 22px !important;
+    border: 1px solid #e8edf3 !important;
+    border-radius: 21px !important;
+    background: #f8fafc !important;
+    color: #172033 !important;
+    box-shadow: none !important;
+}
+.financial-overview-panel .financial-card h2 {
+    margin: 0 0 18px !important;
+    color: #172033 !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+}
+.financial-overview-panel .financial-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    padding: 12px 0 !important;
+    border-bottom: 1px solid #e6ebf2 !important;
+    color: #64748b !important;
+}
+.financial-overview-panel .financial-item:last-child {
+    border-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+.financial-overview-panel .financial-item > span {
+    min-width: 0 !important;
+    color: #64748b !important;
+}
+.financial-overview-panel .financial-item strong {
+    max-width: 65% !important;
+    color: #172033 !important;
+    font-size: clamp(13px, 1.2vw, 16px) !important;
+    text-align: right !important;
+    overflow-wrap: anywhere !important;
+}
+.financial-overview-panel .financial-item strong.profit {
+    color: #059669 !important;
+}
+.financial-overview-panel .financial-item strong.loss {
+    color: #dc2626 !important;
+}
+.financial-overview-panel .financial-icon {
+    background: #e9eef5 !important;
+    color: #475569 !important;
+}
+@media (max-width: 850px) {
+    .financial-overview-top {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+    .financial-overview-panel .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+@media (max-width: 560px) {
+    .financial-overview-panel {
+        padding: 16px !important;
+        border-radius: 22px !important;
+    }
+    .financial-overview-panel .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 12px !important;
+    }
+    .financial-overview-panel .financial-card {
+        padding: 18px !important;
+        border-radius: 17px !important;
+    }
+    .financial-overview-panel .cash-position-card {
+        padding: 19px !important;
+        border-radius: 18px !important;
+    }
+}
+
+
+
+/* Financial Overview: reliable responsive three-column layout */
+.financial-overview-panel > .cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 14px 0 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.financial-overview-panel > .cards > .financial-card {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow-wrap: anywhere !important;
+}
+
+.financial-overview-panel > .cards > .financial-card h2 {
+    overflow-wrap: anywhere !important;
+}
+
+.financial-overview-panel > .cards > .financial-card .financial-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+}
+
+.financial-overview-panel > .cards > .financial-card .financial-item > span,
+.financial-overview-panel > .cards > .financial-card .financial-item > strong {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 760px) {
+    .financial-overview-panel > .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .financial-overview-panel > .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+}
+
+</style>
+
+
+<style id="isc-final-financial-overrides-v2">
+/* Final layout: one overview panel, three periods, compact cash amount. */
+.financial-overview-panel {
+    background: #fff !important;
+    color: #172033 !important;
+    border-radius: 24px !important;
+    overflow: visible !important;
+}
+
+.financial-overview-panel .financial-overview-top {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: start !important;
+    gap: 12px !important;
+    margin-bottom: 18px !important;
+}
+
+.financial-overview-panel .cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0 !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 17px !important;
+    overflow: hidden !important;
+}
+
+.financial-overview-panel .financial-card {
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 17px !important;
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: #172033 !important;
+}
+
+.financial-overview-panel .financial-card + .financial-card {
+    border-left: 1px solid #e2e8f0 !important;
+}
+
+/* Specific, final override for the cash amount card. */
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card {
+    display: block !important;
+    justify-self: end !important;
+    align-self: start !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: 190px !important;
+    margin: 0 !important;
+    padding: 11px 14px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    background: linear-gradient(
+        120deg, #087f5b 0%, #0f9b72 45%, #6d28d9 100%
+    ) !important;
+    background-image: linear-gradient(
+        120deg, #087f5b 0%, #0f9b72 45%, #6d28d9 100%
+    ) !important;
+    background-color: transparent !important;
+    color: #fff !important;
+    box-shadow: 0 6px 16px rgba(75, 50, 150, .18) !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card .cash-position-top {
+    display: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card::before,
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card::after {
+    display: none !important;
+    content: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card .cash-position-amount {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: clamp(15px, 1.5vw, 19px) !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    white-space: nowrap !important;
+    color: #fff !important;
+}
+
+@media (max-width: 650px) {
+    .financial-overview-panel .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .financial-overview-panel .financial-card + .financial-card {
+        border-left: 0 !important;
+        border-top: 1px solid #e2e8f0 !important;
+    }
+
+    .financial-overview-panel .financial-card {
+        padding: 14px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .financial-overview-panel .cash-position-card {
+        max-width: 175px !important;
+    }
+}
+</style>
+
+
+<style id="isc-performance-unified-subtle-v1">
+/* Modern, unified Performance Analytics panel */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: clamp(18px, 2.5vw, 28px) !important;
+    margin: 20px 0 26px !important;
+    border: 1px solid #e8edf3 !important;
+    border-radius: 22px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.035) !important;
+    color: #0f172a !important;
+}
+
+/* Refined heading */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card h2 {
+    margin: 0 0 22px !important;
+    color: #172033 !important;
+    font-size: clamp(19px, 2vw, 23px) !important;
+    font-weight: 750 !important;
+    letter-spacing: -0.035em !important;
+}
+
+/* Four cards in a balanced desktop grid */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    width: 100% !important;
+}
+
+/* Subtle, modern metric cards */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-card {
+    position: relative !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 9px !important;
+    padding: 20px 18px !important;
+    border: 1px solid #edf0f5 !important;
+    border-radius: 16px !important;
+    background: #f8fafc !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    transition: transform .18s ease,
+                border-color .18s ease,
+                background-color .18s ease !important;
+}
+
+/* A fine, muted accent at the top of each metric */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-card::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 18px !important;
+    width: 34px !important;
+    height: 3px !important;
+    border-radius: 0 0 4px 4px !important;
+    background: #94a3b8 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-earnings::before {
+    background: #0d9488 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-profit::before {
+    background: #6478d3 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-best::before {
+    background: #b58a43 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-lowest::before {
+    background: #94a3b8 !important;
+}
+
+/* Gentle hover feedback, without a heavy floating shadow */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-card:hover {
+    transform: translateY(-2px) !important;
+    border-color: #d9e1eb !important;
+    background: #ffffff !important;
+}
+
+/* Metric labels */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-label {
+    color: #64748b !important;
+    font-size: 12px !important;
+    font-weight: 650 !important;
+    line-height: 1.5 !important;
+    letter-spacing: .025em !important;
+}
+
+/* Large, clear values */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value {
+    color: #172033 !important;
+    font-size: clamp(19px, 1.8vw, 25px) !important;
+    font-weight: 780 !important;
+    line-height: 1.25 !important;
+    letter-spacing: -.04em !important;
+    overflow-wrap: anywhere !important;
+    font-variant-numeric: tabular-nums !important;
+}
+
+/* Keep profit/loss meaning visible */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value.profit {
+    color: #16805d !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value.loss {
+    color: #c24141 !important;
+}
+
+/* Explanations and earning dates */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-small,
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-date {
+    color: #94a3b8 !important;
+    font-size: 12px !important;
+    font-weight: 450 !important;
+    line-height: 1.5 !important;
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-value {
+        font-size: clamp(19px, 2.5vw, 24px) !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 520px) {
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card {
+        padding: 16px !important;
+        border-radius: 17px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-card {
+        padding: 17px 16px !important;
+        border-radius: 13px !important;
+        gap: 7px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-value {
+        font-size: 22px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body:has(.performance-analytics-card) .page-container
+    .performance-analytics-card .analytics-card {
+        transition: none !important;
+    }
+}
+
+</style>
+
+<style id="isc-performance-white-default-final">
+/* ISC-PERFORMANCE-WHITE-DEFAULT-FINAL */
+/* Keep the Performance Analytics panel white across theme selections. */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06) !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card h2 {
+    color: #111827 !important;
+}
+
+/* Make all four metric cards white, not pale grey or theme-coloured. */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-card {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-card:hover {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-label {
+    color: #64748b !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value {
+    color: #172033 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value.profit {
+    color: #16805d !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value.loss {
+    color: #c24141 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-small,
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-date {
+    color: #64748b !important;
+}
+</style>
+
+<style id="isc-performance-number-layout-fix">
+/* Keep Performance Analytics figures readable and inside their cards. */
+body:has(.performance-analytics-card) .page-container .performance-analytics-card,
+body:has(.performance-analytics-card) .page-container .performance-analytics-card * {
+    box-sizing: border-box !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    width: 100% !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-card {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-value {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    font-size: clamp(16px, 1.5vw, 22px) !important;
+    line-height: 1.4 !important;
+    letter-spacing: normal !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    font-variant-numeric: tabular-nums !important;
+}
+
+@media (max-width: 600px) {
+    body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-value {
+        font-size: 20px !important;
+    }
+}
+</style>
+
+
+<style id="isc-performance-remove-white-lines">
+/* Remove decorative lines and bright edges from Performance Analytics only. */
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-card::before,
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-card::after {
+    content: none !important;
+    display: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-card {
+    border: 1px solid #e5e7eb !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-image: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-card:hover {
+    border-color: #d1d5db !important;
+    box-shadow: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card {
+    outline: none !important;
+    background-image: none !important;
+}
+</style>
+
+<style id="isc-performance-final-line-fix">
+/* Remove visible lines between Performance Analytics metric cards */
+.page-container .performance-analytics-card .analytics-grid {
+    background: #f8fafc !important;
+    gap: 12px !important;
+}
+
+.page-container .performance-analytics-card .analytics-card,
+.page-container .performance-analytics-card .analytics-card:hover {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    background: #f8fafc !important;
+    background-image: none !important;
+    background-color: #f8fafc !important;
+}
+
+/* Disable decorative lines, overlays and pseudo-elements */
+.page-container .performance-analytics-card .analytics-card::before,
+.page-container .performance-analytics-card .analytics-card::after {
+    content: none !important;
+    display: none !important;
+    border: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* Prevent inner elements from drawing white outlines */
+.page-container .performance-analytics-card .analytics-card * {
+    outline: none !important;
+}
+
+.page-container .performance-analytics-card {
+    background-image: none !important;
+}
+</style>
+
+
+<style>
+/* ISC-PERFORMANCE-SOLID-WHITE-CARDS-START */
+
+/* Keep the analytics panel distinct from its white metric cards */
+.performance-analytics-card {
+    background: #f3f4f6 !important;
+}
+
+/* Make every inner analytics card solid white */
+.performance-analytics-card .analytics-card,
+.performance-analytics-card .analytics-grid > div {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove decorative lines and overlays */
+.performance-analytics-card .analytics-card::before,
+.performance-analytics-card .analytics-card::after,
+.performance-analytics-card .analytics-grid > div::before,
+.performance-analytics-card .analytics-grid > div::after {
+    content: none !important;
+    display: none !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* Preserve readable text and spacing */
+.performance-analytics-card .analytics-card *,
+.performance-analytics-card .analytics-grid > div * {
+    opacity: 1;
+}
+
+/* ISC-PERFORMANCE-SOLID-WHITE-CARDS-END */
+</style>
+
+
+<style>
+/* ISC-FINANCIAL-OVERVIEW-INDEPENDENT-CARDS-START */
+
+/* Separate the Financial Overview cards from one another */
+.financial-overview .financial-overview-grid,
+.financial-overview .overview-grid,
+.financial-overview .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 18px;
+}
+
+/* Independent white cards */
+.financial-overview .financial-card,
+.financial-overview .overview-card,
+.financial-overview .summary-card,
+.financial-overview .stat-card {
+    background: #ffffff !important;
+    background-image: none !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07) !important;
+    padding: 20px !important;
+    margin: 0 !important;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Remove decorative overlays that can look like unwanted lines */
+.financial-overview .financial-card::before,
+.financial-overview .financial-card::after,
+.financial-overview .overview-card::before,
+.financial-overview .overview-card::after,
+.financial-overview .summary-card::before,
+.financial-overview .summary-card::after,
+.financial-overview .stat-card::before,
+.financial-overview .stat-card::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* ISC-FINANCIAL-OVERVIEW-INDEPENDENT-CARDS-END */
+</style>
+
+
+<style>
+/* ISC-FINANCIAL-CARDS-INDEPENDENT-FINAL-START */
+
+/* Remove the shared container styling that joins the cards */
+.page-container .financial-overview-panel > .cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 20px !important;
+    padding: 0 !important;
+    margin: 18px 0 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+}
+
+/* Give each period its own white card */
+.page-container .financial-overview-panel > .cards > .financial-card {
+    display: block !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 22px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #172033 !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 18px !important;
+    box-shadow: 0 5px 16px rgba(15, 23, 42, 0.07) !important;
+}
+
+/* Remove the old divider lines between adjacent cards */
+.page-container .financial-overview-panel > .cards > .financial-card + .financial-card {
+    border-left: 1px solid #e5e7eb !important;
+    border-top: 1px solid #e5e7eb !important;
+}
+
+/* Prevent old pseudo-elements from drawing lines */
+.page-container .financial-overview-panel > .cards > .financial-card::before,
+.page-container .financial-overview-panel > .cards > .financial-card::after {
+    content: none !important;
+    display: none !important;
+}
+
+@media (max-width: 760px) {
+    .page-container .financial-overview-panel > .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 14px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-container .financial-overview-panel > .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 12px !important;
+    }
+}
+
+/* ISC-FINANCIAL-CARDS-INDEPENDENT-FINAL-END */
+</style>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+.performance-analytics-card {
+    width: 100%;
+    padding: 24px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    box-sizing: border-box;
+}
+
+.performance-analytics-card h2 {
+    margin: 0 0 20px;
+}
+
+.performance-analytics-card .analytics-grid {
+    width: 100%;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 950px) {
+    .performance-analytics-card .analytics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .performance-analytics-card {
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .performance-analytics-card .analytics-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+</style>
+
+<style>
+/* =========================================================
+   DASHBOARD - UNIFIED DEFAULT CARD COLOR
+   ========================================================= */
+
+.financial-card,
+.cash-position-card,
+.performance-analytics-card {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08) !important;
+}
+
+.recent-activity-card {
+    background: #14532d !important;
+    border: 1px solid #166534 !important;
+    box-shadow: 0 12px 30px rgba(20, 83, 45, 0.20) !important;
+    color: #ffffff !important;
+}
+
+/* Keep all dashboard card surfaces consistent */
+.financial-card *,
+.cash-position-card *,
+.performance-analytics-card *,
+.recent-activity-card * {
+    box-sizing: border-box;
+}
+
+/* Unified card heading/text base */
+.financial-card h2,
+.cash-position-card h3,
+.performance-analytics-card h2,
+.recent-activity-header h2 {
+    color: #111827;
+}
+
+/* Preserve readable secondary text */
+.financial-card p,
+.cash-position-card p,
+.recent-activity-header p {
+    color: #6b7280;
+}
+
+/* Performance analytics inner cards also use the same default surface */
+.performance-analytics-card .analytics-card {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+/* Recent activity remains one unified card */
+.recent-activity-card .activity-row {
+    background: transparent !important;
+}
+
+/* =========================================================
+   RECENT ACTIONS ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â FOREST GREEN CARD
+   ========================================================= */
+
+.recent-activity-card {
+    background: #14532d !important;
+    border: 1px solid #166534 !important;
+    color: #ffffff !important;
+    box-shadow: 0 12px 30px rgba(20, 83, 45, 0.20) !important;
+}
+
+.recent-activity-card h3,
+.recent-activity-card h4,
+.recent-activity-card p,
+.recent-activity-card span,
+.recent-activity-card strong {
+    color: #ffffff !important;
+}
+
+.recent-activity-card a {
+    color: #dcfce7 !important;
+}
+
+.recent-activity-card .activity-row {
+    border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+.recent-activity-card .activity-icon {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   RECENT ACTIVITY - FOREST GREEN TEXT VISIBILITY
+   ========================================================= */
+
+.recent-activity-card .activity-details strong,
+.recent-activity-card .activity-details span,
+.recent-activity-card .activity-amount,
+.recent-activity-card .activity-income,
+.recent-activity-card .activity-cost {
+    color: #ffffff !important;
+}
+
+.recent-activity-card .activity-icon {
+    color: #ffffff !important;
+}
+
+.recent-activity-card .activity-row {
+    color: #ffffff !important;
+}
+</style>
+
+
+
+
+

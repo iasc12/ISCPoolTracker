@@ -1,4 +1,4 @@
-{% extends "tracker/base.html" %}
+﻿{% extends "tracker/base.html" %}
 
 {% block title %}Dashboard - ISC Pool Tracker
 <style id="isc-dashboard-card-consistency">
@@ -3670,6 +3670,8 @@ body:has(.performance-analytics-card) .page-container
     }
 }
 
+</style>
+
 <style id="isc-performance-white-default-final">
 /* ISC-PERFORMANCE-WHITE-DEFAULT-FINAL */
 /* Keep the Performance Analytics panel white across theme selections. */
@@ -3734,6 +3736,264 @@ body:has(.performance-analytics-card) .page-container
 }
 </style>
 
+<style id="isc-performance-number-layout-fix">
+/* Keep Performance Analytics figures readable and inside their cards. */
+body:has(.performance-analytics-card) .page-container .performance-analytics-card,
+body:has(.performance-analytics-card) .page-container .performance-analytics-card * {
+    box-sizing: border-box !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    width: 100% !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-card {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-value {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    font-size: clamp(16px, 1.5vw, 22px) !important;
+    line-height: 1.4 !important;
+    letter-spacing: normal !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    font-variant-numeric: tabular-nums !important;
+}
+
+@media (max-width: 600px) {
+    body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-value {
+        font-size: 20px !important;
+    }
+}
+</style>
+
+
+<style id="isc-performance-remove-white-lines">
+/* Remove decorative lines and bright edges from Performance Analytics only. */
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-card::before,
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-card::after {
+    content: none !important;
+    display: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-card {
+    border: 1px solid #e5e7eb !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-image: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-card:hover {
+    border-color: #d1d5db !important;
+    box-shadow: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container .performance-analytics-card {
+    outline: none !important;
+    background-image: none !important;
+}
+</style>
+
+<style id="isc-performance-final-line-fix">
+/* Remove visible lines between Performance Analytics metric cards */
+.page-container .performance-analytics-card .analytics-grid {
+    background: #f8fafc !important;
+    gap: 12px !important;
+}
+
+.page-container .performance-analytics-card .analytics-card,
+.page-container .performance-analytics-card .analytics-card:hover {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    background: #f8fafc !important;
+    background-image: none !important;
+    background-color: #f8fafc !important;
+}
+
+/* Disable decorative lines, overlays and pseudo-elements */
+.page-container .performance-analytics-card .analytics-card::before,
+.page-container .performance-analytics-card .analytics-card::after {
+    content: none !important;
+    display: none !important;
+    border: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* Prevent inner elements from drawing white outlines */
+.page-container .performance-analytics-card .analytics-card * {
+    outline: none !important;
+}
+
+.page-container .performance-analytics-card {
+    background-image: none !important;
+}
+</style>
+
+
+<style>
+/* ISC-PERFORMANCE-SOLID-WHITE-CARDS-START */
+
+/* Keep the analytics panel distinct from its white metric cards */
+.performance-analytics-card {
+    background: #f3f4f6 !important;
+}
+
+/* Make every inner analytics card solid white */
+.performance-analytics-card .analytics-card,
+.performance-analytics-card .analytics-grid > div {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove decorative lines and overlays */
+.performance-analytics-card .analytics-card::before,
+.performance-analytics-card .analytics-card::after,
+.performance-analytics-card .analytics-grid > div::before,
+.performance-analytics-card .analytics-grid > div::after {
+    content: none !important;
+    display: none !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* Preserve readable text and spacing */
+.performance-analytics-card .analytics-card *,
+.performance-analytics-card .analytics-grid > div * {
+    opacity: 1;
+}
+
+/* ISC-PERFORMANCE-SOLID-WHITE-CARDS-END */
+</style>
+
+
+<style>
+/* ISC-FINANCIAL-OVERVIEW-INDEPENDENT-CARDS-START */
+
+/* Separate the Financial Overview cards from one another */
+.financial-overview .financial-overview-grid,
+.financial-overview .overview-grid,
+.financial-overview .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 18px;
+}
+
+/* Independent white cards */
+.financial-overview .financial-card,
+.financial-overview .overview-card,
+.financial-overview .summary-card,
+.financial-overview .stat-card {
+    background: #ffffff !important;
+    background-image: none !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07) !important;
+    padding: 20px !important;
+    margin: 0 !important;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Remove decorative overlays that can look like unwanted lines */
+.financial-overview .financial-card::before,
+.financial-overview .financial-card::after,
+.financial-overview .overview-card::before,
+.financial-overview .overview-card::after,
+.financial-overview .summary-card::before,
+.financial-overview .summary-card::after,
+.financial-overview .stat-card::before,
+.financial-overview .stat-card::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* ISC-FINANCIAL-OVERVIEW-INDEPENDENT-CARDS-END */
+</style>
+
+
+<style>
+/* ISC-FINANCIAL-CARDS-INDEPENDENT-FINAL-START */
+
+/* Remove the shared container styling that joins the cards */
+.page-container .financial-overview-panel > .cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 20px !important;
+    padding: 0 !important;
+    margin: 18px 0 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+}
+
+/* Give each period its own white card */
+.page-container .financial-overview-panel > .cards > .financial-card {
+    display: block !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 22px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #172033 !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 18px !important;
+    box-shadow: 0 5px 16px rgba(15, 23, 42, 0.07) !important;
+}
+
+/* Remove the old divider lines between adjacent cards */
+.page-container .financial-overview-panel > .cards > .financial-card + .financial-card {
+    border-left: 1px solid #e5e7eb !important;
+    border-top: 1px solid #e5e7eb !important;
+}
+
+/* Prevent old pseudo-elements from drawing lines */
+.page-container .financial-overview-panel > .cards > .financial-card::before,
+.page-container .financial-overview-panel > .cards > .financial-card::after {
+    content: none !important;
+    display: none !important;
+}
+
+@media (max-width: 760px) {
+    .page-container .financial-overview-panel > .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 14px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-container .financial-overview-panel > .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 12px !important;
+    }
+}
+
+/* ISC-FINANCIAL-CARDS-INDEPENDENT-FINAL-END */
 </style>
 
 {% endblock %}
@@ -3845,7 +4105,7 @@ body:has(.performance-analytics-card) .page-container
 }
 
 /* =========================================================
-   RECENT ACTIONS ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â FOREST GREEN CARD
+   RECENT ACTIONS ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â FOREST GREEN CARD
    ========================================================= */
 
 .recent-activity-card {
@@ -3895,7 +4155,99 @@ body:has(.performance-analytics-card) .page-container
 .recent-activity-card .activity-row {
     color: #ffffff !important;
 }
+
+/* ISC-PERFORMANCE-WHITE-TEXT-FINAL */
+/* White typography only inside Performance Analytics. */
+body:has(.performance-analytics-card) .page-container .performance-analytics-card h2,
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-label,
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-value,
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-small,
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-date,
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-value.profit,
+body:has(.performance-analytics-card) .page-container .performance-analytics-card .analytics-value.loss {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+
+/* ISC-PERFORMANCE-READABLE-WHITE-TEXT */
+/* Change only Performance Analytics cards. */
+.performance-analytics-card {
+    background: #172033 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.performance-analytics-card h2,
+.performance-analytics-card .analytics-label,
+.performance-analytics-card .analytics-value,
+.performance-analytics-card .analytics-small,
+.performance-analytics-card .analytics-date,
+.performance-analytics-card .analytics-value.profit,
+.performance-analytics-card .analytics-value.loss {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+.performance-analytics-card .analytics-grid,
+.performance-analytics-card .analytics-card,
+.performance-analytics-card .analytics-grid > div {
+    background: #172033 !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.performance-analytics-card .analytics-card::before,
+.performance-analytics-card .analytics-card::after,
+.performance-analytics-card .analytics-grid::before,
+.performance-analytics-card .analytics-grid::after {
+    content: none !important;
+    display: none !important;
+}
+
+
+
+/* ISC-PERFORMANCE-DARK-THEME-TEXT-CONTRAST */
+
+/* Keep Performance Analytics text readable in dark theme. */
+html[data-theme="dark"] .performance-analytics-card h2,
+html[data-theme="dark"] .performance-analytics-card h3,
+html[data-theme="dark"] .performance-analytics-card .analytics-label,
+html[data-theme="dark"] .performance-analytics-card .analytics-value,
+html[data-theme="dark"] .performance-analytics-card .analytics-small,
+html[data-theme="dark"] .performance-analytics-card .analytics-date,
+html[data-theme="dark"] .performance-analytics-card p,
+html[data-theme="dark"] .performance-analytics-card span,
+html[data-theme="dark"] .performance-analytics-card strong,
+html[data-theme="dark"] .performance-analytics-card .profit,
+html[data-theme="dark"] .performance-analytics-card .loss,
+body.dark-theme .performance-analytics-card h2,
+body.dark-theme .performance-analytics-card h3,
+body.dark-theme .performance-analytics-card .analytics-label,
+body.dark-theme .performance-analytics-card .analytics-value,
+body.dark-theme .performance-analytics-card .analytics-small,
+body.dark-theme .performance-analytics-card .analytics-date,
+body.dark-theme .performance-analytics-card p,
+body.dark-theme .performance-analytics-card span,
+body.dark-theme .performance-analytics-card strong,
+body.dark-theme .performance-analytics-card .profit,
+body.dark-theme .performance-analytics-card .loss {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+/* Remove decorative lines that can obscure the analytics content. */
+.performance-analytics-card .analytics-card::before,
+.performance-analytics-card .analytics-card::after {
+    display: none !important;
+    content: none !important;
+}
+
 </style>
+
+
 
 
 

@@ -917,7 +917,7 @@ select {
              fill="currentColor"
              stroke="none"
              aria-hidden="true">
-            <path d="M5 8.5a1.5 1.5 0 0 1 2.1 0L12 13.4l4.9-4.9a1.5 1.5 0 1 1 2.1 2.1l-6 6a1.5 1.5 0 0 1-2.1 0l-6-6a1.5 1.5 0 0 1 .1-2.1Z"/>
+            <path d="M4 7h16L12 17 4 7Z"/>
         </svg>
     </button>
     <div class="isc-dropdown-menu" id="iscDropdownMenu" hidden>
@@ -3426,15 +3426,37 @@ body:has(.performance-analytics-card) .page-container
     });
 
     function closeMenu() {
-        menu.hidden = true;
+    if (menu.hidden) {
         trigger.setAttribute("aria-expanded", "false");
+        return;
     }
 
+    trigger.setAttribute("aria-expanded", "false");
+    menu.classList.add("isc-menu-closing");
+}
+
     trigger.addEventListener("click", function () {
-        const willOpen = menu.hidden;
-        menu.hidden = !willOpen;
-        trigger.setAttribute("aria-expanded", String(willOpen));
-    });
+    const willOpen = trigger.getAttribute("aria-expanded") !== "true";
+
+    if (willOpen) {
+        menu.classList.remove("isc-menu-closing");
+        menu.hidden = false;
+        trigger.setAttribute("aria-expanded", "true");
+    } else {
+        closeMenu();
+    }
+});
+
+menu.addEventListener("animationend", function (event) {
+    if (
+        event.target === menu &&
+        event.animationName === "iscDropdownPolishExit" &&
+        menu.classList.contains("isc-menu-closing")
+    ) {
+        menu.hidden = true;
+        menu.classList.remove("isc-menu-closing");
+    }
+});
 
     document.addEventListener("click", function (event) {
         if (!root.contains(event.target)) closeMenu();
@@ -4235,6 +4257,250 @@ body.dark-mode .dropdown-item:hover,
 body.dark-mode .dropdown-item:focus {
     background-color: #374151 !important;
     color: #ffffff !important;
+}
+</style>
+
+
+
+<style id="isc-dropdown-polish-v2">
+/* ISC-DROPDOWN-POLISH-V2-START */
+
+/* Make the menu button and its filled arrow crisp and clickable */
+#isc-dropdown-navigation .isc-menu-trigger {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#isc-dropdown-navigation .isc-menu-trigger .isc-menu-arrow {
+    display: block !important;
+    flex: 0 0 20px !important;
+    width: 20px !important;
+    height: 20px !important;
+    padding: 3px !important;
+    box-sizing: content-box !important;
+    color: #ffffff !important;
+    fill: currentColor !important;
+    background: var(--accent, #0ea5e9) !important;
+    border-radius: 50% !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: rotate(0deg);
+    transform-origin: center;
+    transition:
+        transform 220ms cubic-bezier(.2,.8,.2,1),
+        background-color 180ms ease,
+        box-shadow 180ms ease !important;
+}
+
+#isc-dropdown-navigation .isc-menu-trigger:hover .isc-menu-arrow {
+    box-shadow: 0 3px 9px rgba(15, 23, 42, .20);
+}
+
+#isc-dropdown-navigation .isc-menu-trigger[aria-expanded="true"] .isc-menu-arrow {
+    transform: rotate(180deg) !important;
+}
+
+/* Keyboard accessibility */
+#isc-dropdown-navigation .isc-menu-trigger:focus-visible {
+    outline: 3px solid var(--accent, #0ea5e9) !important;
+    outline-offset: 4px !important;
+}
+
+/* Refined floating menu */
+#isc-dropdown-navigation .isc-dropdown-menu {
+    position: absolute !important;
+    top: calc(100% + 12px) !important;
+    right: 0 !important;
+    left: auto !important;
+    z-index: 12001 !important;
+    width: min(330px, calc(100vw - 24px)) !important;
+    max-height: min(72vh, 600px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    padding: 10px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 18px !important;
+    box-shadow:
+        0 18px 45px rgba(15, 23, 42, .16),
+        0 3px 10px rgba(15, 23, 42, .05) !important;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    transform-origin: top right;
+}
+
+/* Never allow the closed menu to intercept clicks */
+#isc-dropdown-navigation .isc-dropdown-menu[hidden] {
+    display: none !important;
+}
+
+/* Animate the menu when it becomes visible */
+#isc-dropdown-navigation .isc-dropdown-menu:not([hidden]) {
+    animation: iscDropdownPolishEnter 190ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes iscDropdownPolishEnter {
+    from {
+        opacity: 0;
+        translate: 0 -7px;
+        scale: .985;
+    }
+    to {
+        opacity: 1;
+        translate: 0 0;
+        scale: 1;
+    }
+}
+
+/* Clear, comfortable menu items */
+#isc-dropdown-navigation .isc-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item {
+    min-height: 46px !important;
+    box-sizing: border-box !important;
+    border-radius: 12px !important;
+    transition:
+        background-color 150ms ease,
+        color 150ms ease,
+        translate 150ms ease !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item:hover {
+    translate: 2px 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #isc-dropdown-navigation .isc-menu-arrow,
+    #isc-dropdown-navigation .isc-nav-item {
+        transition: none !important;
+    }
+
+    #isc-dropdown-navigation .isc-dropdown-menu:not([hidden]) {
+        animation: none !important;
+    }
+}
+
+/* ISC-DROPDOWN-POLISH-V2-END */
+</style>
+
+
+
+<style id="isc-neutral-triangle-arrow">
+#isc-dropdown-navigation .isc-menu-trigger .isc-menu-arrow {
+    display: block !important;
+    width: 20px !important;
+    height: 20px !important;
+    flex: 0 0 20px !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    color: #334155 !important;
+    fill: currentColor !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    stroke: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: rotate(0deg);
+    transition: transform 200ms ease !important;
+}
+
+#isc-dropdown-navigation .isc-menu-trigger[aria-expanded="true"] .isc-menu-arrow {
+    transform: rotate(180deg) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #isc-dropdown-navigation .isc-menu-trigger .isc-menu-arrow {
+        transition: none !important;
+    }
+}
+</style>
+
+
+
+<style id="isc-floating-menu-motion">
+/* Elegant floating menu surface */
+#isc-dropdown-navigation .isc-dropdown-menu {
+    transform-origin: top right !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 18px !important;
+    box-shadow:
+        0 20px 50px rgba(15, 23, 42, .15),
+        0 5px 14px rgba(15, 23, 42, .06) !important;
+    will-change: opacity, translate, scale;
+}
+
+/* Smooth entrance */
+#isc-dropdown-navigation .isc-dropdown-menu:not([hidden]):not(.isc-menu-closing) {
+    animation: iscDropdownPolishEnter 220ms cubic-bezier(.16, 1, .3, 1) both !important;
+}
+
+@keyframes iscDropdownPolishEnter {
+    from {
+        opacity: 0;
+        translate: 0 -10px;
+        scale: .97;
+    }
+    to {
+        opacity: 1;
+        translate: 0 0;
+        scale: 1;
+    }
+}
+
+/* Smooth exit */
+#isc-dropdown-navigation .isc-dropdown-menu.isc-menu-closing {
+    animation: iscDropdownPolishExit 160ms cubic-bezier(.4, 0, 1, 1) both !important;
+    pointer-events: none !important;
+}
+
+@keyframes iscDropdownPolishExit {
+    from {
+        opacity: 1;
+        translate: 0 0;
+        scale: 1;
+    }
+    to {
+        opacity: 0;
+        translate: 0 -6px;
+        scale: .98;
+    }
+}
+
+/* Refined item hover feedback */
+#isc-dropdown-navigation .isc-nav-item {
+    transition:
+        background-color 160ms ease,
+        color 160ms ease,
+        translate 160ms ease !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item:hover {
+    translate: 2px 0;
+}
+
+#isc-dropdown-navigation .isc-dropdown-menu[hidden] {
+    display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #isc-dropdown-navigation .isc-dropdown-menu,
+    #isc-dropdown-navigation .isc-nav-item {
+        animation: none !important;
+        transition: none !important;
+        will-change: auto;
+    }
 }
 </style>
 
