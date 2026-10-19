@@ -1,4 +1,4 @@
-{% extends "tracker/base.html" %}
+﻿{% extends "tracker/base.html" %}
 
 {% block title %}Login - ISC Pool Tracker{% endblock %}
 
@@ -189,6 +189,12 @@
                 >
             </div>
 
+            <div style="text-align:right; margin-top:-7px; margin-bottom:18px;">
+                <a href="{% url 'password_reset' %}"
+                   style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600;">
+                    Forgot password?
+                </a>
+            </div>
             {% if next %}
                 <input
                     type="hidden"
@@ -226,3 +232,4 @@
 </div>
 
 {% endblock %}
+

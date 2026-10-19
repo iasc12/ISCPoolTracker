@@ -737,7 +737,60 @@ body:has(.performance-analytics-card) .page-container
     </div>
 
 
-    <style>
+    
+<style id="isc-financial-overview-card-separation">
+/* Give Financial Overview cards distinct edges and breathing room */
+.financial-overview-panel {
+    gap: 22px !important;
+}
+
+.financial-overview-panel .financial-overview-top {
+    gap: 20px !important;
+}
+
+.financial-overview-panel .cash-position-card,
+.financial-overview-panel .financial-card,
+.financial-overview-panel .overview-card,
+.financial-overview-panel .summary-card {
+    box-sizing: border-box;
+    border: 1px solid #dbe3ee !important;
+    border-radius: 18px !important;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.07) !important;
+    margin-bottom: 18px !important;
+}
+
+.financial-overview-panel .financial-overview-top > *,
+.financial-overview-panel .financial-overview-grid > *,
+.financial-overview-panel .financial-cards-grid > * {
+    min-width: 0;
+    border-radius: 18px;
+}
+
+.financial-overview-panel .cash-position-card {
+    margin-top: 18px !important;
+    padding: 20px !important;
+}
+
+body.dark-mode .financial-overview-panel .cash-position-card,
+body.dark-mode .financial-overview-panel .financial-card,
+body.dark-mode .financial-overview-panel .overview-card,
+body.dark-mode .financial-overview-panel .summary-card {
+    border-color: #374151 !important;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2) !important;
+}
+
+@media (max-width: 600px) {
+    .financial-overview-panel .cash-position-card,
+    .financial-overview-panel .financial-card,
+    .financial-overview-panel .overview-card,
+    .financial-overview-panel .summary-card {
+        margin-bottom: 14px !important;
+        border-radius: 15px !important;
+    }
+}
+</style>
+
+<style>
 
 /* SMALLER ADD EARNING / ADD EXPENSE BUTTONS */
 
@@ -1314,7 +1367,7 @@ body:has(.performance-analytics-card) .page-container
                         cash-positive
                     {% endif %}">
             
-                    KSh {{ cash_after_expenses|floatformat:2 }}
+                    <span class="cash-balance-label">Bal:</span> KSh {{ cash_after_expenses|floatformat:2 }}
             
                 </div>
             
@@ -2258,16 +2311,97 @@ body:has(.performance-analytics-card) .page-container
 
 </div>
 
+
+<style id="isc-daily-earnings-card-fix">
+/* Enclose the daily earnings chart in a proper card */
+.charts-section > h2 {
+    margin: 0 0 20px;
+}
+
+.charts-section > .chart-card {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 24px;
+    margin: 0 0 24px;
+    background: #ffffff;
+    color: #172033;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+    overflow: hidden;
+}
+
+.charts-section > .chart-card h3 {
+    margin-top: 0;
+    color: #172033;
+}
+
+.charts-section > .chart-card .chart-description {
+    color: #64748b;
+    margin-bottom: 16px;
+}
+
+.charts-section > .chart-card .chart-box {
+    width: 100%;
+    min-width: 0;
+}
+
+body.dark-mode .charts-section > .chart-card {
+    background: #111827;
+    color: #f3f4f6;
+    border-color: #374151;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+body.dark-mode .charts-section > .chart-card h3 {
+    color: #f9fafb;
+}
+
+body.dark-mode .charts-section > .chart-card .chart-description {
+    color: #cbd5e1;
+}
+
+@media (max-width: 600px) {
+    .charts-section > .chart-card {
+        padding: 17px;
+        border-radius: 16px;
+    }
+}
+</style>
+
+
+<style id="isc-financial-heading-inside-card">
+.charts-section > h2 {
+    display: none;
+}
+
+.charts-section > .chart-card .isc-financial-heading-inside-card {
+    margin: 0 0 22px;
+    padding: 0 0 16px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #172033;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card {
+    color: #f9fafb;
+    border-bottom-color: #374151;
+}
+</style>
 <!-- CHARTS -->
 
     <div class="charts-section">
 
-        <h2>Financial Charts</h2>
+        
 
 
         <!-- DAILY EARNINGS -->
 
         <div class="chart-card">
+            <h2 class="isc-financial-heading-inside-card">Financial Charts</h2>
+
 
             <h3>
                 Daily Earnings - Last 7 Days
@@ -2481,6 +2615,9 @@ body:has(.performance-analytics-card) .page-container
 
 })();
 </script>
+
+
+
 
 <!-- RECENT ACTIVITY -->
 
@@ -3532,6 +3669,71 @@ body:has(.performance-analytics-card) .page-container
         transition: none !important;
     }
 }
+
+<style id="isc-performance-white-default-final">
+/* ISC-PERFORMANCE-WHITE-DEFAULT-FINAL */
+/* Keep the Performance Analytics panel white across theme selections. */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06) !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card h2 {
+    color: #111827 !important;
+}
+
+/* Make all four metric cards white, not pale grey or theme-coloured. */
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-card {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-card:hover {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-label {
+    color: #64748b !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value {
+    color: #172033 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value.profit {
+    color: #16805d !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-value.loss {
+    color: #c24141 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-small,
+body:has(.performance-analytics-card) .page-container
+.performance-analytics-card .analytics-date {
+    color: #64748b !important;
+}
+</style>
+
 </style>
 
 {% endblock %}

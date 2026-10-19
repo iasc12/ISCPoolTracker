@@ -116,41 +116,53 @@ def profile(request):
 @login_required
 def edit_profile(request):
     user = request.user
+    profile, _ = Profile.objects.get_or_create(user=user)
 
     if request.method == "POST":
         username = request.POST.get("username", "").strip()
         email = request.POST.get("email", "").strip()
+        submitted_phone = request.POST.get("phone_number", "").strip()
+
+        normalized_phone = None
+        if submitted_phone:
+            normalized_phone = _normalize_mpesa_phone(submitted_phone)
 
         if not username:
-            messages.error(
-                request,
-                "Username cannot be empty.",
-            )
+            messages.error(request, "Username cannot be empty.")
         elif (
             username != user.username
             and type(user).objects.filter(username=username).exists()
         ):
+            messages.error(request, "That username is already in use.")
+        elif submitted_phone and not normalized_phone:
             messages.error(
                 request,
-                "That username is already in use.",
+                "Enter a valid Kenyan mobile number, for example 0712345678.",
             )
         else:
             user.username = username
             user.email = email
             user.save()
 
+            new_phone = normalized_phone or ""
+            if new_phone != profile.phone_number:
+                profile.phone_number = new_phone
+                profile.phone_verified = False
+                profile.save(
+                    update_fields=["phone_number", "phone_verified"]
+                )
+
             messages.success(
                 request,
-                "Profile updated successfully.",
+                "Profile updated successfully. Any changed phone number must be verified before SMS recovery can use it.",
             )
-
             return redirect("profile")
 
     return render(
         request,
         "tracker/edit_profile.html",
+        {"profile": profile},
     )
-
 
 @login_required
 def change_password(request):

@@ -911,12 +911,13 @@ select {
 <div class="isc-menu-wrap" id="isc-dropdown-navigation">
     <button type="button" class="isc-menu-trigger" id="iscMenuTrigger" aria-expanded="false" aria-controls="iscDropdownMenu">
         <span class="isc-menu-trigger-label">Menu</span>
-        <svg class="isc-menu-arrow" viewBox="0 0 24 24"
-             width="20" height="20" fill="none"
-             stroke="currentColor" stroke-width="2.2"
-             stroke-linecap="round" stroke-linejoin="round"
+        <svg class="isc-menu-arrow"
+             viewBox="0 0 24 24"
+             width="20" height="20"
+             fill="currentColor"
+             stroke="none"
              aria-hidden="true">
-            <path d="m6 9 6 6 6-6"/>
+            <path d="M5 8.5a1.5 1.5 0 0 1 2.1 0L12 13.4l4.9-4.9a1.5 1.5 0 1 1 2.1 2.1l-6 6a1.5 1.5 0 0 1-2.1 0l-6-6a1.5 1.5 0 0 1 .1-2.1Z"/>
         </svg>
     </button>
     <div class="isc-dropdown-menu" id="iscDropdownMenu" hidden>
@@ -3643,8 +3644,273 @@ body.dark-mode #isc-dropdown-navigation .isc-menu-trigger {
 }
 </style>
 
-</body>
-</html>
+
+<style id="isc-final-dashboard-theme-fix-v1">
+/* Light mode: clean white Performance Analytics cards, without shadows. */
+body:not(.dark-mode) .page-container .performance-analytics-card,
+body:not(.dark-mode) .page-container .performance-analytics-card .analytics-card {
+    background: #fff !important;
+    background-image: none !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+body:not(.dark-mode) .page-container .performance-analytics-card .analytics-card:hover {
+    box-shadow: none !important;
+    transform: none !important;
+}
+body:not(.dark-mode) .page-container .performance-analytics-card h2,
+body:not(.dark-mode) .page-container .performance-analytics-card .analytics-card *,
+body:not(.dark-mode) .page-container .performance-analytics-card .analytics-label {
+    text-shadow: none !important;
+}
+body:not(.dark-mode) .page-container .performance-analytics-card h2 {
+    color: #111827 !important;
+}
+body:not(.dark-mode) .page-container .performance-analytics-card .analytics-label {
+    color: #475569 !important;
+}
+
+/* Balance label */
+.cash-balance-label {
+    display: inline-block;
+    margin-right: 5px;
+    font-size: .78em;
+    font-weight: 750;
+    letter-spacing: .02em;
+}
+
+/* Dark mode: dashboard panels and cards */
+body.dark-mode .page-container,
+body.dark-mode .page-container .financial-overview-panel,
+body.dark-mode .page-container .financial-overview-top,
+body.dark-mode .page-container .financial-overview-title,
+body.dark-mode .page-container .financial-card,
+body.dark-mode .page-container .cash-position-card,
+body.dark-mode .page-container .performance-analytics-card,
+body.dark-mode .page-container .performance-analytics-card .analytics-card,
+body.dark-mode .page-container .recent-activity-card,
+body.dark-mode .page-container .charts-section,
+body.dark-mode .page-container .chart-card {
+    background: #080b10 !important;
+    background-image: none !important;
+    color: #e5e7eb !important;
+    border-color: #273244 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+body.dark-mode .page-container h1,
+body.dark-mode .page-container h2,
+body.dark-mode .page-container h3,
+body.dark-mode .page-container h4,
+body.dark-mode .page-container p,
+body.dark-mode .page-container span,
+body.dark-mode .page-container label,
+body.dark-mode .page-container .analytics-label,
+body.dark-mode .page-container .analytics-small,
+body.dark-mode .page-container .analytics-date,
+body.dark-mode .page-container .financial-item > span {
+    color: #e5e7eb !important;
+}
+body.dark-mode .page-container .cash-position-amount,
+body.dark-mode .page-container .cash-position-icon {
+    color: #f8fafc !important;
+}
+body.dark-mode .page-container .financial-card:hover,
+body.dark-mode .page-container .performance-analytics-card .analytics-card:hover,
+body.dark-mode .page-container .recent-activity-card:hover,
+body.dark-mode .page-container .chart-card:hover {
+    box-shadow: none !important;
+    transform: none !important;
+}
+body.dark-mode .page-container table,
+body.dark-mode .page-container thead,
+body.dark-mode .page-container tbody,
+body.dark-mode .page-container tr,
+body.dark-mode .page-container th,
+body.dark-mode .page-container td {
+    background-color: #080b10 !important;
+    color: #e5e7eb !important;
+    border-color: #273244 !important;
+}
+body.dark-mode .page-container input,
+body.dark-mode .page-container select,
+body.dark-mode .page-container textarea {
+    background: #111827 !important;
+    color: #f8fafc !important;
+    border-color: #374151 !important;
+}
+body.dark-mode .page-container input::placeholder,
+body.dark-mode .page-container textarea::placeholder {
+    color: #9ca3af !important;
+}
+
+/* Dark mode navigation dropdown: override any older white-dropdown styles. */
+body.dark-mode #isc-dropdown-navigation,
+body.dark-mode #isc-dropdown-navigation .isc-dropdown-menu {
+    background: #080b10 !important;
+    color: #e5e7eb !important;
+    border-color: #273244 !important;
+}
+body.dark-mode #isc-dropdown-navigation .isc-nav-item {
+    color: #e5e7eb !important;
+}
+body.dark-mode #isc-dropdown-navigation .isc-nav-item:hover,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item.active,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item[aria-current="page"] {
+    background: #1e293b !important;
+    color: #93c5fd !important;
+    border-color: #334155 !important;
+}
+</style>
+
+
+<style id="isc-dark-readable-text-v2">
+/* Readable text throughout ISC Pool Tracker dark mode */
+body.dark-mode {
+    color: #e5e7eb !important;
+    background-color: #111827 !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode label,
+body.dark-mode small,
+body.dark-mode li,
+body.dark-mode dt,
+body.dark-mode dd,
+body.dark-mode th,
+body.dark-mode td,
+body.dark-mode caption,
+body.dark-mode .card-title,
+body.dark-mode .card-text,
+body.dark-mode .form-label,
+body.dark-mode .form-text,
+body.dark-mode .modal-title,
+body.dark-mode .dropdown-header,
+body.dark-mode .nav-link,
+body.dark-mode .breadcrumb-item,
+body.dark-mode .list-group-item {
+    color: #e5e7eb !important;
+}
+
+body.dark-mode .text-muted,
+body.dark-mode .text-secondary,
+body.dark-mode .secondary-text,
+body.dark-mode .help-text,
+body.dark-mode .form-text {
+    color: #b8c2d1 !important;
+}
+
+body.dark-mode .card,
+body.dark-mode .dashboard-card,
+body.dark-mode .stat-card,
+body.dark-mode .performance-analytics-card,
+body.dark-mode .financial-overview-panel,
+body.dark-mode .cash-position-card,
+body.dark-mode .table-responsive,
+body.dark-mode .list-group-item,
+body.dark-mode .modal-content,
+body.dark-mode .dropdown-menu,
+body.dark-mode .popover,
+body.dark-mode .offcanvas {
+    color: #e5e7eb !important;
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+    box-shadow: none !important;
+}
+
+body.dark-mode table,
+body.dark-mode .table {
+    --bs-table-color: #e5e7eb;
+    --bs-table-bg: #1f2937;
+    --bs-table-border-color: #374151;
+    --bs-table-striped-color: #e5e7eb;
+    --bs-table-striped-bg: #263244;
+    --bs-table-hover-color: #ffffff;
+    --bs-table-hover-bg: #334155;
+    color: #e5e7eb !important;
+}
+
+body.dark-mode input:not([type="checkbox"]):not([type="radio"]),
+body.dark-mode select,
+body.dark-mode textarea,
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    color: #f3f4f6 !important;
+    background-color: #111827 !important;
+    border-color: #4b5563 !important;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder,
+body.dark-mode .form-control::placeholder {
+    color: #9ca3af !important;
+    opacity: 1;
+}
+
+body.dark-mode a:not(.btn):not(.button) {
+    color: #7dd3fc;
+}
+
+body.dark-mode .dropdown-menu a,
+body.dark-mode .dropdown-item {
+    color: #e5e7eb !important;
+}
+
+body.dark-mode .dropdown-item:hover,
+body.dark-mode .dropdown-item:focus {
+    color: #ffffff !important;
+    background-color: #374151 !important;
+}
+
+/* Keep common success, warning, and error indicators meaningful */
+body.dark-mode .text-success { color: #4ade80 !important; }
+body.dark-mode .text-danger { color: #f87171 !important; }
+body.dark-mode .text-warning { color: #fbbf24 !important; }
+body.dark-mode .text-info { color: #7dd3fc !important; }
+
+/* Ensure analytics figures remain readable */
+body.dark-mode .performance-analytics-card *,
+body.dark-mode .cash-position-card *,
+body.dark-mode .financial-overview-panel * {
+    text-shadow: none !important;
+}
+</style>
+
+
+<style id="isc-filled-dropdown-arrow-v1">
+/* Replace the dropdown caret with a solid filled triangle */
+.dropdown-toggle::after,
+.nav-link.dropdown-toggle::after,
+button.dropdown-toggle::after {
+    display: inline-block !important;
+    vertical-align: 0.15em !important;
+    content: "" !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin-left: 0.45em !important;
+    border-top: 0.42em solid currentColor !important;
+    border-right: 0.34em solid transparent !important;
+    border-bottom: 0 !important;
+    border-left: 0.34em solid transparent !important;
+    opacity: 1 !important;
+}
+
+/* Keep the filled arrow visible in dark mode too */
+body.dark-mode .dropdown-toggle::after {
+    border-top-color: currentColor !important;
+}
+</style>
+
+
+
 
 
 
@@ -3733,3 +3999,244 @@ body.dark-mode #isc-dropdown-navigation .isc-menu-trigger {
 }
 </style>
 
+
+<style id="isc-premium-white-dropdown">
+/* ISC PREMIUM WHITE DROPDOWN — final visual overrides */
+#isc-dropdown-navigation .isc-dropdown-menu,
+body.dark-mode #isc-dropdown-navigation .isc-dropdown-menu {
+    background: #ffffff !important;
+    color: #172033 !important;
+    border: 1px solid #e5eaf2 !important;
+    border-radius: 20px !important;
+    box-shadow:
+        0 24px 60px rgba(15, 23, 42, 0.16),
+        0 5px 16px rgba(15, 23, 42, 0.06),
+        0 1px 3px rgba(15, 23, 42, 0.04) !important;
+    padding: 12px !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Smooth entrance when the menu opens */
+#isc-dropdown-navigation .isc-dropdown-menu:not([hidden]) {
+    animation: iscPremiumDropdownEnter 220ms cubic-bezier(.2, .8, .2, 1) both;
+    transform-origin: top right;
+}
+
+@keyframes iscPremiumDropdownEnter {
+    from {
+        opacity: 0;
+        transform: translateY(-7px) scale(.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Clean, readable navigation rows */
+#isc-dropdown-navigation .isc-nav-item,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item {
+    min-height: 50px !important;
+    color: #334155 !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 14px !important;
+    font-weight: 560 !important;
+    letter-spacing: .005em;
+    transition:
+        background-color 190ms ease,
+        border-color 190ms ease,
+        color 190ms ease,
+        transform 190ms cubic-bezier(.2, .8, .2, 1),
+        box-shadow 190ms ease !important;
+}
+
+/* Subtle blue hover with a gentle lift */
+#isc-dropdown-navigation .isc-nav-item:hover,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item:hover {
+    color: #1d4ed8 !important;
+    background: #eff6ff !important;
+    border-color: #dbeafe !important;
+    transform: translateX(3px) !important;
+    box-shadow: 0 3px 10px rgba(37, 99, 235, .06) !important;
+}
+
+/* Icon tiles remain crisp white/grey until hovered */
+#isc-dropdown-navigation .isc-nav-icon-wrap,
+body.dark-mode #isc-dropdown-navigation .isc-nav-icon-wrap {
+    background: #f8fafc !important;
+    border-color: #e7edf5 !important;
+    color: #64748b !important;
+    border-radius: 12px !important;
+    transition:
+        background-color 190ms ease,
+        border-color 190ms ease,
+        color 190ms ease,
+        transform 190ms ease !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item:hover .isc-nav-icon-wrap,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item:hover .isc-nav-icon-wrap {
+    background: #dbeafe !important;
+    border-color: #bfdbfe !important;
+    color: #2563eb !important;
+    transform: scale(1.04);
+}
+
+/* Active page gets a refined highlight */
+#isc-dropdown-navigation .isc-nav-item.active,
+#isc-dropdown-navigation .isc-nav-item[aria-current="page"],
+body.dark-mode #isc-dropdown-navigation .isc-nav-item.active,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item[aria-current="page"] {
+    color: #1d4ed8 !important;
+    background: #eff6ff !important;
+    border-color: #dbeafe !important;
+    font-weight: 650 !important;
+    box-shadow: inset 3px 0 0 #3b82f6 !important;
+}
+
+#isc-dropdown-navigation .isc-nav-item.active .isc-nav-icon-wrap,
+#isc-dropdown-navigation .isc-nav-item[aria-current="page"] .isc-nav-icon-wrap,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item.active .isc-nav-icon-wrap,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item[aria-current="page"] .isc-nav-icon-wrap {
+    color: #2563eb !important;
+    background: #dbeafe !important;
+    border-color: #bfdbfe !important;
+}
+
+/* Keep badges readable on the white panel */
+#isc-dropdown-navigation .isc-nav-badge {
+    border-color: #ffffff !important;
+}
+
+/* Keyboard accessibility */
+#isc-dropdown-navigation .isc-nav-item:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, .35) !important;
+    outline-offset: 2px !important;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    #isc-dropdown-navigation .isc-dropdown-menu:not([hidden]) {
+        animation: none !important;
+    }
+
+    #isc-dropdown-navigation .isc-nav-item,
+    #isc-dropdown-navigation .isc-nav-icon-wrap {
+        transition: none !important;
+    }
+}
+</style>
+
+
+<style id="isc-final-contrast-and-arrow-fix">
+/* Solid downward arrow for the actual ISC menu trigger */
+#isc-dropdown-navigation .isc-menu-arrow {
+    display: block !important;
+    width: 20px !important;
+    height: 20px !important;
+    fill: currentColor !important;
+    stroke: none !important;
+    color: inherit !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+#isc-dropdown-navigation .isc-menu-arrow path {
+    fill: currentColor !important;
+    stroke: none !important;
+}
+
+/* Keep the premium menu readable in dark mode */
+body.dark-mode #isc-dropdown-navigation .isc-dropdown-menu {
+    background: #111827 !important;
+    color: #f3f4f6 !important;
+    border-color: #374151 !important;
+}
+body.dark-mode #isc-dropdown-navigation .isc-nav-item,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item span {
+    color: #e5e7eb !important;
+}
+body.dark-mode #isc-dropdown-navigation .isc-nav-item:hover,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item.active,
+body.dark-mode #isc-dropdown-navigation .isc-nav-item[aria-current="page"] {
+    background: #263449 !important;
+    color: #ffffff !important;
+    border-color: #475569 !important;
+}
+body.dark-mode #isc-dropdown-navigation .isc-nav-icon-wrap {
+    background: #263449 !important;
+    color: #e5e7eb !important;
+    border-color: #475569 !important;
+}
+
+/* Improve contrast for common page text and form controls */
+body.dark-mode main,
+body.dark-mode main p,
+body.dark-mode main label,
+body.dark-mode main legend,
+body.dark-mode main dt,
+body.dark-mode main dd,
+body.dark-mode main li,
+body.dark-mode main .form-text,
+body.dark-mode main .text-muted,
+body.dark-mode main small,
+body.dark-mode main .card-title,
+body.dark-mode main .card-text,
+body.dark-mode main th,
+body.dark-mode main td {
+    color: #e5e7eb !important;
+}
+body.dark-mode main h1,
+body.dark-mode main h2,
+body.dark-mode main h3,
+body.dark-mode main h4,
+body.dark-mode main h5,
+body.dark-mode main h6 {
+    color: #f9fafb !important;
+}
+body.dark-mode main input:not([type="checkbox"]):not([type="radio"]),
+body.dark-mode main select,
+body.dark-mode main textarea {
+    color: #f9fafb !important;
+    background-color: #111827 !important;
+    border-color: #4b5563 !important;
+}
+body.dark-mode main input::placeholder,
+body.dark-mode main textarea::placeholder {
+    color: #9ca3af !important;
+    opacity: 1 !important;
+}
+body.dark-mode main input:disabled,
+body.dark-mode main select:disabled,
+body.dark-mode main textarea:disabled {
+    color: #d1d5db !important;
+    opacity: 1 !important;
+}
+
+/* Links remain distinguishable against dark backgrounds */
+body.dark-mode main a:not(.btn) {
+    color: #7dd3fc;
+}
+body.dark-mode main a:not(.btn):hover {
+    color: #bae6fd;
+}
+
+/* Keep Bootstrap dropdown text readable */
+body.dark-mode .dropdown-menu {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+body.dark-mode .dropdown-menu a,
+body.dark-mode .dropdown-item {
+    color: #f3f4f6 !important;
+}
+body.dark-mode .dropdown-item:hover,
+body.dark-mode .dropdown-item:focus {
+    background-color: #374151 !important;
+    color: #ffffff !important;
+}
+</style>
+
+</body>
+</html>

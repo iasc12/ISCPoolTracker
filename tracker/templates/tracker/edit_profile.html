@@ -122,6 +122,25 @@
                 >
             </div>
 
+            <div class="field">
+                <label for="phone_number">Mobile Number (Kenya)</label>
+                <input
+                    type="tel"
+                    id="phone_number"
+                    name="phone_number"
+                    value="{{ profile.phone_number }}"
+                    placeholder="0712345678 or +254712345678"
+                    autocomplete="tel"
+                >
+                <small>
+                    {% if profile.phone_verified %}
+                        This number is verified for account recovery.
+                    {% else %}
+                        This number is not verified yet and cannot be used for SMS recovery.
+                    {% endif %}
+                </small>
+            </div>
+
             <div class="actions">
                 <button type="submit" class="btn btn-primary">
                     Save Changes

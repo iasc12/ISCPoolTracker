@@ -353,9 +353,53 @@ class Profile(models.Model):
         null=True
     )
 
+    phone_number = models.CharField(
+        max_length=20,
+        blank=True,
+        default="",
+    )
+
+    phone_verified = models.BooleanField(
+        default=False,
+    )
+
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
+class SmsVerificationCode(models.Model):
+    PURPOSE_PHONE_VERIFY = "phone_verify"
+    PURPOSE_PASSWORD_RESET = "password_reset"
+
+    PURPOSE_CHOICES = [
+        (PURPOSE_PHONE_VERIFY, "Phone verification"),
+        (PURPOSE_PASSWORD_RESET, "Password reset"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="sms_verification_codes",
+    )
+    purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES)
+    phone_number = models.CharField(max_length=20)
+    code_hash = models.CharField(max_length=128)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    attempts = models.PositiveSmallIntegerField(default=0)
+    used_at = models.DateTimeField(blank=True, null=True)
+    request_ip = models.GenericIPAddressField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["user", "purpose", "created_at"]),
+            models.Index(fields=["request_ip", "created_at"]),
+        ]
+
+    def __str__(self):
+        return f"{self.purpose} code for user {self.user_id}"
+
 
 class Membership(models.Model):
 

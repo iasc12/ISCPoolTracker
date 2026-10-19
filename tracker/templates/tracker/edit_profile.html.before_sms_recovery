@@ -1,0 +1,141 @@
+{% extends "tracker/base.html" %}
+
+{% block title %}Edit Profile - ISC Pool Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+.edit-profile-page {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.edit-card {
+    background: var(--card-bg, #fff);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+.edit-card h1 {
+    margin: 0 0 7px;
+}
+
+.edit-card .subtitle {
+    margin: 0 0 25px;
+    opacity: .6;
+}
+
+.field {
+    margin-bottom: 20px;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 650;
+}
+
+.field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 15px;
+    border: 1px solid rgba(127,127,127,.25);
+    border-radius: 13px;
+    background: transparent;
+    color: inherit;
+    font-size: 15px;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.btn {
+    border: 0;
+    border-radius: 13px;
+    padding: 13px 20px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 650;
+}
+
+.btn-primary {
+    background: #111827;
+    color: white;
+}
+
+.btn-secondary {
+    background: rgba(127,127,127,.12);
+    color: inherit;
+}
+
+.error-message {
+    background: rgba(220,38,38,.1);
+    color: #dc2626;
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+}
+</style>
+
+<div class="edit-profile-page">
+
+    <div class="edit-card">
+
+        <h1>Edit Profile</h1>
+        <p class="subtitle">
+            Update your ISC Pool Tracker account information.
+        </p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error-message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="field">
+                <label for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value="{{ request.user.username }}"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ request.user.email }}"
+                >
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="btn btn-primary">
+                    Save Changes
+                </button>
+
+                <a href="{% url 'profile' %}" class="btn btn-secondary">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
