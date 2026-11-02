@@ -2088,6 +2088,10 @@ def generate_report(request):
                 row["expense_type"],
             ),
             "amount": row["total"] or Decimal("0.00"),
+            "items": [
+                item for item in expenses
+                if item.expense_type == row["expense_type"]
+            ],
         }
         for row in expense_summary
     ]
@@ -2268,6 +2272,12 @@ def download_report_pdf(request):
 
     buffer = BytesIO()
 
+    def report_page_background(canvas, doc):
+        canvas.saveState()
+        canvas.setFillColor(colors.HexColor("#eaf2f8"))
+        canvas.rect(0, 0, A4[0], A4[1], fill=1, stroke=0)
+        canvas.restoreState()
+
     document = SimpleDocTemplate(
         buffer,
         pagesize=A4,
@@ -2379,7 +2389,7 @@ def download_report_pdf(request):
                 "BACKGROUND",
                 (0, 0),
                 (-1, -1),
-                colors.HexColor("#f8fafc"),
+                colors.white,
             ),
             (
                 "BOX",
@@ -2510,13 +2520,13 @@ def download_report_pdf(request):
                 "BACKGROUND",
                 (0, 0),
                 (-1, 0),
-                colors.HexColor("#2563eb"),
+                colors.HexColor("#dbeafe"),
             ),
             (
                 "TEXTCOLOR",
                 (0, 0),
                 (-1, 0),
-                colors.white,
+                colors.HexColor("#334155"),
             ),
             (
                 "FONTNAME",
@@ -2625,13 +2635,13 @@ def download_report_pdf(request):
                 "BACKGROUND",
                 (0, 0),
                 (-1, 0),
-                colors.HexColor("#dc2626"),
+                colors.HexColor("#fee2e2"),
             ),
             (
                 "TEXTCOLOR",
                 (0, 0),
                 (-1, 0),
-                colors.white,
+                colors.HexColor("#334155"),
             ),
             (
                 "FONTNAME",
@@ -2709,7 +2719,7 @@ def download_report_pdf(request):
         )
     )
 
-    document.build(story)
+    document.build(story, onFirstPage=report_page_background, onLaterPages=report_page_background)
 
     buffer.seek(0)
 

@@ -3,6 +3,7 @@
 {% block content %}
 <style>
 .report-preview-page {
+    background: #f8fafc;
     max-width: 1180px;
     margin: 30px auto;
     padding: 0 18px 40px;
@@ -43,7 +44,7 @@
 }
 .report-back-link {
     color: var(--text-color, #334155);
-    background: var(--card-bg, #fff);
+    background: #ffffff;
     border: 1px solid var(--border-color, #e2e8f0);
 }
 .report-download-link {
@@ -51,7 +52,8 @@
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
 }
 .report-preview-card {
-    background: var(--card-bg, #fff);
+    background: #ffffff;
+    background: #ffffff;
     border: 1px solid var(--border-color, #e2e8f0);
     border-radius: 16px;
     padding: 23px;
@@ -80,9 +82,10 @@
     margin-bottom: 24px;
 }
 .report-summary-item {
+    background: #f8fafc;
     padding: 18px;
     border-radius: 12px;
-    background: var(--secondary-card-bg,#f8fafc);
+    background: #f8fafc;
     border: 1px solid var(--border-color,#e2e8f0);
     min-width: 0;
 }
@@ -121,7 +124,7 @@
 }
 .report-preview-table th {
     color: #64748b;
-    background: var(--secondary-card-bg,#f8fafc);
+    background: #f8fafc;
     font-size: 11px;
     text-transform: uppercase;
 }
@@ -146,13 +149,84 @@
     .report-preview-actions { width: 100%; }
     .report-preview-actions a { flex: 1; }
     .report-summary-grid { grid-template-columns: 1fr; }
-    .report-preview-card { padding: 16px; }
+    .report-preview-card {
+    background: #ffffff; padding: 16px; }
 }
 @media print {
     .report-preview-actions { display: none !important; }
-    .report-preview-page { max-width: none; margin: 0; padding: 0; }
-    .report-preview-card { box-shadow: none; }
+    .report-preview-page {
+    background: #f8fafc; max-width: none; margin: 0; padding: 0; }
+    .report-preview-card {
+    background: #ffffff; box-shadow: none; }
 }
+
+
+
+/* ISC VISIBLE LIGHT RED REPORT DESIGN */
+
+.report-preview-card {
+    background: #fee2e2 !important;
+    color: #292524 !important;
+    border: 1px solid #fca5a5 !important;
+    border-radius: 18px;
+    box-shadow: 0 5px 18px rgba(127, 29, 29, 0.08);
+}
+
+.report-preview-card .report-document-heading {
+    background: #fecaca;
+    border-bottom: 2px solid #f87171;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.report-preview-card .report-document-heading h1,
+.report-preview-card .report-document-heading h2,
+.report-preview-card .report-section-title {
+    color: #991b1b !important;
+}
+
+.report-preview-card .report-document-heading p {
+    color: #57534e !important;
+}
+
+.report-preview-card .report-summary-item {
+    background: #fff1f2 !important;
+    border: 1px solid #fda4af !important;
+    color: #292524 !important;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(127, 29, 29, 0.06);
+}
+
+.report-preview-card .report-summary-item span {
+    color: #7f1d1d !important;
+}
+
+.report-preview-card .report-summary-item strong {
+    color: #292524 !important;
+}
+
+.report-preview-card .report-positive {
+    color: #047857 !important;
+}
+
+.report-preview-card .report-negative {
+    color: #b91c1c !important;
+}
+
+@media print {
+    .report-preview-card {
+        background: #fee2e2 !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .report-preview-card .report-summary-item {
+        background: #fff1f2 !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+}
+
 </style>
 
 <div class="report-preview-page">
@@ -229,6 +303,112 @@
         </div>
 
         <h3 class="report-section-title">Expenses History</h3>
+
+        <style>
+            .expense-history-details {
+                width: 100%;
+            }
+
+            .expense-history-details > summary {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto 22px;
+                align-items: center;
+                gap: 14px;
+                padding: 14px 16px;
+                cursor: pointer;
+                list-style: none;
+                font-weight: 700;
+                color: #1e293b;
+                background: #fff1f2;
+                border: 1px solid #fecdd3;
+                border-radius: 10px;
+                transition: background .2s ease;
+            }
+
+            .expense-history-details > summary::-webkit-details-marker {
+                display: none;
+            }
+
+            .expense-history-details > summary:hover {
+                background: #ffe4e6;
+            }
+
+            .expense-history-arrow {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 22px;
+                height: 22px;
+                border-radius: 50%;
+                background: #ffe4e6;
+                color: #be123c;
+                font-size: 17px;
+                transition: transform .2s ease;
+            }
+
+            .expense-history-details[open] .expense-history-arrow {
+                transform: rotate(180deg);
+            }
+
+            .expense-history-breakdown {
+                padding: 10px 16px 14px;
+                background: #fffafa;
+                border: 1px solid #fecdd3;
+                border-top: 0;
+                border-radius: 0 0 10px 10px;
+            }
+
+            .expense-history-breakdown table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .expense-history-breakdown th,
+            .expense-history-breakdown td {
+                padding: 10px 8px;
+                border-bottom: 1px solid #f1d5d9;
+                text-align: left;
+                font-size: 13px;
+            }
+
+            .expense-history-breakdown th {
+                color: #881337;
+                font-weight: 700;
+            }
+
+            .expense-history-breakdown .expense-detail-amount {
+                text-align: right;
+                white-space: nowrap;
+                font-weight: 700;
+                color: #991b1b;
+            }
+
+            .expense-history-notes {
+                display: block;
+                margin-top: 3px;
+                color: #64748b;
+                font-size: 12px;
+                font-weight: 400;
+            }
+
+            .expense-history-row {
+                padding: 5px 0;
+            }
+
+            @media (max-width: 600px) {
+                .expense-history-details > summary {
+                    padding: 12px 10px;
+                    gap: 8px;
+                    font-size: 13px;
+                }
+
+                .expense-history-breakdown {
+                    padding: 8px;
+                    overflow-x: auto;
+                }
+            }
+        </style>
+
         <div class="report-table-wrap">
             <table class="report-preview-table">
                 <thead>
@@ -240,12 +420,55 @@
                 <tbody>
                     {% for expense in expense_summary %}
                     <tr>
-                        <td>{{ expense.type }}</td>
-                        <td class="amount">KSh {{ expense.amount|floatformat:2 }}</td>
+                        <td colspan="2">
+                            <details class="expense-history-details">
+                                <summary>
+                                    <span>{{ expense.type }}</span>
+                                    <span class="amount">
+                                        KSh {{ expense.amount|floatformat:2 }}
+                                    </span>
+                                    <span class="expense-history-arrow" aria-hidden="true">?</span>
+                                </summary>
+
+                                <div class="expense-history-breakdown">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Date and Details</th>
+                                                <th style="text-align: right;">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for item in expense.items %}
+                                            <tr>
+                                                <td>
+                                                    {{ item.date|date:"d M Y" }}
+                                                    {% if item.notes %}
+                                                    <span class="expense-history-notes">
+                                                        {{ item.notes }}
+                                                    </span>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="expense-detail-amount">
+                                                    KSh {{ item.amount|floatformat:2 }}
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="2">No individual expenses found.</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </details>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="2" class="report-empty-row">No expenses recorded for this period.</td>
+                        <td colspan="2" class="report-empty-row">
+                            No expenses recorded for this period.
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
