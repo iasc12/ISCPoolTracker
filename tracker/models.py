@@ -43,6 +43,10 @@ class Expense(models.Model):
         ("RENT", "Rent"),
         ("MAINTENANCE", "Maintenance"),
         ("OTHERS", "Other Expense"),
+        ("FOOD", "Food"),
+        ("COMMUTANCE", "Commutance"),
+        ("GIRLFRIEND", "Girlfriend"),
+        ("SHOPPING", "Shopping"),
     ]
 
     date = models.DateField()

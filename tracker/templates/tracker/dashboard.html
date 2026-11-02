@@ -1299,7 +1299,7 @@ body.dark-mode .financial-overview-panel .summary-card {
             </div>
             <!-- CASH AFTER EXPENSES -->
             
-            <div class="cash-position-card">
+            <div class="cash-position-card isc-balance-chip">
             
                 <div class="cash-position-amount
                     {% if cash_after_expenses < 0 %}
@@ -4275,7 +4275,202 @@ body.dark-theme .performance-analytics-card .loss {
 
 </style>
 
+<style id="isc-compact-dynamic-balance-card">
+/* Compact balance indicator only; preserve the three financial cards */
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .financial-overview-top {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .financial-overview-top .cash-position-card {
+    display: inline-flex !important;
+    flex: 0 1 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    align-self: center !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 6px 10px !important;
+    box-sizing: border-box !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 9px !important;
+    background: #fff !important;
+    background-image: none !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, .06) !important;
+    overflow: visible !important;
+    transform: none !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card .cash-position-amount {
+    display: inline !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    line-height: 1.3 !important;
+    letter-spacing: normal !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    overflow-wrap: normal !important;
+    color: #172033 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card .cash-balance-label {
+    display: inline !important;
+    margin: 0 !important;
+    font-size: inherit !important;
+}
+
+@media (max-width: 560px) {
+    body:has(.performance-analytics-card) .page-container
+    .financial-overview-panel .cash-position-card {
+        padding: 5px 8px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .financial-overview-panel .cash-position-card .cash-position-amount {
+        font-size: 12px !important;
+    }
+}
+</style>
 
 
+<style id="isc-balance-chip-final-fix">
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .financial-overview-top > .cash-position-card.isc-balance-chip {
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    flex-grow: 0 !important;
+    flex-shrink: 0 !important;
+    flex-basis: auto !important;
+    width: fit-content !important;
+    min-width: fit-content !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 6px 10px !important;
+    align-self: center !important;
+    justify-self: start !important;
+    box-sizing: border-box !important;
+    border-radius: 9px !important;
+}
 
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card.isc-balance-chip .cash-position-amount {
+    display: inline !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    white-space: nowrap !important;
+}
 
+@media (max-width: 560px) {
+    body:has(.performance-analytics-card) .page-container
+    .financial-overview-panel .cash-position-card.isc-balance-chip {
+        padding: 5px 8px !important;
+    }
+
+    body:has(.performance-analytics-card) .page-container
+    .financial-overview-panel .cash-position-card.isc-balance-chip .cash-position-amount {
+        font-size: 12px !important;
+    }
+}
+</style>
+
+<style id="isc-final-balance-chip-fix">
+/* Compact balance chip; keep reporting-period cards independent */
+html body .financial-overview-panel .financial-overview-top {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+}
+
+html body .financial-overview-panel .financial-overview-top
+> .cash-position-card.isc-balance-chip {
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 6px 10px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    align-self: center !important;
+    box-sizing: border-box !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 9px !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #172033 !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, .06) !important;
+    overflow: visible !important;
+}
+
+html body .financial-overview-panel
+.cash-position-card.isc-balance-chip .cash-position-amount {
+    display: inline-block !important;
+    width: auto !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    line-height: 1.3 !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    color: #172033 !important;
+}
+
+html body .financial-overview-panel
+.cash-position-card.isc-balance-chip .cash-balance-label {
+    display: inline !important;
+    margin: 0 !important;
+    font-size: inherit !important;
+}
+
+body.dark-mode .financial-overview-panel
+.cash-position-card.isc-balance-chip {
+    background: #111c2e !important;
+    border-color: #374151 !important;
+}
+
+body.dark-mode .financial-overview-panel
+.cash-position-card.isc-balance-chip .cash-position-amount {
+    color: #f1f5f9 !important;
+}
+
+@media (max-width: 560px) {
+    html body .financial-overview-panel
+    .cash-position-card.isc-balance-chip {
+        padding: 5px 8px !important;
+    }
+
+    html body .financial-overview-panel
+    .cash-position-card.isc-balance-chip .cash-position-amount {
+        font-size: 12px !important;
+    }
+}
+</style>
