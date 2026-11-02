@@ -401,7 +401,10 @@ def dashboard(request):
 
     earning_days = (
         CoinCollection.objects
-        .filter(user=request.user)
+        .filter(
+            user=request.user,
+            collection_date__range=[month_start, month_end],
+        )
         .values("collection_date")
         .distinct()
         .count()
@@ -409,7 +412,10 @@ def dashboard(request):
 
     total_earnings = money(
         CoinCollection.objects
-        .filter(user=request.user)
+        .filter(
+            user=request.user,
+            collection_date__range=[month_start, month_end],
+        )
         .aggregate(
             total=Sum("actual_m_pesa")
         )["total"]
@@ -417,7 +423,10 @@ def dashboard(request):
 
     total_expenses = money(
         Expense.objects
-        .filter(user=request.user)
+        .filter(
+            user=request.user,
+            date__range=[month_start, month_end],
+        )
         .aggregate(
             total=Sum("amount")
         )["total"]
@@ -466,7 +475,10 @@ def dashboard(request):
 
     earning_day_totals = (
         CoinCollection.objects
-        .filter(user=request.user)
+        .filter(
+            user=request.user,
+            collection_date__range=[month_start, month_end],
+        )
         .values("collection_date")
         .annotate(
             total=Sum("actual_m_pesa")
@@ -588,7 +600,10 @@ def dashboard(request):
 
     latest_coin_collection = (
         CoinCollection.objects
-        .filter(user=request.user)
+        .filter(
+            user=request.user,
+            collection_date__range=[month_start, month_end],
+        )
         .order_by(
             "-collection_date",
             "-created_at"
@@ -679,6 +694,7 @@ def dashboard(request):
             CoinCollection.objects
             .filter(
                 user=request.user,
+                collection_date__range=[month_start, month_end],
                 actual_m_pesa__isnull=False,
             )
             .order_by(

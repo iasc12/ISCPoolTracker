@@ -1301,65 +1301,6 @@ body.dark-mode .financial-overview-panel .summary-card {
             
             <div class="cash-position-card">
             
-                <div class="cash-position-top">
-            
-                    <div>
-            
-                        <span class="cash-position-eyebrow">
-                            CASH POSITION
-                        </span>
-            
-                        <h3>
-                            Cash After Expenses
-                        </h3>
-            
-                        <p>
-                            Expected money remaining after all recorded expenses
-                        </p>
-            
-                    </div>
-            
-                    <div class="cash-position-icon">
-            
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-            
-                            <path
-                                d="M4 7.5h16v11H4z"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                                stroke-linejoin="round">
-                            </path>
-            
-                            <path
-                                d="M4 9.5h16"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.7">
-                            </path>
-            
-                            <path
-                                d="M15.5 14h2.5"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.7"
-                                stroke-linecap="round">
-                            </path>
-            
-                            <circle
-                                cx="12"
-                                cy="14"
-                                r="1.8"
-                                fill="currentColor">
-                            </circle>
-            
-                        </svg>
-            
-                    </div>
-            
-                </div>
-            
-            
                 <div class="cash-position-amount
                     {% if cash_after_expenses < 0 %}
                         cash-negative
@@ -3994,6 +3935,93 @@ body:has(.performance-analytics-card) .page-container .performance-analytics-car
 }
 
 /* ISC-FINANCIAL-CARDS-INDEPENDENT-FINAL-END */
+</style>
+
+
+<style id="isc-financial-overview-final-layout">
+/* Independent Financial Overview cards */
+.page-container .financial-overview-panel > .cards {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 20px !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    padding: 0 !important;
+}
+
+.page-container .financial-overview-panel > .cards > .financial-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 22px !important;
+    background: #fff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 18px !important;
+    box-shadow: 0 5px 16px rgba(15, 23, 42, .07) !important;
+}
+
+/* Restore the full Cash After Expenses card */
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card {
+    display: block !important;
+    justify-self: stretch !important;
+    align-self: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 22px 24px !important;
+    overflow: visible !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 18px !important;
+    background: #fff !important;
+    background-image: none !important;
+    color: #172033 !important;
+    box-shadow: 0 5px 16px rgba(15, 23, 42, .07) !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card .cash-position-top {
+    display: flex !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card h3,
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card p,
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card span,
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card .cash-position-amount {
+    color: #172033 !important;
+}
+
+body:has(.performance-analytics-card) .page-container
+.financial-overview-panel .cash-position-card .cash-position-amount {
+    display: block !important;
+    margin-top: 22px !important;
+    padding: 0 !important;
+    font-size: clamp(23px, 2.3vw, 31px) !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 760px) {
+    .page-container .financial-overview-panel > .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 14px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-container .financial-overview-panel > .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 12px !important;
+    }
+}
 </style>
 
 {% endblock %}
