@@ -2051,6 +2051,31 @@ def generate_report(request):
         ).order_by("date", "id")
     )
 
+    expense_summary = (
+        Expense.objects
+        .filter(
+            user=request.user,
+            date__gte=month_start,
+            date__lte=month_end,
+        )
+        .values("expense_type")
+        .annotate(total=Sum("amount"))
+        .order_by("expense_type")
+    )
+
+    expense_labels = dict(Expense.EXPENSE_TYPE_CHOICES)
+
+    expense_summary = [
+        {
+            "type": expense_labels.get(
+                row["expense_type"],
+                row["expense_type"],
+            ),
+            "amount": row["total"] or Decimal("0.00"),
+        }
+        for row in expense_summary
+    ]
+
     total_earnings = sum(
         (
             item.actual_m_pesa or Decimal("0.00")
@@ -2100,6 +2125,7 @@ def generate_report(request):
         "report_date": report_date,
         "earnings_rows": earnings_rows,
         "expenses": expenses,
+        "expense_summary": expense_summary,
         "total_earnings": total_earnings,
         "total_expenses": total_expenses,
         "net_balance": total_earnings - total_expenses,
@@ -2186,6 +2212,13 @@ def download_report_pdf(request):
 
     expense_labels = dict(
         Expense.EXPENSE_TYPE_CHOICES
+    )
+
+    grouped_expenses = (
+        expenses
+        .values("expense_type")
+        .annotate(total=Sum("amount"))
+        .order_by("expense_type")
     )
 
     # ---------------------------------------------------------
@@ -2539,42 +2572,33 @@ def download_report_pdf(request):
 
     expenses_data = [
         [
-            "Date",
-            "Expense Type",
-            "Amount",
-            "Notes",
+            "Expense Category",
+            "Total Amount",
         ]
     ]
 
-    for expense in expenses:
-
+    for expense in grouped_expenses:
         expense_type = expense_labels.get(
-            expense.expense_type,
-            expense.expense_type,
+            expense["expense_type"],
+            expense["expense_type"],
         )
 
         expenses_data.append([
-            expense.date.strftime("%d %b %Y"),
             expense_type,
-            f"KSh {expense.amount:,.2f}",
-            expense.notes or "-",
+            f"KSh {(expense['total'] or Decimal('0.00')):,.2f}",
         ])
 
     if len(expenses_data) == 1:
         expenses_data.append([
             "No expenses recorded",
             "-",
-            "-",
-            "-",
         ])
 
     expenses_table = Table(
         expenses_data,
         colWidths=[
-            29 * mm,
-            44 * mm,
-            32 * mm,
-            55 * mm,
+            90 * mm,
+            96 * mm,
         ],
         repeatRows=1,
     )
