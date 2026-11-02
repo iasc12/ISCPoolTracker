@@ -1206,39 +1206,27 @@ def reports(request):
     # EXPENSE BREAKDOWN
     # ---------------------------------------------------------
 
-    expense_breakdown = []
-
     expense_labels = dict(
         Expense.EXPENSE_TYPE_CHOICES
     )
 
-    expense_types = (
+    grouped_expenses = (
         all_expenses_qs
         .values("expense_type")
-        .distinct()
+        .annotate(total=Sum("amount"))
+        .order_by()
     )
 
-    for row in expense_types:
-
-        expense_type = row["expense_type"]
-
-        amount = money(
-            all_expenses_qs
-            .filter(
-                expense_type=expense_type
-            )
-            .aggregate(
-                total=Sum("amount")
-            )["total"]
-        )
-
-        expense_breakdown.append({
+    expense_breakdown = [
+        {
             "type": expense_labels.get(
-                expense_type,
-                expense_type,
+                row["expense_type"],
+                row["expense_type"],
             ),
-            "amount": amount,
-        })
+            "amount": money(row["total"]),
+        }
+        for row in grouped_expenses
+    ]
 
     expense_breakdown.sort(
         key=lambda item: item["amount"],
