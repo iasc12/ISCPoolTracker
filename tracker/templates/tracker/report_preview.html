@@ -309,11 +309,12 @@
             .expense-history-details {
                 width: 100%;
                 margin: 0;
-                border-bottom: 1px solid #f1d5d9;
+                border-bottom: 0;
             }
 
-            .expense-history-details:last-child {
-                border-bottom: 0;
+            /* Separator between complete expense categories. */
+            .expense-history-row:not(:last-child) .expense-history-details {
+                border-bottom: 1px solid #f1c5cc;
             }
 
             .expense-history-details > summary {
@@ -500,3 +501,4 @@
     </section>
 </div>
 {% endblock %}
+
