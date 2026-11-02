@@ -27,6 +27,7 @@ from .views import (
     reports,
     generate_report,
 
+    download_report_pdf,
     coin_collection_list,
     add_coin_collection,
     edit_coin_collection,
@@ -150,6 +151,12 @@ urlpatterns = [
         "reports/generate/",
         generate_report,
         name="generate_report",
+    ),
+
+    path(
+        "reports/download/",
+        download_report_pdf,
+        name="download_report_pdf",
     ),
 
     path(

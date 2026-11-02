@@ -7,7 +7,7 @@ from io import BytesIO
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import A4, letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, KeepTogether
@@ -2016,8 +2016,112 @@ def make_system_owner(request):
 
 
 
+
+
 @login_required
 def generate_report(request):
+    """Show a monthly report before PDF download."""
+
+    today = timezone.localdate()
+
+    try:
+        selected_year = int(request.GET.get("year", today.year))
+        selected_month = int(request.GET.get("month", today.month))
+
+        if not 1 <= selected_month <= 12:
+            raise ValueError
+
+    except (TypeError, ValueError):
+        selected_year = today.year
+        selected_month = today.month
+
+    month_start = date(selected_year, selected_month, 1)
+
+    if selected_month == 12:
+        next_month = date(selected_year + 1, 1, 1)
+    else:
+        next_month = date(selected_year, selected_month + 1, 1)
+
+    month_end = next_month - timedelta(days=1)
+
+    report_date = today
+
+    earnings = list(
+        CoinCollection.objects.filter(
+            user=request.user,
+            collection_date__gte=month_start,
+            collection_date__lte=month_end,
+            actual_m_pesa__isnull=False,
+        ).order_by("collection_date", "created_at")
+    )
+
+    expenses = list(
+        Expense.objects.filter(
+            user=request.user,
+            date__gte=month_start,
+            date__lte=month_end,
+        ).order_by("date", "id")
+    )
+
+    total_earnings = sum(
+        (
+            item.actual_m_pesa or Decimal("0.00")
+            for item in earnings
+        ),
+        Decimal("0.00"),
+    )
+
+    total_expenses = sum(
+        (
+            item.amount or Decimal("0.00")
+            for item in expenses
+        ),
+        Decimal("0.00"),
+    )
+
+    earnings_rows = []
+
+    for collection in earnings:
+        expected = (
+            Decimal(collection.coins_collected or 0)
+            * Decimal("20.00")
+        )
+        actual = collection.actual_m_pesa or Decimal("0.00")
+        difference = actual - expected
+
+        rate = (
+            actual / expected * Decimal("100")
+            if expected > 0
+            else None
+        )
+
+        earnings_rows.append({
+            "collection": collection,
+            "expected": expected,
+            "actual": actual,
+            "difference": difference,
+            "rate": rate,
+        })
+
+    context = {
+        "selected_month": selected_month,
+        "selected_year": selected_year,
+        "month_name": month_start.strftime("%B"),
+        "month_start": month_start,
+        "month_end": month_end,
+        "report_date": report_date,
+        "earnings_rows": earnings_rows,
+        "expenses": expenses,
+        "total_earnings": total_earnings,
+        "total_expenses": total_expenses,
+        "net_balance": total_earnings - total_expenses,
+    }
+
+    return render(request, "tracker/report_preview.html", context)
+
+
+@login_required
+def download_report_pdf(request):
 
     today = timezone.localdate()
 
@@ -2191,7 +2295,7 @@ def generate_report(request):
 
     story.append(
         Paragraph(
-            f"Earnings &amp; Expenses History — "
+            f"Earnings &amp; Expenses History - "
             f"{month_name} {selected_year}",
             subtitle_style,
         )
@@ -2327,7 +2431,7 @@ def generate_report(request):
             )
             rate_text = f"{rate:.1f}%"
         else:
-            rate_text = "—"
+            rate_text = "-"
 
         earnings_data.append([
             collection.collection_date.strftime(
@@ -2343,11 +2447,11 @@ def generate_report(request):
     if len(earnings_data) == 1:
         earnings_data.append([
             "No earnings recorded",
-            "—",
-            "—",
-            "—",
-            "—",
-            "—",
+            "-",
+            "-",
+            "-",
+            "-",
+            "-",
         ])
 
     earnings_table = Table(
@@ -2465,15 +2569,15 @@ def generate_report(request):
             expense.date.strftime("%d %b %Y"),
             expense_type,
             f"KSh {expense.amount:,.2f}",
-            expense.notes or "—",
+            expense.notes or "-",
         ])
 
     if len(expenses_data) == 1:
         expenses_data.append([
             "No expenses recorded",
-            "—",
-            "—",
-            "—",
+            "-",
+            "-",
+            "-",
         ])
 
     expenses_table = Table(
@@ -2565,6 +2669,14 @@ def generate_report(request):
             f"<b>Report period:</b> "
             f"{month_start.strftime('%d %b %Y')} "
             f"to {month_end.strftime('%d %b %Y')}",
+            body_style,
+        )
+    )
+
+    story.append(Spacer(1, 6))
+    story.append(
+        Paragraph(
+            f"<b>Prepared on:</b> {today.strftime('%d %b %Y')}",
             body_style,
         )
     )

@@ -1522,24 +1522,10 @@ body.dark-mode .monthly-report-form {
 
                     </div>
 
-                    <div class="report-input-group">
-
-                        <label for="report-date">
-                            Report Date
-                        </label>
-
-                        <input type="date"
-                               id="report-date"
-                               name="report_date"
-                               value="{{ month_end|date:'Y-m-d' }}"
-                               required>
-
-                    </div>
-
                     <button type="submit"
                             class="generate-report-button">
 
-                        Generate Report
+                        View Report
 
                     </button>
 
@@ -1880,7 +1866,7 @@ body.dark-mode .monthly-report-form {
 
 
         <a
-            href="{% url 'generate_report' %}"
+            href="{% url 'generate_report' %}?month={{ selected_month }}&year={{ selected_year }}"
             class="generate-button"
         >
 
@@ -1892,7 +1878,7 @@ body.dark-mode .monthly-report-form {
 
             </svg>
 
-            Generate Report
+            View Report
 
         </a>
 

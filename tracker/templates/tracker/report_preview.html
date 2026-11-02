@@ -1,0 +1,258 @@
+{% extends "tracker/base.html" %}
+
+{% block content %}
+<style>
+.report-preview-page {
+    max-width: 1180px;
+    margin: 30px auto;
+    padding: 0 18px 40px;
+    color: var(--text-color, #172033);
+}
+.report-preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+.report-preview-header h1 {
+    margin: 0 0 7px;
+    font-size: 28px;
+    font-weight: 800;
+}
+.report-preview-subtitle {
+    color: #64748b;
+    font-size: 14px;
+}
+.report-preview-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.report-preview-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 43px;
+    padding: 0 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+}
+.report-back-link {
+    color: var(--text-color, #334155);
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border-color, #e2e8f0);
+}
+.report-download-link {
+    color: #fff;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+.report-preview-card {
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 16px;
+    padding: 23px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 18px rgba(15,23,42,.045);
+}
+.report-document-heading {
+    text-align: center;
+    padding: 10px 0 22px;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+    margin-bottom: 22px;
+}
+.report-document-heading h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+}
+.report-document-heading p {
+    margin: 5px 0;
+    color: #64748b;
+    font-size: 13px;
+}
+.report-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 15px;
+    margin-bottom: 24px;
+}
+.report-summary-item {
+    padding: 18px;
+    border-radius: 12px;
+    background: var(--secondary-card-bg,#f8fafc);
+    border: 1px solid var(--border-color,#e2e8f0);
+    min-width: 0;
+}
+.report-summary-item span {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 9px;
+}
+.report-summary-item strong {
+    display: block;
+    font-size: clamp(17px,2.4vw,24px);
+    overflow-wrap: anywhere;
+}
+.report-positive { color: #059669; }
+.report-negative { color: #dc2626; }
+.report-section-title {
+    font-size: 17px;
+    font-weight: 800;
+    margin: 25px 0 13px;
+}
+.report-table-wrap { width: 100%; overflow-x: auto; }
+.report-preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 680px;
+}
+.report-preview-table th,
+.report-preview-table td {
+    text-align: left;
+    padding: 12px 11px;
+    border-bottom: 1px solid var(--border-color,#e2e8f0);
+    vertical-align: top;
+}
+.report-preview-table th {
+    color: #64748b;
+    background: var(--secondary-card-bg,#f8fafc);
+    font-size: 11px;
+    text-transform: uppercase;
+}
+.report-preview-table td.amount {
+    white-space: nowrap;
+    font-weight: 700;
+}
+.report-empty-row {
+    color: #64748b;
+    text-align: center !important;
+    padding: 22px !important;
+}
+.report-period-footer {
+    margin-top: 22px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color,#e2e8f0);
+    color: #64748b;
+    font-size: 13px;
+}
+@media(max-width:700px) {
+    .report-preview-header { align-items: stretch; }
+    .report-preview-actions { width: 100%; }
+    .report-preview-actions a { flex: 1; }
+    .report-summary-grid { grid-template-columns: 1fr; }
+    .report-preview-card { padding: 16px; }
+}
+@media print {
+    .report-preview-actions { display: none !important; }
+    .report-preview-page { max-width: none; margin: 0; padding: 0; }
+    .report-preview-card { box-shadow: none; }
+}
+</style>
+
+<div class="report-preview-page">
+    <div class="report-preview-header">
+        <div>
+            <h1>Report Preview</h1>
+            <div class="report-preview-subtitle">
+                Review your financial report before downloading it.
+            </div>
+        </div>
+        <div class="report-preview-actions">
+            <a class="report-back-link"
+               href="{% url 'reports' %}?month={{ selected_month }}&year={{ selected_year }}">
+                Back to Reports
+            </a>
+            <a class="report-download-link"
+               href="{% url 'download_report_pdf' %}?month={{ selected_month }}&year={{ selected_year }}">
+                Download PDF
+            </a>
+        </div>
+    </div>
+
+    <section class="report-preview-card">
+        <div class="report-document-heading">
+            <h2>ISC Pool Tracker</h2>
+            <p><strong>{{ month_name }} {{ selected_year }} - Earnings &amp; Expenses Report</strong></p>
+            <p>Report date: {{ report_date|date:"d M Y" }}</p>
+            <p>Reporting period: {{ month_start|date:"d M Y" }} - {{ month_end|date:"d M Y" }}</p>
+        </div>
+
+        <div class="report-summary-grid">
+            <div class="report-summary-item">
+                <span>Total Earnings</span>
+                <strong class="report-positive">KSh {{ total_earnings|floatformat:2 }}</strong>
+            </div>
+            <div class="report-summary-item">
+                <span>Total Expenses</span>
+                <strong>KSh {{ total_expenses|floatformat:2 }}</strong>
+            </div>
+            <div class="report-summary-item">
+                <span>Net Balance</span>
+                <strong class="{% if net_balance < 0 %}report-negative{% else %}report-positive{% endif %}">
+                    KSh {{ net_balance|floatformat:2 }}
+                </strong>
+            </div>
+        </div>
+
+        <h3 class="report-section-title">Earnings History</h3>
+        <div class="report-table-wrap">
+            <table class="report-preview-table">
+                <thead>
+                    <tr>
+                        <th>Date</th><th>Coins</th><th>Expected M-Pesa</th>
+                        <th>Actual M-Pesa</th><th>Difference</th><th>Collection Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in earnings_rows %}
+                    <tr>
+                        <td>{{ row.collection.collection_date|date:"d M Y" }}</td>
+                        <td>{{ row.collection.coins_collected }}</td>
+                        <td class="amount">KSh {{ row.expected|floatformat:2 }}</td>
+                        <td class="amount">KSh {{ row.actual|floatformat:2 }}</td>
+                        <td class="amount {% if row.difference < 0 %}report-negative{% else %}report-positive{% endif %}">
+                            KSh {{ row.difference|floatformat:2 }}
+                        </td>
+                        <td>{% if row.rate != None %}{{ row.rate|floatformat:1 }}%{% else %}?{% endif %}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" class="report-empty-row">No earnings recorded for this period.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="report-section-title">Expenses History</h3>
+        <div class="report-table-wrap">
+            <table class="report-preview-table">
+                <thead>
+                    <tr><th>Date</th><th>Expense Type</th><th>Amount</th><th>Notes</th></tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>{{ expense.date|date:"d M Y" }}</td>
+                        <td>{{ expense.get_expense_type_display }}</td>
+                        <td class="amount">KSh {{ expense.amount|floatformat:2 }}</td>
+                        <td>{{ expense.notes|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="report-empty-row">No expenses recorded for this period.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="report-period-footer">
+            Prepared on {{ report_date|date:"d M Y" }}.
+            This report covers {{ month_start|date:"d M Y" }} to {{ month_end|date:"d M Y" }}.
+        </div>
+    </section>
+</div>
+{% endblock %}
