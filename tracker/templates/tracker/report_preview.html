@@ -609,66 +609,23 @@
 
 <script id="isc-one-page-report-print">
 (function () {
-    function printReportOnePage() {
-        const page = document.querySelector(".report-preview-page");
-        if (!page) {
-            window.print();
-            return;
-        }
-
-        // Include every expense category in the PDF.
-        page.querySelectorAll(".expense-history-details").forEach(function (item) {
-            item.open = true;
-        });
-
-        // Reset previous print scaling before measuring.
-        page.style.transform = "none";
-        page.style.width = "100%";
-        page.style.height = "auto";
-
-        requestAnimationFrame(function () {
-            const width = page.scrollWidth;
-            const height = page.scrollHeight;
-
-            // A4 printable area with 5mm margins, in CSS pixels.
-            const availableWidth = 200 * 96 / 25.4;
-            const availableHeight = 287 * 96 / 25.4;
-
-            const scale = Math.min(
-                1,
-                availableWidth / width,
-                availableHeight / height
-            );
-
-            page.style.width = width + "px";
-            page.style.height = (height * scale) + "px";
-            page.style.transformOrigin = "top left";
-            page.style.transform = "scale(" + scale + ")";
-
-            requestAnimationFrame(function () {
-                window.print();
-            });
-        });
-    }
-
     const downloadLink = document.querySelector(".report-download-link");
+
     if (downloadLink) {
         downloadLink.onclick = function (event) {
             event.preventDefault();
-            printReportOnePage();
+
+            // Expand every expense category before printing.
+            document.querySelectorAll(
+                ".expense-history-details"
+            ).forEach(function (item) {
+                item.open = true;
+            });
+
+            // Print at normal size across as many A4 pages as needed.
+            window.print();
         };
     }
-
-    // Restore normal preview appearance after printing.
-    window.addEventListener("afterprint", function () {
-        const page = document.querySelector(".report-preview-page");
-        if (page) {
-            page.style.transform = "";
-            page.style.transformOrigin = "";
-            page.style.width = "";
-            page.style.height = "";
-        }
-    });
 })();
 </script>
 
