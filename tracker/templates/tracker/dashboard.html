@@ -2331,6 +2331,272 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
     border-bottom-color: #374151;
 }
 </style>
+
+<style>
+/* ISC WEEKLY EARNINGS CHART CONTROLS
+   These styles affect only the navigation and PDF controls.
+   The existing Chart.js appearance is deliberately untouched.
+*/
+.isc-earnings-chart-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 12px 0 18px;
+}
+
+.isc-chart-week-navigation {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.isc-chart-week-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: #172033;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 19px;
+    font-weight: 700;
+    border: 0;
+}
+
+.isc-chart-week-button:hover {
+    background: #26364f;
+    color: #ffffff;
+}
+
+.isc-chart-week-disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.isc-chart-week-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.isc-earnings-pdf-dropdown {
+    position: relative;
+}
+
+.isc-earnings-pdf-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 9px;
+    background: #172033;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    list-style: none;
+}
+
+.isc-earnings-pdf-trigger::-webkit-details-marker {
+    display: none;
+}
+
+.isc-earnings-pdf-arrow {
+    font-size: 11px;
+}
+
+.isc-earnings-pdf-dropdown[open] .isc-earnings-pdf-arrow {
+    transform: rotate(180deg);
+}
+
+.isc-earnings-pdf-form {
+    position: absolute;
+    z-index: 20;
+    right: 0;
+    top: calc(100% + 8px);
+    width: 245px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.isc-earnings-pdf-form label {
+    color: #334155;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.isc-earnings-pdf-form input {
+    width: 100%;
+    min-width: 0;
+    padding: 9px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    color: #172033;
+    background: #ffffff;
+}
+
+.isc-earnings-pdf-form button {
+    margin-top: 7px;
+    padding: 10px;
+    border: 0;
+    border-radius: 8px;
+    background: #15803d;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+@media (max-width: 520px) {
+    .isc-earnings-chart-toolbar {
+        align-items: flex-start;
+    }
+
+    .isc-chart-week-navigation {
+        flex-wrap: wrap;
+    }
+
+    .isc-chart-week-label {
+        font-size: 12px;
+    }
+}
+</style>
+
+
+<style id="isc-financial-chart-header-position-v1">
+
+.isc-financial-chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 18px;
+}
+
+.isc-financial-chart-header > h2 {
+    margin: 0 !important;
+}
+
+.isc-financial-chart-header .isc-earnings-chart-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0 !important;
+}
+
+.isc-financial-chart-header .isc-chart-week-button {
+    background: #15803d !important;
+    color: #ffffff !important;
+    border: 1px solid #15803d !important;
+}
+
+.isc-financial-chart-header .isc-chart-week-label {
+    background: #dcfce7 !important;
+    color: #166534 !important;
+    padding: 9px 12px;
+    border-radius: 9px;
+    font-weight: 800;
+}
+
+.isc-financial-chart-header .isc-chart-week-disabled {
+    background: #bbf7d0 !important;
+    color: #166534 !important;
+    border-color: #bbf7d0 !important;
+}
+
+.isc-financial-chart-header .isc-earnings-pdf-trigger {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border: 1px solid #1d4ed8 !important;
+    border-radius: 9px;
+    padding: 10px 15px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.isc-financial-chart-header .isc-earnings-pdf-trigger:hover {
+    background: #1d4ed8 !important;
+}
+
+@media (max-width: 650px) {
+    .isc-financial-chart-header {
+        align-items: flex-start;
+    }
+
+    .isc-financial-chart-header .isc-earnings-chart-toolbar {
+        justify-content: flex-start;
+        width: 100%;
+    }
+}
+
+</style>
+
+
+<style id="isc-financial-chart-right-stacked-controls-v1">
+
+.isc-financial-chart-header {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 12px !important;
+}
+
+.isc-financial-chart-header > h2 {
+    margin: 0 !important;
+    flex-shrink: 0;
+}
+
+.isc-financial-chart-header .isc-earnings-chart-toolbar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    width: auto !important;
+    margin: 0 0 0 auto !important;
+}
+
+.isc-financial-chart-header .isc-chart-week-navigation {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    flex-wrap: nowrap !important;
+    gap: 5px !important;
+}
+
+.isc-financial-chart-header .isc-earnings-pdf-dropdown {
+    align-self: flex-end !important;
+    margin: 0 !important;
+}
+
+@media (max-width: 520px) {
+    .isc-financial-chart-header {
+        flex-wrap: wrap !important;
+    }
+
+    .isc-financial-chart-header .isc-earnings-chart-toolbar {
+        width: 100% !important;
+        align-items: flex-end !important;
+    }
+}
+
+</style>
+
 <!-- CHARTS -->
 
     <div class="charts-section">
@@ -2341,11 +2607,92 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
         <!-- DAILY EARNINGS -->
 
         <div class="chart-card">
-            <h2 class="isc-financial-heading-inside-card">Financial Charts</h2>
+            <div class="isc-financial-chart-header">
 
+                <h2 class="isc-financial-heading-inside-card">Financial Charts</h2>
+
+                <!-- WEEKLY EARNINGS NAVIGATION AND PDF EXPORT -->
+                <div class="isc-earnings-chart-toolbar">
+
+                <div class="isc-chart-week-navigation">
+                    <a
+                        class="isc-chart-week-button"
+                        href="?chart_week={{ previous_chart_week|date:'Y-m-d' }}"
+                        aria-label="Previous week"
+                        title="Previous week"
+                    >
+                        &#9664;
+                    </a>
+
+                    <span class="isc-chart-week-label">
+                        {{ chart_week_start|date:"d M Y" }}
+                        &ndash;
+                        {{ chart_week_end|date:"d M Y" }}
+                    </span>
+
+                    {% if chart_week_start < week_start %}
+                        <a
+                            class="isc-chart-week-button"
+                            href="?chart_week={{ next_chart_week|date:'Y-m-d' }}"
+                            aria-label="Next week"
+                            title="Next week"
+                        >
+                            &#9654;
+                        </a>
+                    {% else %}
+                        <span
+                            class="isc-chart-week-button isc-chart-week-disabled"
+                            aria-disabled="true"
+                            title="You are viewing the current week"
+                        >
+                            &#9654;
+                        </span>
+                    {% endif %}
+                </div>
+
+                <details class="isc-earnings-pdf-dropdown">
+                    <summary
+                        class="isc-earnings-pdf-trigger"
+                        title="Export earnings PDF"
+                        aria-label="Export earnings PDF"
+                    >
+                        <span>PDF Export</span>
+                        <span class="isc-earnings-pdf-arrow">&#9660;</span>
+                    </summary>
+
+                    <form
+                        method="get"
+                        action="{% url 'earnings_chart_preview' %}"
+                        class="isc-earnings-pdf-form"
+                    >
+                        <label for="earnings-pdf-start">Start date</label>
+                        <input
+                            type="date"
+                            id="earnings-pdf-start"
+                            name="start_date"
+                            required
+                        >
+
+                        <label for="earnings-pdf-end">End date</label>
+                        <input
+                            type="date"
+                            id="earnings-pdf-end"
+                            name="end_date"
+                            required
+                        >
+
+                        <button type="submit">
+                            Preview earnings PDF
+                        </button>
+                    </form>
+                </details>
+
+                </div>
+
+            </div>
 
             <h3>
-                Daily Earnings - Last 7 Days
+                Daily Earnings
             </h3>
 
             <p class="chart-description">

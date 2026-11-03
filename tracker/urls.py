@@ -26,6 +26,8 @@ from .views import (
 
     reports,
     generate_report,
+    earnings_chart_preview,
+    download_earnings_chart_pdf,
 
     download_report_pdf,
     coin_collection_list,
@@ -145,6 +147,18 @@ urlpatterns = [
         "reports/",
         reports,
         name="reports",
+    ),
+
+    path(
+        "earnings-chart/preview/",
+        earnings_chart_preview,
+        name="earnings_chart_preview",
+    ),
+
+    path(
+        "earnings-chart/download/",
+        download_earnings_chart_pdf,
+        name="download_earnings_chart_pdf",
     ),
 
     path(

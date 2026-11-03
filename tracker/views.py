@@ -7,10 +7,13 @@ from io import BytesIO
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
-from reportlab.lib.pagesizes import A4, letter
+from reportlab.lib.pagesizes import A4, letter, landscape
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, KeepTogether
+from reportlab.graphics.shapes import Drawing
+from reportlab.graphics.charts.barcharts import VerticalBarChart
+
 
 from django.conf import settings
 from django.contrib import messages
@@ -511,20 +514,35 @@ def dashboard(request):
         }
 
     # ---------------------------------------------------------
-    # LAST 7 DAYS CHART DATA
+    # WEEKLY EARNINGS CHART DATA
     # ---------------------------------------------------------
+
+    chart_week_start = week_start
+
+    requested_chart_week = request.GET.get("chart_week")
+
+    if requested_chart_week:
+        try:
+            requested_date = date.fromisoformat(requested_chart_week)
+
+            chart_week_start = (
+                requested_date -
+                timedelta(days=requested_date.weekday())
+            )
+        except (TypeError, ValueError):
+            chart_week_start = week_start
+
+    chart_week_end = chart_week_start + timedelta(days=6)
+
+    previous_chart_week = chart_week_start - timedelta(days=7)
+    next_chart_week = chart_week_start + timedelta(days=7)
 
     chart_labels = []
     earnings_chart_values = []
-    expense_chart_values = []
-    profit_chart_values = []
 
-    for i in range(6, -1, -1):
+    for i in range(7):
 
-        chart_date = (
-            today -
-            timedelta(days=i)
-        )
+        chart_date = chart_week_start + timedelta(days=i)
 
         daily_earnings = money(
             CoinCollection.objects
@@ -537,36 +555,12 @@ def dashboard(request):
             )["total"]
         )
 
-        daily_expenses = money(
-            Expense.objects
-            .filter(
-                user=request.user,
-                date=chart_date,
-            )
-            .aggregate(
-                total=Sum("amount")
-            )["total"]
-        )
-
-        daily_profit = (
-            daily_earnings -
-            daily_expenses
-        )
-
         chart_labels.append(
             chart_date.strftime("%a %d %b")
         )
 
         earnings_chart_values.append(
             float(daily_earnings)
-        )
-
-        expense_chart_values.append(
-            float(daily_expenses)
-        )
-
-        profit_chart_values.append(
-            float(daily_profit)
         )
 
     # ---------------------------------------------------------
@@ -667,6 +661,11 @@ def dashboard(request):
         "lowest_day": lowest_day,
 
         # Charts
+        "chart_week_start": chart_week_start,
+        "chart_week_end": chart_week_end,
+        "previous_chart_week": previous_chart_week,
+        "next_chart_week": next_chart_week,
+
         "chart_labels": chart_labels,
 
         "chart_values": (
@@ -675,14 +674,6 @@ def dashboard(request):
 
         "earnings_chart_values": (
             earnings_chart_values
-        ),
-
-        "expense_chart_values": (
-            expense_chart_values
-        ),
-
-        "profit_chart_values": (
-            profit_chart_values
         ),
 
         # Target
@@ -2020,6 +2011,253 @@ def make_system_owner(request):
 
 
 
+
+
+
+def _earnings_chart_report_data(user, start_date, end_date):
+    """Return daily actual M-Pesa earnings for one user's date range."""
+
+    records = (
+        CoinCollection.objects
+        .filter(
+            user=user,
+            collection_date__range=(start_date, end_date),
+            actual_m_pesa__isnull=False,
+        )
+        .values("collection_date")
+        .annotate(total=Sum("actual_m_pesa"))
+        .order_by("collection_date")
+    )
+
+    totals_by_date = {
+        row["collection_date"]: row["total"] or Decimal("0.00")
+        for row in records
+    }
+
+    labels = []
+    values = []
+    total_earnings = Decimal("0.00")
+
+    current_date = start_date
+
+    while current_date <= end_date:
+        amount = totals_by_date.get(
+            current_date,
+            Decimal("0.00"),
+        )
+
+        labels.append(current_date.strftime("%d %b %Y"))
+        values.append(float(amount))
+        total_earnings += amount
+
+        current_date += timedelta(days=1)
+
+    return labels, values, total_earnings
+
+
+@login_required
+def earnings_chart_preview(request):
+    """Preview an earnings-only chart for a selected date range."""
+
+    start_date_text = request.GET.get("start_date", "")
+    end_date_text = request.GET.get("end_date", "")
+
+    error = None
+    labels = []
+    values = []
+    total_earnings = Decimal("0.00")
+
+    start_date = None
+    end_date = None
+
+    try:
+        if not start_date_text or not end_date_text:
+            raise ValueError("Please select both a start date and an end date.")
+
+        start_date = date.fromisoformat(start_date_text)
+        end_date = date.fromisoformat(end_date_text)
+
+        if start_date > end_date:
+            raise ValueError("The start date cannot be after the end date.")
+
+        labels, values, total_earnings = _earnings_chart_report_data(
+            request.user,
+            start_date,
+            end_date,
+        )
+
+    except ValueError as exc:
+        error = str(exc)
+
+    context = {
+        "start_date": start_date,
+        "end_date": end_date,
+        "start_date_text": start_date_text,
+        "end_date_text": end_date_text,
+        "labels": labels,
+        "values": values,
+        "total_earnings": total_earnings,
+        "error": error,
+    }
+
+    return render(
+        request,
+        "tracker/earnings_chart_preview.html",
+        context,
+    )
+
+
+@login_required
+def download_earnings_chart_pdf(request):
+    """Generate an earnings-only PDF for a selected date range."""
+
+    try:
+        start_date = date.fromisoformat(
+            request.GET.get("start_date", "")
+        )
+        end_date = date.fromisoformat(
+            request.GET.get("end_date", "")
+        )
+
+        if start_date > end_date:
+            return HttpResponse(
+                "The start date cannot be after the end date.",
+                status=400,
+            )
+
+    except (TypeError, ValueError):
+        return HttpResponse(
+            "Please provide valid start and end dates.",
+            status=400,
+        )
+
+    labels, values, total_earnings = _earnings_chart_report_data(
+        request.user,
+        start_date,
+        end_date,
+    )
+
+    buffer = BytesIO()
+
+    document = SimpleDocTemplate(
+        buffer,
+        pagesize=landscape(A4),
+        rightMargin=15 * mm,
+        leftMargin=15 * mm,
+        topMargin=15 * mm,
+        bottomMargin=15 * mm,
+        title="ISC Pool Tracker Earnings Report",
+        author="ISC Pool Tracker",
+    )
+
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        "EarningsPDFTitle",
+        parent=styles["Title"],
+        alignment=TA_CENTER,
+        textColor=colors.HexColor("#172033"),
+        fontSize=19,
+        spaceAfter=10,
+    )
+
+    subtitle_style = ParagraphStyle(
+        "EarningsPDFSubtitle",
+        parent=styles["Normal"],
+        alignment=TA_CENTER,
+        textColor=colors.HexColor("#64748b"),
+        fontSize=10,
+        spaceAfter=16,
+    )
+
+    total_style = ParagraphStyle(
+        "EarningsPDFTotal",
+        parent=styles["Heading2"],
+        alignment=TA_CENTER,
+        textColor=colors.HexColor("#15803d"),
+        fontSize=15,
+        spaceBefore=8,
+        spaceAfter=18,
+    )
+
+    story = [
+        Paragraph("ISC POOL TRACKER", title_style),
+        Paragraph("Daily Earnings Report", subtitle_style),
+        Paragraph(
+            f"Period: {start_date.strftime('%d %B %Y')} "
+            f"to {end_date.strftime('%d %B %Y')}",
+            subtitle_style,
+        ),
+        Paragraph(
+            f"Total Earnings: KSh {total_earnings:,.2f}",
+            total_style,
+        ),
+    ]
+
+    drawing = Drawing(700, 330)
+
+    chart = VerticalBarChart()
+    chart.x = 45
+    chart.y = 65
+    chart.width = 620
+    chart.height = 225
+
+    chart.data = [tuple(values)]
+    chart.categoryAxis.categoryNames = labels
+
+    chart.valueAxis.valueMin = 0
+    chart.valueAxis.valueMax = max(values) * 1.15 if any(values) else 1
+
+    chart.categoryAxis.labels.fontSize = 7
+    chart.categoryAxis.labels.angle = 45
+    chart.categoryAxis.labels.dx = -3
+    chart.categoryAxis.labels.dy = -8
+
+    chart.valueAxis.labels.fontSize = 8
+    chart.valueAxis.labels.fillColor = colors.HexColor("#475569")
+
+    chart.bars[0].fillColor = colors.HexColor("#16a34a")
+    chart.bars[0].strokeColor = colors.HexColor("#15803d")
+    chart.barSpacing = 3
+    chart.groupSpacing = 8
+
+    drawing.add(chart)
+    story.append(drawing)
+
+    story.append(Spacer(1, 12))
+
+    footer_style = ParagraphStyle(
+        "EarningsPDFFooter",
+        parent=styles["Normal"],
+        alignment=TA_CENTER,
+        textColor=colors.HexColor("#64748b"),
+        fontSize=8,
+    )
+
+    story.append(
+        Paragraph(
+            "This report contains recorded earnings only. "
+            "Amounts are based on actual M-Pesa collections.",
+            footer_style,
+        )
+    )
+
+    document.build(story)
+
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    response = HttpResponse(
+        pdf,
+        content_type="application/pdf",
+    )
+
+    response["Content-Disposition"] = (
+        'attachment; filename="ISC-Earnings-Report-'
+        f'{start_date.isoformat()}-to-{end_date.isoformat()}.pdf"'
+    )
+
+    return response
 
 
 @login_required

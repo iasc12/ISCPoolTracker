@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnings Report Preview | ISC Pool Tracker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 28px 16px;
+            background: #f1f5f9;
+            color: #172033;
+            font-family: Arial, sans-serif;
+        }
+
+        .report-container {
+            width: 100%;
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        .report-card {
+            padding: 28px;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .report-header {
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+
+        .report-header h1 {
+            margin: 0 0 8px;
+            font-size: 25px;
+        }
+
+        .report-header p {
+            color: #64748b;
+            margin: 5px 0;
+        }
+
+        .total-card {
+            margin: 22px auto;
+            padding: 20px;
+            max-width: 430px;
+            text-align: center;
+            border-radius: 12px;
+            background: #ecfdf5;
+        }
+
+        .total-card span {
+            display: block;
+            color: #166534;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .total-card strong {
+            display: block;
+            margin-top: 8px;
+            color: #15803d;
+            font-size: 29px;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 390px;
+            margin-top: 20px;
+        }
+
+        .error {
+            padding: 14px;
+            border-radius: 9px;
+            background: #fef2f2;
+            color: #b91c1c;
+            margin: 20px 0;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .actions a {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .download {
+            background: #15803d;
+            color: #ffffff;
+        }
+
+        .back {
+            background: #172033;
+            color: #ffffff;
+        }
+
+        @media (max-width: 600px) {
+            .report-card {
+                padding: 17px;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            .total-card strong {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="report-container">
+    <div class="report-card">
+
+        <div class="report-header">
+            <h1>ISC Pool Tracker</h1>
+            <p>Daily Earnings Report Preview</p>
+
+            {% if start_date and end_date %}
+                <p>
+                    {{ start_date|date:"d M Y" }}
+                    &ndash; {{ end_date|date:"d M Y" }}
+                </p>
+            {% endif %}
+        </div>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% else %}
+
+            <div class="total-card">
+                <span>TOTAL EARNINGS</span>
+                <strong>KSh {{ total_earnings|floatformat:2 }}</strong>
+            </div>
+
+            <h3>Daily Earnings</h3>
+
+            <div class="chart-container">
+                <canvas id="earningsPreviewChart"></canvas>
+            </div>
+
+            {{ labels|json_script:"preview-labels" }}
+            {{ values|json_script:"preview-values" }}
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+            <script>
+                const labels = JSON.parse(
+                    document.getElementById("preview-labels").textContent
+                );
+
+                const values = JSON.parse(
+                    document.getElementById("preview-values").textContent
+                );
+
+                const canvas = document.getElementById(
+                    "earningsPreviewChart"
+                );
+
+                const ctx = canvas.getContext("2d");
+
+                const gradient = ctx.createLinearGradient(0, 0, 0, 390);
+                gradient.addColorStop(0, "#4ade80");
+                gradient.addColorStop(0.5, "#22c55e");
+                gradient.addColorStop(1, "#15803d");
+
+                new Chart(canvas, {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Daily Earnings",
+                            data: values,
+                            backgroundColor: gradient,
+                            borderRadius: 12,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return "KSh " +
+                                            Number(context.raw).toLocaleString(
+                                                "en-KE",
+                                                {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2
+                                                }
+                                            );
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return "KSh " +
+                                            Number(value).toLocaleString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            </script>
+
+            <div class="actions">
+                <a
+                    class="download"
+                    href="{% url 'download_earnings_chart_pdf' %}?start_date={{ start_date_text|urlencode }}&amp;end_date={{ end_date_text|urlencode }}"
+                >
+                    Download PDF
+                </a>
+
+                <a class="back" href="{% url 'dashboard' %}">
+                    Back to Dashboard
+                </a>
+            </div>
+
+        {% endif %}
+
+        {% if error %}
+            <div class="actions">
+                <a class="back" href="{% url 'dashboard' %}">
+                    Back to Dashboard
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+</body>
+</html>
