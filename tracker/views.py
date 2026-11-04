@@ -527,13 +527,14 @@ def dashboard(request):
         or timezone.localdate()
     )
 
-    chart_end = timezone.localdate()
+    today = timezone.localdate()
+    chart_end = today + timedelta(days=6 - today.weekday())
 
     daily_totals = (
         CoinCollection.objects
         .filter(
             user=request.user,
-            collection_date__range=(chart_start, chart_end),
+            collection_date__range=(chart_start, today),
         )
         .values("collection_date")
         .annotate(total=Sum("actual_m_pesa"))

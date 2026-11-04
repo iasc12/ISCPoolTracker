@@ -2982,57 +2982,11 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
         }
     });
 
-    // AUTOMATIC HORIZONTAL SCROLLING
-
-    let isPaused = false;
+    // Keep the chart stationary for manual navigation.
     let animationFrame = null;
-    let lastFrameTime = null;
 
-    const scrollSpeed = 22;
-
-    function pauseScrolling() {
-        isPaused = true;
-        lastFrameTime = null;
-    }
-
-    function resumeScrolling() {
-        isPaused = false;
-        lastFrameTime = null;
-    }
-
-    function automaticScroll(timestamp) {
-
-        const maximumScroll =
-            scrollContainer.scrollWidth -
-            scrollContainer.clientWidth;
-
-        if (maximumScroll > 1 && !isPaused) {
-
-            if (lastFrameTime !== null) {
-
-                const elapsed = Math.min(
-                    (timestamp - lastFrameTime) / 1000,
-                    0.05
-                );
-
-                scrollContainer.scrollLeft +=
-                    scrollSpeed * elapsed;
-
-                if (
-                    scrollContainer.scrollLeft >= maximumScroll
-                ) {
-                    scrollContainer.scrollLeft = 0;
-                }
-            }
-
-            lastFrameTime = timestamp;
-
-        } else {
-            lastFrameTime = null;
-        }
-
-        animationFrame = requestAnimationFrame(automaticScroll);
-    }
+    function pauseScrolling() {}
+    function resumeScrolling() {}
 
     // Pause while the user interacts with the chart.
     scrollContainer.addEventListener(
@@ -3135,17 +3089,17 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
     scrollContainer.addEventListener("pointercancel", stopChartDrag);
     scrollContainer.addEventListener("lostpointercapture", stopChartDrag);
 
-    // Respect reduced-motion preferences.
-    const reducedMotion =
-        window.matchMedia &&
-        window.matchMedia(
-            "(prefers-reduced-motion: reduce)"
-        ).matches;
+    // Initially show the latest week (rightmost dates).
+    requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+            const maximumScroll =
+                scrollContainer.scrollWidth -
+                scrollContainer.clientWidth;
 
-    if (!reducedMotion) {
-        animationFrame =
-            requestAnimationFrame(automaticScroll);
-    }
+            scrollContainer.scrollLeft =
+                Math.max(0, maximumScroll);
+        });
+    });
 
     window.addEventListener("pagehide", function () {
 
