@@ -2614,42 +2614,6 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
                 <!-- WEEKLY EARNINGS NAVIGATION AND PDF EXPORT -->
                 <div class="isc-earnings-chart-toolbar">
 
-                <div class="isc-chart-week-navigation">
-                    <a
-                        class="isc-chart-week-button"
-                        href="?chart_week={{ previous_chart_week|date:'Y-m-d' }}"
-                        aria-label="Previous week"
-                        title="Previous week"
-                    >
-                        &#9664;
-                    </a>
-
-                    <span class="isc-chart-week-label">
-                        {{ chart_week_start|date:"d M Y" }}
-                        &ndash;
-                        {{ chart_week_end|date:"d M Y" }}
-                    </span>
-
-                    {% if chart_week_start < week_start %}
-                        <a
-                            class="isc-chart-week-button"
-                            href="?chart_week={{ next_chart_week|date:'Y-m-d' }}"
-                            aria-label="Next week"
-                            title="Next week"
-                        >
-                            &#9654;
-                        </a>
-                    {% else %}
-                        <span
-                            class="isc-chart-week-button isc-chart-week-disabled"
-                            aria-disabled="true"
-                            title="You are viewing the current week"
-                        >
-                            &#9654;
-                        </span>
-                    {% endif %}
-                </div>
-
                 <details class="isc-earnings-pdf-dropdown">
                     <summary
                         class="isc-earnings-pdf-trigger"
@@ -2700,10 +2664,20 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
             </p>
 
             <div class="chart-box">
-
-                <canvas id="earningsChart"></canvas>
-
-            </div>
+    <div
+        class="isc-earnings-scroll"
+        id="earningsChartScroll"
+        aria-label="Automatically scrolling daily earnings chart"
+        tabindex="0"
+    >
+        <div
+            class="isc-earnings-scroll-inner"
+            id="earningsChartInner"
+        >
+            <canvas id="earningsChart"></canvas>
+        </div>
+    </div>
+</div>
 
         </div>
 
@@ -2726,6 +2700,78 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
 
 <!-- CHART DATA -->
 
+
+<style id="isc-automatic-earnings-scroll-v1">
+
+.isc-earnings-scroll {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    touch-action: pan-x pan-y;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
+}
+
+.isc-earnings-scroll:active {
+    cursor: grabbing;
+}
+
+.isc-earnings-scroll:focus-visible {
+    outline: 2px solid #22c55e;
+    outline-offset: 3px;
+    border-radius: 8px;
+}
+
+.isc-earnings-scroll::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+.isc-earnings-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.isc-earnings-scroll::-webkit-scrollbar-thumb {
+    background: #22c55e;
+    border-radius: 20px;
+}
+
+.isc-earnings-scroll-inner {
+    position: relative;
+    height: 320px;
+    min-width: 100%;
+}
+
+.isc-earnings-scroll-inner canvas {
+    display: block;
+    height: 320px !important;
+    max-width: none !important;
+}
+
+@media (max-width: 700px) {
+    .isc-earnings-scroll-inner {
+        height: 280px;
+    }
+
+    .isc-earnings-scroll-inner canvas {
+        height: 280px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .isc-earnings-scroll {
+        scroll-behavior: auto;
+    }
+}
+
+</style>
+
 {{ chart_labels|json_script:"chart-labels" }}
 {{ earnings_chart_values|json_script:"earnings-values" }}
 
@@ -2734,29 +2780,69 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
 <script>
 (function () {
 
-    const labels = JSON.parse(
-        document.getElementById("chart-labels").textContent
-    );
+    const labelsElement =
+        document.getElementById("chart-labels");
 
-    const earningsValues = JSON.parse(
-        document.getElementById("earnings-values").textContent
-    );
+    const valuesElement =
+        document.getElementById("earnings-values");
 
-    const canvas = document.getElementById("earningsChart");
+    const canvas =
+        document.getElementById("earningsChart");
 
-    const ctx = canvas.getContext("2d");
+    const scrollContainer =
+        document.getElementById("earningsChartScroll");
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, 420);
+    const chartInner =
+        document.getElementById("earningsChartInner");
 
-    gradient.addColorStop(0, "#4ade80");
-    gradient.addColorStop(0.5, "#22c55e");
-    gradient.addColorStop(1, "#15803d");
-
-    if (!canvas) {
+    if (
+        !labelsElement ||
+        !valuesElement ||
+        !canvas ||
+        !scrollContainer ||
+        !chartInner ||
+        typeof Chart === "undefined"
+    ) {
         return;
     }
 
-    new Chart(canvas, {
+    const labels = JSON.parse(labelsElement.textContent);
+
+    const earningsValues = JSON.parse(
+        valuesElement.textContent
+    );
+
+    if (!labels.length) {
+        return;
+    }
+
+    // Restore the original seven-day chart proportions.
+    const minimumWidth =
+        scrollContainer.clientWidth || 320;
+
+    // Each day receives one-seventh of the visible chart width.
+    const dayWidth = minimumWidth / 7;
+
+    const chartWidth = Math.max(
+        minimumWidth,
+        labels.length * dayWidth
+    );
+
+    chartInner.style.width = chartWidth + "px";
+    chartInner.style.minWidth = chartWidth + "px";
+
+    // Original green gradient.
+    const ctx = canvas.getContext("2d");
+
+    const gradient = ctx.createLinearGradient(
+        0, 0, 0, 420
+    );
+
+    gradient.addColorStop(0, "#f0fdf4");
+    gradient.addColorStop(0.5, "#86efac");
+    gradient.addColorStop(1, "#16a34a");
+
+    const earningsChart = new Chart(canvas, {
 
         type: "bar",
 
@@ -2768,53 +2854,40 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
                 data: earningsValues,
 
                 backgroundColor: gradient,
-
                 hoverBackgroundColor: "#16a34a",
 
                 borderRadius: 14,
-
                 borderSkipped: false,
 
-                barPercentage: 0.58,
-
+                barPercentage: 0.36,
                 categoryPercentage: 0.72
             }]
         },
 
         options: {
-
             responsive: true,
-
             maintainAspectRatio: false,
 
             plugins: {
-
                 legend: {
                     display: false
                 },
 
                 tooltip: {
-
                     backgroundColor: "#111827",
-
                     titleColor: "#ffffff",
-
                     bodyColor: "#ffffff",
 
                     padding: 14,
-
                     cornerRadius: 12,
-
                     displayColors: false,
 
                     callbacks: {
-
-                        title: function(context) {
+                        title: function (context) {
                             return context[0].label;
                         },
 
-                        label: function(context) {
-
+                        label: function (context) {
                             return "KSh " +
                                 Number(context.raw).toLocaleString(
                                     "en-KE",
@@ -2829,9 +2902,7 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
             },
 
             scales: {
-
                 x: {
-
                     grid: {
                         display: false
                     },
@@ -2841,20 +2912,21 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
                     },
 
                     ticks: {
-
                         color: "#6b7280",
-
                         padding: 8,
 
                         font: {
                             size: 12,
                             weight: "700"
-                        }
+                        },
+
+                        autoSkip: false,
+                        maxRotation: 0,
+                        minRotation: 0
                     }
                 },
 
                 y: {
-
                     beginAtZero: true,
 
                     grid: {
@@ -2866,9 +2938,7 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
                     },
 
                     ticks: {
-
                         color: "#6b7280",
-
                         padding: 8,
 
                         font: {
@@ -2876,29 +2946,198 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
                             weight: "600"
                         },
 
-                        callback: function(value) {
-
+                        callback: function (value) {
                             return "KSh " +
-                                Number(value).toLocaleString();
+                                Number(value).toLocaleString("en-KE");
                         }
                     }
                 }
             },
 
             animation: {
-
                 duration: 1000,
-
                 easing: "easeOutQuart"
             },
 
             interaction: {
-
                 intersect: false,
-
                 mode: "index"
             }
         }
+    });
+
+    // AUTOMATIC HORIZONTAL SCROLLING
+
+    let isPaused = false;
+    let animationFrame = null;
+    let lastFrameTime = null;
+
+    const scrollSpeed = 22;
+
+    function pauseScrolling() {
+        isPaused = true;
+        lastFrameTime = null;
+    }
+
+    function resumeScrolling() {
+        isPaused = false;
+        lastFrameTime = null;
+    }
+
+    function automaticScroll(timestamp) {
+
+        const maximumScroll =
+            scrollContainer.scrollWidth -
+            scrollContainer.clientWidth;
+
+        if (maximumScroll > 1 && !isPaused) {
+
+            if (lastFrameTime !== null) {
+
+                const elapsed = Math.min(
+                    (timestamp - lastFrameTime) / 1000,
+                    0.05
+                );
+
+                scrollContainer.scrollLeft +=
+                    scrollSpeed * elapsed;
+
+                if (
+                    scrollContainer.scrollLeft >= maximumScroll
+                ) {
+                    scrollContainer.scrollLeft = 0;
+                }
+            }
+
+            lastFrameTime = timestamp;
+
+        } else {
+            lastFrameTime = null;
+        }
+
+        animationFrame = requestAnimationFrame(automaticScroll);
+    }
+
+    // Pause while the user interacts with the chart.
+    scrollContainer.addEventListener(
+        "mouseenter",
+        pauseScrolling
+    );
+
+    scrollContainer.addEventListener(
+        "mouseleave",
+        resumeScrolling
+    );
+
+    scrollContainer.addEventListener(
+        "focusin",
+        pauseScrolling
+    );
+
+    scrollContainer.addEventListener(
+        "focusout",
+        resumeScrolling
+    );
+
+    scrollContainer.addEventListener(
+        "touchstart",
+        pauseScrolling,
+        { passive: true }
+    );
+
+    scrollContainer.addEventListener(
+        "touchend",
+        resumeScrolling,
+        { passive: true }
+    );
+
+    scrollContainer.addEventListener(
+        "touchcancel",
+        resumeScrolling,
+        { passive: true }
+    );
+
+    // Mouse wheel and trackpad navigation.
+    scrollContainer.addEventListener(
+        "wheel",
+        function(event) {
+            const maximumScroll =
+                scrollContainer.scrollWidth -
+                scrollContainer.clientWidth;
+
+            if (maximumScroll <= 1) return;
+
+            pauseScrolling();
+
+            const delta = event.shiftKey
+                ? event.deltaY
+                : (Math.abs(event.deltaX) > Math.abs(event.deltaY)
+                    ? event.deltaX
+                    : event.deltaY);
+
+            event.preventDefault();
+            scrollContainer.scrollLeft += delta;
+        },
+        { passive: false }
+    );
+
+    // Drag the chart horizontally with a mouse.
+    let dragStartX = 0;
+    let dragStartScrollLeft = 0;
+    let isDraggingChart = false;
+
+    scrollContainer.addEventListener("pointerdown", function(event) {
+        pauseScrolling();
+
+        if (event.pointerType !== "mouse" || event.button !== 0) {
+            return;
+        }
+
+        dragStartX = event.clientX;
+        dragStartScrollLeft = scrollContainer.scrollLeft;
+        isDraggingChart = true;
+        scrollContainer.style.cursor = "grabbing";
+        scrollContainer.setPointerCapture(event.pointerId);
+    });
+
+    scrollContainer.addEventListener("pointermove", function(event) {
+        if (!isDraggingChart) return;
+
+        const distance = event.clientX - dragStartX;
+        scrollContainer.scrollLeft = dragStartScrollLeft - distance;
+    });
+
+    function stopChartDrag() {
+        if (isDraggingChart) {
+            isDraggingChart = false;
+            scrollContainer.style.cursor = "grab";
+        }
+        resumeScrolling();
+    }
+
+    scrollContainer.addEventListener("pointerup", stopChartDrag);
+    scrollContainer.addEventListener("pointercancel", stopChartDrag);
+    scrollContainer.addEventListener("lostpointercapture", stopChartDrag);
+
+    // Respect reduced-motion preferences.
+    const reducedMotion =
+        window.matchMedia &&
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches;
+
+    if (!reducedMotion) {
+        animationFrame =
+            requestAnimationFrame(automaticScroll);
+    }
+
+    window.addEventListener("pagehide", function () {
+
+        if (animationFrame !== null) {
+            cancelAnimationFrame(animationFrame);
+        }
+
+        earningsChart.destroy();
     });
 
 })();

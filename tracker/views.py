@@ -22,7 +22,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.db.models import Count, Sum
+from django.db.models import Count, Min, Sum
 from django.shortcuts import (
     get_object_or_404,
     redirect,
@@ -514,45 +514,48 @@ def dashboard(request):
         }
 
     # ---------------------------------------------------------
-    # WEEKLY EARNINGS CHART DATA
-    # ---------------------------------------------------------
+    # AUTOMATIC DAILY EARNINGS CHART DATA
 
-    chart_week_start = week_start
+    collection_dates = (
+        CoinCollection.objects
+        .filter(user=request.user)
+        .aggregate(first_date=Min("collection_date"))
+    )
 
-    requested_chart_week = request.GET.get("chart_week")
+    chart_start = (
+        collection_dates["first_date"]
+        or timezone.localdate()
+    )
 
-    if requested_chart_week:
-        try:
-            requested_date = date.fromisoformat(requested_chart_week)
+    chart_end = timezone.localdate()
 
-            chart_week_start = (
-                requested_date -
-                timedelta(days=requested_date.weekday())
-            )
-        except (TypeError, ValueError):
-            chart_week_start = week_start
+    daily_totals = (
+        CoinCollection.objects
+        .filter(
+            user=request.user,
+            collection_date__range=(chart_start, chart_end),
+        )
+        .values("collection_date")
+        .annotate(total=Sum("actual_m_pesa"))
+        .order_by("collection_date")
+    )
 
-    chart_week_end = chart_week_start + timedelta(days=6)
-
-    previous_chart_week = chart_week_start - timedelta(days=7)
-    next_chart_week = chart_week_start + timedelta(days=7)
+    earnings_by_date = {
+        item["collection_date"]: money(item["total"])
+        for item in daily_totals
+    }
 
     chart_labels = []
     earnings_chart_values = []
 
-    for i in range(7):
+    total_chart_days = (chart_end - chart_start).days + 1
 
-        chart_date = chart_week_start + timedelta(days=i)
+    for day_number in range(total_chart_days):
+        chart_date = chart_start + timedelta(days=day_number)
 
-        daily_earnings = money(
-            CoinCollection.objects
-            .filter(
-                user=request.user,
-                collection_date=chart_date,
-            )
-            .aggregate(
-                total=Sum("actual_m_pesa")
-            )["total"]
+        daily_earnings = earnings_by_date.get(
+            chart_date,
+            Decimal("0.00")
         )
 
         chart_labels.append(
@@ -563,7 +566,6 @@ def dashboard(request):
             float(daily_earnings)
         )
 
-    # ---------------------------------------------------------
     # TARGET VS ACTUAL
     # ---------------------------------------------------------
 
@@ -661,10 +663,6 @@ def dashboard(request):
         "lowest_day": lowest_day,
 
         # Charts
-        "chart_week_start": chart_week_start,
-        "chart_week_end": chart_week_end,
-        "previous_chart_week": previous_chart_week,
-        "next_chart_week": next_chart_week,
 
         "chart_labels": chart_labels,
 
