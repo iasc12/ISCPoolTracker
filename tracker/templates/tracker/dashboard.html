@@ -2913,11 +2913,27 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
 
                     ticks: {
                         color: "#6b7280",
-                        padding: 8,
+                        padding: 6,
 
                         font: {
-                            size: 12,
+                            size: 10,
                             weight: "700"
+                        },
+
+                        callback: function(value) {
+                            const label = String(
+                                this.getLabelForValue(value)
+                            );
+                            const parts = label.split(" ");
+
+                            if (parts.length >= 3) {
+                                return [
+                                    parts.slice(1).join(" "),
+                                    parts[0]
+                                ];
+                            }
+
+                            return label;
                         },
 
                         autoSkip: false,
