@@ -2663,11 +2663,14 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
                 Daily pool earnings.
             </p>
 
-            <div class="chart-box">
+            <div class="chart-box isc-earnings-chart-layout">
+    <div class="isc-earnings-axis" aria-hidden="true">
+        <canvas id="earningsYAxis"></canvas>
+    </div>
     <div
         class="isc-earnings-scroll"
         id="earningsChartScroll"
-        aria-label="Automatically scrolling daily earnings chart"
+        aria-label="Horizontally scrollable daily earnings chart"
         tabindex="0"
     >
         <div
@@ -2770,6 +2773,48 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
     }
 }
 
+
+/* Fixed Y-axis with independently scrolling earnings plot */
+.chart-box.isc-earnings-chart-layout {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+}
+
+.isc-earnings-axis {
+    flex: 0 0 78px;
+    width: 78px;
+    height: 320px;
+    min-width: 78px;
+    position: relative;
+    overflow: hidden;
+}
+
+.isc-earnings-axis canvas {
+    display: block;
+    width: 78px !important;
+    height: 320px !important;
+    max-width: none !important;
+}
+
+.chart-box.isc-earnings-chart-layout .isc-earnings-scroll {
+    flex: 1 1 auto;
+    width: 0;
+    min-width: 0;
+    max-width: 100%;
+}
+
+@media (max-width: 700px) {
+    .isc-earnings-axis {
+        height: 280px;
+    }
+
+    .isc-earnings-axis canvas {
+        height: 280px !important;
+    }
+}
+
 </style>
 
 {{ chart_labels|json_script:"chart-labels" }}
@@ -2789,6 +2834,9 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
     const canvas =
         document.getElementById("earningsChart");
 
+    const axisCanvas =
+        document.getElementById("earningsYAxis");
+
     const scrollContainer =
         document.getElementById("earningsChartScroll");
 
@@ -2799,6 +2847,7 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
         !labelsElement ||
         !valuesElement ||
         !canvas ||
+        !axisCanvas ||
         !scrollContainer ||
         !chartInner ||
         typeof Chart === "undefined"
@@ -2863,6 +2912,58 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
                 categoryPercentage: 0.72
             }]
         },
+
+        plugins: [{
+            id: "iscFixedEarningsYAxis",
+
+            afterDraw: function(chart) {
+                const axis = document.getElementById("earningsYAxis");
+                if (!axis) return;
+
+                const ratio = window.devicePixelRatio || 1;
+                const width = axis.clientWidth || 78;
+                const height = axis.clientHeight || 320;
+
+                const pixelWidth = Math.round(width * ratio);
+                const pixelHeight = Math.round(height * ratio);
+
+                if (
+                    axis.width !== pixelWidth ||
+                    axis.height !== pixelHeight
+                ) {
+                    axis.width = pixelWidth;
+                    axis.height = pixelHeight;
+                }
+
+                const context = axis.getContext("2d");
+                context.setTransform(ratio, 0, 0, ratio, 0, 0);
+                context.clearRect(0, 0, width, height);
+
+                const scale = chart.scales.y;
+                if (!scale) return;
+
+                context.fillStyle = "#6b7280";
+                context.font = "600 11px Arial, sans-serif";
+                context.textAlign = "right";
+                context.textBaseline = "middle";
+
+                scale.ticks.forEach(function(tick) {
+                    const y = scale.getPixelForValue(tick.value);
+
+                    if (
+                        y < chart.chartArea.top - 1 ||
+                        y > chart.chartArea.bottom + 1
+                    ) {
+                        return;
+                    }
+
+                    const label = "KSh " +
+                        Number(tick.value).toLocaleString("en-KE");
+
+                    context.fillText(label, width - 8, y);
+                });
+            }
+        }],
 
         options: {
             responsive: true,
@@ -2943,6 +3044,7 @@ body.dark-mode .charts-section > .chart-card .isc-financial-heading-inside-card 
                 },
 
                 y: {
+                    display: false,
                     beginAtZero: true,
 
                     grid: {
